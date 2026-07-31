@@ -1,0 +1,1633 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+#mfw{font-family:'Segoe UI',Arial,sans-serif;background:#f2f5f9;color:#1c2b3a;min-height:100vh}
+#mfw *{box-sizing:border-box;margin:0;padding:0}
+/* HEADER */
+#mfw .hdr{background:#0e2038;border-bottom:3px solid #1e8c5a;padding:15px 26px;display:table;width:100%}
+#mfw .hdrl{display:table-cell;vertical-align:middle}
+#mfw .hdrr{display:table-cell;vertical-align:middle;text-align:right}
+#mfw .logo{font-size:10px;color:#35c98a;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+#mfw .htitle{font-size:16px;font-weight:700;color:#ffffff;margin-top:2px}
+#mfw .hsub{font-size:11px;color:#9db4c8;margin-top:1px}
+#mfw .badge{border:1px solid #35c98a;color:#35c98a;background:#12351f;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px}
+#mfw .badge2{border-color:#7c96f0;color:#7c96f0;background:#16223f}
+/* TABS */
+#mfw .tabs{background:#ffffff;border-bottom:1px solid #dbe3ec;padding:0 26px;overflow-x:auto;white-space:nowrap}
+#mfw .tab{display:inline-block;padding:12px 14px;font-size:12px;font-weight:600;color:#5a7184;cursor:pointer;border-bottom:3px solid transparent}
+#mfw .tab:hover{color:#0e2038}
+#mfw .tab.on{color:#0e2038;border-bottom-color:#1e8c5a}
+#mfw .tab.on2{color:#0e2038;border-bottom-color:#2b4fd8}
+#mfw .tab.done{color:#14804f}
+#mfw .sn{display:inline-block;width:19px;height:19px;border-radius:50%;background:#e2e9f1;color:#44586c;font-size:10px;text-align:center;line-height:19px;font-weight:700;margin-right:5px;vertical-align:middle}
+#mfw .tab.on .sn{background:#1e8c5a;color:#ffffff}
+#mfw .tab.on2 .sn{background:#2b4fd8;color:#ffffff}
+#mfw .tab.done .sn{background:#c7e8d6;color:#14804f}
+#mfw .pbar{height:3px;background:#e2e9f1}
+#mfw .pfill{height:100%;background:#1e8c5a;transition:width .4s}
+/* CONTENT */
+#mfw .ct{padding:24px 26px;max-width:900px;margin:0 auto}
+#mfw .pnl{display:none}
+#mfw .pnl.on{display:block}
+/* CARD */
+#mfw .card{background:#ffffff;border:1px solid #dbe3ec;border-radius:11px;padding:20px;margin-bottom:16px}
+#mfw .ctit{font-size:11px;font-weight:700;color:#14804f;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+#mfw .ctit2{color:#2b4fd8}
+/* FORM */
+#mfw label{display:block;font-size:10px;color:#5a7184;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+#mfw input,#mfw select,#mfw textarea{background:#fbfcfe;border:1px solid #ccd6e2;border-radius:7px;color:#1c2b3a;font-size:13px;padding:8px 11px;outline:none;font-family:inherit;width:100%;transition:border .2s}
+#mfw input:focus,#mfw select:focus,#mfw textarea:focus{border-color:#1e8c5a}
+#mfw textarea{resize:vertical;min-height:60px}
+#mfw input[readonly]{background:#eef6f1;color:#14804f;font-weight:700}
+#mfw .pref{position:relative}
+#mfw .pref .sym{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#5a7184;font-size:12px;pointer-events:none}
+#mfw .pref input{padding-left:24px}
+#mfw .fld{margin-bottom:12px}
+/* TABLE GRID */
+#mfw .g2{display:table;width:100%;border-spacing:10px 0}
+#mfw .g2r{display:table-row}
+#mfw .g2c{display:table-cell;width:50%;vertical-align:top;padding:0 5px 12px}
+#mfw .g3{display:table;width:100%;border-spacing:8px 0}
+#mfw .g3r{display:table-row}
+#mfw .g3c{display:table-cell;width:33.3%;vertical-align:top;padding:0 4px 10px}
+/* KPI */
+#mfw .krow{display:table;width:100%;border-spacing:10px}
+#mfw .kr{display:table-row}
+#mfw .kc{display:table-cell;background:#f7fafc;border:1px solid #dbe3ec;border-radius:9px;padding:12px;text-align:center;vertical-align:middle}
+#mfw .klbl{font-size:9px;color:#5a7184;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+#mfw .kval{font-size:19px;font-weight:800;color:#14804f}
+#mfw .ksub{font-size:9px;color:#5a7184;margin-top:2px}
+/* BUTTONS */
+#mfw .btn{padding:10px 24px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit}
+#mfw .btn-p{background:#1e8c5a;color:#ffffff}
+#mfw .btn-p:hover{background:#16744a}
+#mfw .btn-b{background:#2b4fd8;color:#ffffff}
+#mfw .btn-b:hover{background:#2342b8}
+#mfw .btn-o{background:#ffffff;border:1px solid #ccd6e2;color:#44586c;font-family:inherit}
+#mfw .btn-o:hover{border-color:#1e8c5a;color:#14804f}
+#mfw .btn-sm{padding:6px 13px;font-size:11px;border-radius:6px;cursor:pointer;border:none;font-family:inherit}
+#mfw .btn-add{background:#eef2f7;color:#44586c;font-size:11px;padding:6px 12px;border-radius:6px;cursor:pointer;border:1px solid #ccd6e2;font-family:inherit}
+#mfw .btn-add:hover{border-color:#1e8c5a;color:#14804f}
+#mfw .btn-del{background:transparent;border:none;color:#c62828;cursor:pointer;font-size:13px;padding:4px 7px;font-family:inherit}
+#mfw .navrow{display:table;width:100%;margin-top:20px}
+#mfw .navl{display:table-cell;vertical-align:middle}
+#mfw .navr{display:table-cell;vertical-align:middle;text-align:right}
+/* INFO */
+#mfw .ibox{background:#eef7f2;border-left:3px solid #1e8c5a;border-radius:0 7px 7px 0;padding:12px 16px;margin-bottom:14px;font-size:12px;color:#33475b;line-height:1.7}
+#mfw .ibox strong{color:#0e2038}
+#mfw .ibox2{background:#eef1fb;border-left-color:#2b4fd8}
+/* EXPLICACIONES PILARES */
+#mfw .pexpl{font-size:12px;color:#33475b;line-height:1.7;margin-bottom:12px}
+#mfw .pexpl strong{color:#0e2038}
+#mfw .pexpl ul{margin:6px 0 6px 20px;padding:0}
+#mfw .pexpl li{margin-bottom:3px}
+/* ACORDEON GASTOS */
+#mfw .acord{background:#fbfcfe;border:1px solid #dbe3ec;border-radius:9px;margin-bottom:10px;overflow:hidden}
+#mfw .acord-hdr{display:table;width:100%;padding:12px 14px;cursor:pointer;user-select:none}
+#mfw .acord-hdr:hover{background:#f1f5f9}
+#mfw .acord-l{display:table-cell;vertical-align:middle}
+#mfw .acord-r{display:table-cell;vertical-align:middle;text-align:right}
+#mfw .acord-title{font-size:12px;font-weight:700;color:#1c2b3a}
+#mfw .acord-sub{font-size:10px;color:#5a7184;margin-top:2px}
+#mfw .acord-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;margin-right:8px;vertical-align:middle}
+#mfw .tag-esencial{background:#e2f4ea;color:#14804f;border:1px solid #b6dfc8}
+#mfw .tag-noesencial{background:#fdf2dd;color:#8f5e06;border:1px solid #ecd9ad}
+#mfw .acord-arrow{color:#5a7184;font-size:13px;transition:transform .2s;display:inline-block}
+#mfw .acord-arrow.open{transform:rotate(90deg)}
+#mfw .acord-body{display:none;padding:14px;border-top:1px solid #dbe3ec}
+#mfw .acord-body.open{display:block}
+#mfw .gasto-row{display:table;width:100%;margin-bottom:8px;border-spacing:8px 0}
+#mfw .gasto-r{display:table-row}
+#mfw .gasto-name{display:table-cell;vertical-align:middle;width:38%}
+#mfw .gasto-val{display:table-cell;vertical-align:middle;width:28%}
+#mfw .gasto-per{display:table-cell;vertical-align:middle;width:26%}
+#mfw .gasto-per select{padding:8px 6px;font-size:12px}
+#mfw .gasto-val input{font-size:12px}
+#mfw .gasto-del{display:table-cell;vertical-align:middle;width:8%;text-align:right}
+#mfw .total-cat{font-size:11px;color:#44586c;text-align:right;margin-top:4px;font-weight:600}
+/* FLUJOS STICKY M2 */
+#mfw .fsticky{background:#ffffff;border:1px solid #dbe3ec;border-radius:11px;padding:14px;margin-bottom:18px;position:sticky;top:0;z-index:10}
+#mfw .fsticky-t{font-size:10px;color:#5a7184;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+#mfw .frow{display:table;width:100%;border-spacing:10px}
+#mfw .fr{display:table-row}
+#mfw .fc{display:table-cell;background:#f7fafc;border:1px solid #e3e9f0;border-radius:8px;padding:11px;vertical-align:top;width:33.3%}
+#mfw .fc-lbl{font-size:9px;color:#5a7184;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+#mfw .fc-total{font-size:10px;color:#5a7184;margin-bottom:1px}
+#mfw .fc-usado{font-size:10px;color:#8f5e06;margin-bottom:2px}
+#mfw .fc-disp{font-size:17px;font-weight:800}
+#mfw .fc-bar{height:3px;background:#e2e9f1;border-radius:2px;margin-top:7px}
+#mfw .fc-fill{height:100%;border-radius:2px;transition:width .3s}
+/* PILARES */
+#mfw .pilar{border-radius:11px;padding:20px;margin-bottom:16px;border:1px solid;background:#ffffff}
+#mfw .ps1{background:#f2faf6;border-color:#b6dfc8}
+#mfw .ps2{background:#f1f4fd;border-color:#c3cdf2}
+#mfw .ps3{background:#fdf8ec;border-color:#ecd9ad}
+#mfw .ph{display:table;width:100%;margin-bottom:12px}
+#mfw .phl{display:table-cell;vertical-align:middle}
+#mfw .phr{display:table-cell;vertical-align:middle;text-align:right}
+#mfw .pico{display:inline-block;width:40px;height:40px;border-radius:9px;text-align:center;line-height:40px;font-size:18px;margin-right:10px;vertical-align:middle}
+#mfw .ps1 .pico{background:#dff1e7;border:1px solid #b6dfc8}
+#mfw .ps2 .pico{background:#e2e8fb;border:1px solid #c3cdf2}
+#mfw .ps3 .pico{background:#f8ecd2;border:1px solid #ecd9ad}
+#mfw .pname{font-size:14px;font-weight:800;display:inline;vertical-align:middle}
+#mfw .ps1 .pname{color:#14804f}
+#mfw .ps2 .pname{color:#2b4fd8}
+#mfw .ps3 .pname{color:#8f5e06}
+#mfw .pdesc{font-size:10px;color:#5a7184;margin-top:2px}
+#mfw .ptlbl{font-size:9px;color:#5a7184;text-transform:uppercase;letter-spacing:.5px}
+#mfw .ptval{font-size:20px;font-weight:800}
+#mfw .ps1 .ptval{color:#14804f}
+#mfw .ps2 .ptval{color:#2b4fd8}
+#mfw .ps3 .ptval{color:#8f5e06}
+#mfw .asig3{display:table;width:100%;border-spacing:10px}
+#mfw .asig3r{display:table-row}
+#mfw .asig3c{display:table-cell;background:#ffffff;border:1px solid #e3e9f0;border-radius:9px;padding:13px;vertical-align:top;width:33.3%}
+#mfw .asig-lbl{font-size:9px;color:#5a7184;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+#mfw .asig-saldo{font-size:10px;margin-top:5px;padding:3px 7px;border-radius:4px;background:#f1f5f9;text-align:center;font-weight:600}
+#mfw .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:middle}
+#mfw .dot-g{background:#1e8c5a} #mfw .dot-a{background:#c98a10} #mfw .dot-b{background:#2b4fd8}
+/* TABLA PROYECCIÓN */
+#mfw .ptable{width:100%;border-collapse:collapse;font-size:12px}
+#mfw .ptable th{background:#f1f5f9;color:#5a7184;font-size:10px;text-transform:uppercase;padding:8px 10px;text-align:right;border-bottom:1px solid #dbe3ec}
+#mfw .ptable th:first-child{text-align:left}
+#mfw .ptable td{padding:7px 10px;border-bottom:1px solid #eef2f7;text-align:right;color:#33475b}
+#mfw .ptable td:first-child{text-align:left;color:#1c2b3a;font-weight:600}
+#mfw .ptable .tot td{background:#eef2f7;color:#0e2038;font-weight:700;border-bottom:none}
+#mfw .cs1{color:#14804f!important} #mfw .cs2{color:#2b4fd8!important} #mfw .cs3{color:#8f5e06!important}
+/* BIENVENIDA */
+#mfw .welcome{max-width:540px;margin:60px auto;text-align:center;padding:0 20px}
+#mfw .w-logo{font-size:12px;color:#14804f;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+#mfw .w-title{font-size:26px;font-weight:800;color:#0e2038;margin-bottom:10px;line-height:1.3}
+#mfw .w-sub{font-size:13px;color:#5a7184;margin-bottom:36px;line-height:1.7}
+#mfw .w-cards{display:table;width:100%;border-spacing:14px}
+#mfw .w-cr{display:table-row}
+#mfw .w-cc{display:table-cell;width:50%;vertical-align:top}
+#mfw .w-card{background:#ffffff;border:1px solid #dbe3ec;border-radius:12px;padding:24px 18px;cursor:pointer;transition:border .2s;text-align:center}
+#mfw .w-card:hover{border-color:#1e8c5a}
+#mfw .w-card2:hover{border-color:#2b4fd8}
+#mfw .w-icon{font-size:32px;margin-bottom:10px}
+#mfw .w-ctitle{font-size:14px;font-weight:700;color:#0e2038;margin-bottom:6px}
+#mfw .w-csub{font-size:11px;color:#5a7184;line-height:1.5}
+/* VEHÍCULOS / ACTIVOS */
+#mfw .vh-row{display:table;width:100%;margin-bottom:8px;border-spacing:8px 0}
+#mfw .vh-r{display:table-row}
+#mfw .vh-n{display:table-cell;vertical-align:middle;width:55%}
+#mfw .vh-v{display:table-cell;vertical-align:middle;width:35%}
+#mfw .vh-d{display:table-cell;vertical-align:middle;width:10%;text-align:right}
+/* UPLOAD */
+#mfw .upzone{border:2px dashed #ccd6e2;border-radius:11px;padding:28px;text-align:center;cursor:pointer;transition:border .2s;margin-bottom:14px}
+#mfw .upzone:hover{border-color:#2b4fd8}
+/* RESUMEN TABLE */
+#mfw .rtable{width:100%;border-collapse:collapse;font-size:12px}
+#mfw .rtable th{background:#f1f5f9;color:#5a7184;font-size:10px;text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:1px solid #dbe3ec}
+#mfw .rtable td{padding:9px 12px;border-bottom:1px solid #eef2f7;color:#33475b}
+#mfw .rtable tr:last-child td{border-bottom:none}
+#mfw .tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+#mfw .tv{background:#e2f4ea;color:#14804f;border:1px solid #b6dfc8}
+#mfw .ta{background:#fdf2dd;color:#8f5e06;border:1px solid #ecd9ad}
+#mfw .tb{background:#e2e8fb;color:#2b4fd8;border:1px solid #c3cdf2}
+#mfw .tr2{background:#fbe4e4;color:#c62828;border:1px solid #f0bcbc}
+/* MES EXTRAS */
+#mfw .mes-grid{display:table;width:100%;border-spacing:7px}
+#mfw .mes-r{display:table-row}
+#mfw .mes-c{display:table-cell;width:16.6%;background:#f7fafc;border:1px solid #e3e9f0;border-radius:7px;padding:9px 7px;text-align:center;vertical-align:top}
+#mfw .mes-lbl{font-size:9px;color:#5a7184;font-weight:700;text-transform:uppercase;margin-bottom:5px}
+#mfw .mes-input{background:#ffffff;border:1px solid #ccd6e2;border-radius:5px;color:#1c2b3a;font-size:11px;padding:5px 4px;width:100%;text-align:center;outline:none;font-family:inherit}
+#mfw .mes-input:focus{border-color:#c98a10}
+/* METAS */
+#mfw .meta-row{display:table;width:100%;margin-bottom:8px;border-spacing:6px 0}
+#mfw .meta-r{display:table-row}
+#mfw .meta-c{display:table-cell;vertical-align:middle}
+#mfw .meta-c input,#mfw .meta-c select{font-size:12px;padding:7px 8px}
+#mfw .meta-c .pref input{padding-left:19px}
+#mfw .meta-c .pref .sym{left:6px;font-size:11px}
+#mfw .meta-cuota{display:table-cell;vertical-align:middle;text-align:right;font-size:12px;font-weight:700;color:#14804f;width:15%}
+#mfw .meta-del{display:table-cell;vertical-align:middle;width:5%;text-align:right}
+#mfw .meta-head{display:table;width:100%;border-spacing:6px 0;margin-bottom:4px}
+#mfw .meta-head span{display:table-cell;font-size:9px;color:#5a7184;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+#mfw .pill-s1{background:#e2f4ea;color:#14804f}
+#mfw .pill-s2{background:#e2e8fb;color:#2b4fd8}
+#mfw .pill-s3{background:#f8ecd2;color:#8f5e06}
+</style>
+
+<div id="mfw">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdrl">
+    <div class="logo">Finanzas Inteligentes</div>
+    <div class="htitle">Mentoría Financiera</div>
+    <div class="hsub" id="hdr-sub">Sistema de Consultoría</div>
+  </div>
+  <div class="hdrr">
+    <span class="badge" id="hdr-badge">INICIO</span>
+  </div>
+</div>
+
+<!-- TABS (oculto en bienvenida) -->
+<div class="tabs" id="tabs-bar" style="display:none">
+  <span class="tab on" id="tab0" onclick="goTab(0)"><span class="sn">1</span>Datos</span>
+  <span class="tab" id="tab1" onclick="goTab(1)"><span class="sn">2</span>Presupuesto</span>
+  <span class="tab" id="tab2" onclick="goTab(2)"><span class="sn">3</span>Hábitos y Patrimonio</span>
+  <span class="tab" id="tab3" onclick="goTab(3)"><span class="sn">4</span>Estrategia 3S</span>
+  <span class="tab" id="tab4" onclick="goTab(4)"><span class="sn">5</span>Diagnóstico</span>
+  <span class="tab" id="tab5" onclick="goTab(5)"><span class="sn">6</span>Propuesta</span>
+</div>
+<div class="pbar" id="pbar-wrap" style="display:none"><div class="pfill" id="pfill" style="width:16%"></div></div>
+
+<div class="ct">
+
+<!-- ══════════════════════════════════════════════
+     PANTALLA DE BIENVENIDA
+══════════════════════════════════════════════ -->
+<div class="pnl on" id="pnl-home">
+  <div class="welcome">
+    <div class="w-logo">Finanzas Inteligentes</div>
+    <div class="w-title">Mentoría Financiera<br>Metodología 3S</div>
+    <div class="w-sub">Herramienta de consultoría para asesores. Levanta la información de tu cliente, genera el diagnóstico y diseña la propuesta en una sola sesión.</div>
+    <div class="w-cards">
+      <div class="w-cr">
+        <div class="w-cc">
+          <div class="w-card" onclick="iniciarNuevo()">
+            <div class="w-icon">📋</div>
+            <div class="w-ctitle">Nueva consultoría</div>
+            <div class="w-csub">Inicia el levantamiento de información desde cero con un nuevo cliente.</div>
+          </div>
+        </div>
+        <div class="w-cc">
+          <div class="w-card w-card2" onclick="document.getElementById('file-json').click()">
+            <div class="w-icon">📂</div>
+            <div class="w-ctitle">Cargar sesión anterior</div>
+            <div class="w-csub">Adjunta el JSON de la Sesión 1 para continuar directamente con la propuesta.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="file-json" accept=".json" style="display:none" onchange="cargarJSON(event)">
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 0 — DATOS DEL CLIENTE
+══════════════════════════════════════════════ -->
+<div class="pnl" id="pnl-0">
+  <div class="card">
+    <div class="ctit">Datos demográficos</div>
+    <div class="g2"><div class="g2r">
+      <div class="g2c"><div class="fld"><label>Nombre completo</label><input type="text" id="nombre" placeholder="Ej. María Fernanda López"></div></div>
+      <div class="g2c"><div class="fld"><label>Fecha de nacimiento</label><input type="date" id="fecnac" onchange="calcEdad()"></div></div>
+    </div><div class="g2r">
+      <div class="g2c"><div class="fld"><label>Edad (calculada)</label><input type="text" id="edad" readonly placeholder="—"></div></div>
+      <div class="g2c"><div class="fld"><label>Estado civil</label><select id="estadocivil"><option value="">Seleccionar...</option><option>Soltero/a</option><option>Casado/a</option><option>Unión libre</option><option>Divorciado/a</option><option>Viudo/a</option></select></div></div>
+    </div><div class="g2r">
+      <div class="g2c"><div class="fld"><label>Profesión / Ocupación</label><input type="text" id="profesion" placeholder="Ej. Médico, Ingeniero"></div></div>
+      <div class="g2c"><div class="fld"><label>Tipo de vinculación</label><select id="vinculacion"><option value="">Seleccionar...</option><option>Empleado</option><option>Independiente</option><option>Empresario</option><option>Pensionado</option></select></div></div>
+    </div><div class="g2r">
+      <div class="g2c"><div class="fld"><label>¿Tiene hijos?</label><select id="hijos" onchange="toggleHijos()"><option value="no">No</option><option value="si">Sí</option></select></div></div>
+      <div class="g2c"><div class="fld" id="nhijos-wrap" style="display:none"><label>Número de hijos</label><input type="number" id="nhijos" min="1" max="15" placeholder="2"></div></div>
+    </div><div class="g2r">
+      <div class="g2c"><div class="fld"><label>Dependientes económicos</label><input type="number" id="dependientes" min="0" placeholder="0"></div></div>
+      <div class="g2c"><div class="fld"><label>Ciudad / Departamento</label><input type="text" id="ciudad" placeholder="Ej. Medellín, Antioquia"></div></div>
+    </div></div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Expectativas de la asesoría</div>
+    <div class="ibox">Registra <strong>qué espera el cliente</strong> de este proceso. Esta información aparece en el diagnóstico y en los PDF entregables, y permite validar al final si la propuesta responde a lo que el cliente pidió.</div>
+    <div class="g2"><div class="g2r">
+      <div class="g2c"><div class="fld"><label>Objetivo principal del cliente</label><select id="objetivo"><option value="">Seleccionar...</option><option>Libertad financiera</option><option>Pensión y retiro</option><option>Protección de la familia</option><option>Crecimiento del patrimonio</option><option>Educación de los hijos</option><option>Compra de vivienda</option><option>Ordenar sus finanzas</option><option>Salir de deudas</option><option>Otro</option></select></div></div>
+      <div class="g2c"><div class="fld"><label>Horizonte esperado</label><select id="horizonte"><option value="">Seleccionar...</option><option>Corto plazo (menos de 3 años)</option><option>Mediano plazo (3 a 10 años)</option><option>Largo plazo (más de 10 años)</option></select></div></div>
+    </div></div>
+    <div class="fld"><label>Expectativas del cliente (en sus propias palabras)</label><textarea id="expectativas" placeholder="Ej. Quiero saber si con lo que gano puedo pensionarme a los 60, proteger a mis hijos y empezar a invertir sin riesgo alto..."></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Fondo de pensiones</div>
+    <div class="g2"><div class="g2r">
+      <div class="g2c"><div class="fld"><label>Fondo de pensiones</label><select id="fondo"><option value="">Seleccionar...</option><option>Colpensiones (RPM)</option><option>Protección</option><option>Porvenir</option><option>Colfondos</option><option>Skandia</option><option>No cotiza actualmente</option></select></div></div>
+      <div class="g2c"><div class="fld"><label>Semanas cotizadas</label><input type="number" id="semanas" placeholder="320" min="0"></div></div>
+    </div><div class="g2r">
+      <div class="g2c"><div class="fld"><label>Ingreso Base de Cotización (IBC)</label><div class="pref"><span class="sym">$</span><input type="text" id="ibc" placeholder="4.500.000" oninput="fn(this)"></div></div></div>
+      <div class="g2c"><div class="fld"><label>Edad de retiro deseada</label><input type="number" id="edadretiro" placeholder="60" min="50" max="75" oninput="updMetas()"></div></div>
+    </div></div>
+  </div>
+
+  <div class="navrow"><div class="navl"></div><div class="navr"><button class="btn btn-p" onclick="goTab(1)">Siguiente → Presupuesto</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 1 — PRESUPUESTO (ACORDEÓN)
+══════════════════════════════════════════════ -->
+<div class="pnl" id="pnl-1">
+
+  <div class="card">
+    <div class="ctit">Ingresos mensuales</div>
+    <div class="g2"><div class="g2r">
+      <div class="g2c"><div class="fld"><label>Ingreso principal (salario / honorarios)</label><div class="pref"><span class="sym">$</span><input type="text" id="ing1" placeholder="8.000.000" oninput="fn(this);calcFlujo()"></div></div></div>
+      <div class="g2c"><div class="fld"><label>Otros ingresos</label><div class="pref"><span class="sym">$</span><input type="text" id="ing2" placeholder="0" oninput="fn(this);calcFlujo()"></div></div></div>
+    </div><div class="g2r">
+      <div class="g2c" colspan="2"><div class="fld"><label>Descripción otros ingresos</label><input type="text" id="ing2desc" placeholder="Ej. Arriendo, dividendos..."></div></div>
+    </div></div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Gastos</div>
+    <div class="ibox">Abre cada categoría, ingresa los gastos base y agrega líneas personalizadas si el cliente tiene gastos adicionales. <strong>Para cada gasto elige su periodicidad</strong> (mensual, trimestral, semestral o anual): el sistema lo convierte automáticamente a su equivalente mensual para sumar todo en la misma base.<br><br><strong>💳 Sobre las deudas:</strong> la <strong>cuota mensual</strong> de créditos va en la categoría "Servicio de deudas" de aquí abajo. <strong>Ese es el único valor que reduce el flujo de caja libre.</strong> En la siguiente pestaña registrarás el <strong>saldo</strong> de cada deuda (para el patrimonio), pero eso no vuelve a restar del flujo.</div>
+
+    <!-- CATEGORÍAS DE GASTOS -->
+    <div id="cats-wrap"></div>
+
+    <div style="margin-top:14px">
+      <div class="krow"><div class="kr">
+        <div class="kc"><div class="klbl">Total ingresos</div><div class="kval" id="kpi-ing">$0</div></div>
+        <div class="kc"><div class="klbl">Total gastos (mensual)</div><div class="kval" style="color:#c62828" id="kpi-gas">$0</div></div>
+        <div class="kc"><div class="klbl">Flujo de caja libre</div><div class="kval" id="kpi-fcl">$0</div><div class="ksub" id="kpi-fcl-pct">—</div></div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="navrow"><div class="navl"><button class="btn btn-o" onclick="goTab(0)">← Anterior</button></div><div class="navr"><button class="btn btn-p" onclick="goTab(2)">Siguiente → Hábitos y Patrimonio</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 2 — HÁBITOS FINANCIEROS + PATRIMONIO
+══════════════════════════════════════════════ -->
+<div class="pnl" id="pnl-2">
+  <div class="card">
+    <div class="ctit">Ahorros actuales</div>
+    <div class="g2"><div class="g2r">
+      <div class="g2c"><div class="fld"><label>¿Ahorra actualmente?</label><select id="ahorra"><option value="no">No</option><option value="si">Sí</option></select></div></div>
+      <div class="g2c"><div class="fld"><label>Monto de ahorro mensual</label><div class="pref"><span class="sym">$</span><input type="text" id="ahorroamt" placeholder="0" oninput="fn(this)"></div></div></div>
+    </div><div class="g2r">
+      <div class="g2c"><div class="fld"><label>¿Dónde tiene sus ahorros?</label><select id="dondeahorra"><option value="">Seleccionar...</option><option>Cuenta de ahorros</option><option>Efectivo</option><option>CDT</option><option>Fondo de inversión</option><option>Criptomonedas</option><option>Acciones</option><option>No tiene</option></select></div></div>
+      <div class="g2c"><div class="fld"><label>Capital total ahorrado</label><div class="pref"><span class="sym">$</span><input type="text" id="capitalahorrado" placeholder="0" oninput="fn(this)"></div></div></div>
+    </div></div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Patrimonio — Activos del cliente</div>
+    <div class="ibox">Levanta el inventario de activos para conocer el <strong>patrimonio total del cliente</strong>. Los <strong>activos líquidos</strong> son los que se convierten en dinero en días (efectivo, cuentas, CDT, fondos). Los <strong>activos no líquidos</strong> toman meses en venderse (vivienda, vehículo, lotes, negocios).</div>
+
+    <div style="font-size:10px;color:#14804f;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">💧 Activos líquidos</div>
+    <div id="act-liq"></div>
+    <button class="btn-add" onclick="addActivo('liq')" style="margin-bottom:16px">+ Agregar activo líquido</button>
+
+    <div style="font-size:10px;color:#2b4fd8;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">🏠 Activos no líquidos</div>
+    <div id="act-noliq"></div>
+    <button class="btn-add" onclick="addActivo('noliq')">+ Agregar activo no líquido</button>
+
+    <div class="krow" style="margin-top:14px"><div class="kr">
+      <div class="kc"><div class="klbl">Activos líquidos</div><div class="kval" id="kpi-liq">$0</div></div>
+      <div class="kc"><div class="klbl">Activos no líquidos</div><div class="kval" style="color:#2b4fd8" id="kpi-noliq">$0</div></div>
+      <div class="kc"><div class="klbl">Total activos</div><div class="kval" style="color:#0e2038" id="kpi-patbruto">$0</div></div>
+      <div class="kc"><div class="klbl">Patrimonio neto</div><div class="kval" id="kpi-patneto">$0</div><div class="ksub">activos − deudas</div></div>
+    </div></div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Deudas actuales</div>
+    <div class="ibox" style="border-left-color:#8f5e06;background:#fdf8ec">Aquí registras el <strong>saldo</strong> de cada deuda para calcular el <strong>patrimonio neto</strong> y el mapa de endeudamiento. La <strong>cuota mensual es solo de referencia</strong>: la que reduce el flujo de caja libre es la que ya incluiste en el presupuesto (categoría "Servicio de deudas"). <strong>No se resta dos veces.</strong></div>
+    <div id="deudas-list"></div>
+    <button class="btn-add" onclick="addDeuda()" style="margin-top:6px">+ Agregar deuda</button>
+    <div class="krow" style="margin-top:14px"><div class="kr">
+      <div class="kc"><div class="klbl">Total deudas</div><div class="kval" style="color:#c62828" id="kpi-deuda">$0</div></div>
+      <div class="kc"><div class="klbl">Cuota mensual total (ref.)</div><div class="kval" style="color:#8f5e06" id="kpi-cuota">$0</div><div class="ksub">ya contada en el presupuesto</div></div>
+    </div></div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Capital disponible para invertir</div>
+    <div class="g2"><div class="g2r">
+      <div class="g2c"><div class="fld"><label>Capital disponible hoy</label><div class="pref"><span class="sym">$</span><input type="text" id="capdisponible" placeholder="0" oninput="fn(this)"></div></div></div>
+      <div class="g2c"><div class="fld"><label>¿Tiene inversiones actuales?</label><select id="tieneinv"><option value="no">No</option><option value="si">Sí</option></select></div></div>
+    </div></div>
+    <div class="fld"><label>Descripción inversiones actuales</label><textarea id="invdesc" placeholder="Ej. Apartamento en arriendo, acciones, plan pensión voluntaria..."></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Flujos extraordinarios anuales</div>
+    <div class="ibox">Primas, bonos, comisiones o cualquier ingreso que no sea mensual fijo. Indica el mes y el monto aproximado.</div>
+    <div class="mes-grid"><div class="mes-r">
+      <div class="mes-c"><div class="mes-lbl">Ene</div><input class="mes-input" type="text" id="m1" placeholder="0" oninput="fnm(this)"></div>
+      <div class="mes-c"><div class="mes-lbl">Feb</div><input class="mes-input" type="text" id="m2" placeholder="0" oninput="fnm(this)"></div>
+      <div class="mes-c"><div class="mes-lbl">Mar</div><input class="mes-input" type="text" id="m3" placeholder="0" oninput="fnm(this)"></div>
+      <div class="mes-c"><div class="mes-lbl">Abr</div><input class="mes-input" type="text" id="m4" placeholder="0" oninput="fnm(this)"></div>
+      <div class="mes-c"><div class="mes-lbl">May</div><input class="mes-input" type="text" id="m5" placeholder="0" oninput="fnm(this)"></div>
+      <div class="mes-c"><div class="mes-lbl">Jun</div><input class="mes-input" type="text" id="m6" placeholder="0" oninput="fnm(this)"></div>
+    </div><div class="mes-r" style="margin-top:7px">
+      <div class="mes-c"><div class="mes-lbl">Jul</div><input class="mes-input" type="text" id="m7" placeholder="0" oninput="fnm(this)"></div>
+      <div class="mes-c"><div class="mes-lbl">Ago</div><input class="mes-input" type="text" id="m8" placeholder="0" oninput="fnm(this)"></div>
+      <div class="mes-c"><div class="mes-lbl">Sep</div><input class="mes-input" type="text" id="m9" placeholder="0" oninput="fnm(this)"></div>
+      <div class="mes-c"><div class="mes-lbl">Oct</div><input class="mes-input" type="text" id="m10" placeholder="0" oninput="fnm(this)"></div>
+      <div class="mes-c"><div class="mes-lbl">Nov</div><input class="mes-input" type="text" id="m11" placeholder="0" oninput="fnm(this)"></div>
+      <div class="mes-c"><div class="mes-lbl">Dic</div><input class="mes-input" type="text" id="m12" placeholder="0" oninput="fnm(this)"></div>
+    </div></div>
+    <div style="text-align:right;margin-top:8px;font-size:11px;color:#5a7184">Total flujos extraordinarios año: <strong style="color:#8f5e06" id="total-extras">$0</strong></div>
+  </div>
+
+  <div class="navrow"><div class="navl"><button class="btn btn-o" onclick="goTab(1)">← Anterior</button></div><div class="navr"><button class="btn btn-p" onclick="goTab(3)">Siguiente → Estrategia 3S</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 3 — ESTRATEGIA 3S (EDUCACIÓN)
+══════════════════════════════════════════════ -->
+<div class="pnl" id="pnl-3">
+  <div class="ibox"><strong>Metodología 3S</strong><br>En esta sección le explicamos al cliente cómo funciona cada pilar de la estrategia. Los valores y vehículos se asignan en la Propuesta (Sesión 2).</div>
+
+  <!-- PARÁMETROS DE ACUMULACIÓN -->
+  <div class="card">
+    <div class="ctit ctit2">Parámetros de acumulación</div>
+    <div class="ibox ibox2">El objetivo patrimonial de los pilares S2 + S3 es acumular <strong>120 veces el ingreso mensual</strong> (70× en S2 y 50× en S3). Ese es el <strong>valor presente</strong>; el sistema lo proyecta a <strong>valor futuro</strong> usando la edad de retiro deseada y la inflación promedio, y calcula los años disponibles para acumularlo.</div>
+    <div class="g2"><div class="g2r">
+      <div class="g2c"><div class="fld"><label>Inflación promedio 10 años — descuento (% E.A.)</label><input type="text" id="inflacion" value="4.5" placeholder="4.5" oninput="updMetas()"></div></div>
+      <div class="g2c"><div class="fld"><label>Años para acumular (calculado)</label><input type="text" id="aniosret" readonly placeholder="—"></div></div>
+    </div></div>
+    <div class="krow" style="margin-top:6px"><div class="kr">
+      <div class="kc"><div class="klbl">Valor a acumular HOY (VP)</div><div class="kval" id="vp-tot">$0</div><div class="ksub">120× ingreso mensual (S2+S3)</div></div>
+      <div class="kc"><div class="klbl">Valor futuro objetivo (VF)</div><div class="kval" style="color:#2b4fd8" id="vf-tot">$0</div><div class="ksub" id="vf-sub">al retiro</div></div>
+      <div class="kc"><div class="klbl">Tiempo para acumular</div><div class="kval" style="color:#8f5e06" id="n-ret">—</div><div class="ksub" id="n-sub">edad → retiro</div></div>
+    </div></div>
+  </div>
+
+  <div class="pilar ps1">
+    <div class="ph">
+      <div class="phl"><span class="pico">🛡️</span><span class="pname">S1 — Seguridad</span><div class="pdesc" style="margin-left:50px">Liquidez · Respaldo · Perfil conservador-moderado</div></div>
+      <div class="phr"><div class="ptlbl">Meta</div><div class="ptval" id="s1meta">$0 – $0</div></div>
+    </div>
+    <div class="pexpl">
+      <strong>¿Qué es?</strong> La base de la estrategia. El colchón de liquidez que protege ante cualquier imprevisto sin endeudarse.<br><br>
+      <strong>Objetivo:</strong> Acumular entre <strong>3 y 6 veces el ingreso mensual</strong> en una cuenta de fácil acceso que rente por encima de la inflación.<br><br>
+      <strong>Características clave:</strong>
+      <ul>
+        <li>Alta liquidez — dinero disponible en máximo 72 horas</li>
+        <li>Rentabilidad superior a la inflación</li>
+        <li>Perfil conservador-moderado</li>
+        <li>No es para hacer crecer el patrimonio, es para no endeudarse en emergencias</li>
+      </ul>
+      <span style="color:#14804f;font-weight:600">En la Sesión 2 definiremos los vehículos financieros específicos para este pilar.</span>
+    </div>
+    <div class="fld"><label>Notas S1</label><textarea id="s1nota" placeholder="Observaciones sobre este pilar para el cliente..."></textarea></div>
+  </div>
+
+  <div class="pilar ps2">
+    <div class="ph">
+      <div class="phl"><span class="pico">🏛️</span><span class="pname">S2 — Solidez</span><div class="pdesc" style="margin-left:50px">Retiro · Protección familiar · Blindaje patrimonial</div></div>
+      <div class="phr"><div class="ptlbl">Valor a acumular (70×) · VP</div><div class="ptval" id="s2meta-vp">$0</div><div class="pdesc">VF al retiro: <span id="s2meta-vf" style="color:#2b4fd8;font-weight:700">$0</span></div></div>
+    </div>
+    <div class="pexpl">
+      <strong>¿Qué es?</strong> El pilar del retiro y la protección. Capital que se acumula a largo plazo y protege a la familia.<br><br>
+      <strong>Objetivo:</strong> Construir capital intocable por mínimo <strong>10 años</strong>, orientado al retiro y a la protección de los dependientes. Meta: <strong>70 veces el ingreso mensual</strong>.<br><br>
+      <strong>Características clave:</strong>
+      <ul>
+        <li>Capital "cerrado" — no disponible en el corto plazo</li>
+        <li>Blindaje <strong>tributario</strong>, <strong>patrimonial</strong> y <strong>civil</strong></li>
+        <li>Pensado para el momento del retiro, no para el día a día</li>
+      </ul>
+      <span style="color:#2b4fd8;font-weight:600">En la Sesión 2 definiremos los productos que dan este blindaje en Colombia.</span>
+    </div>
+    <div class="fld"><label>Notas S2</label><textarea id="s2nota" placeholder="Observaciones sobre este pilar para el cliente..."></textarea></div>
+  </div>
+
+  <div class="pilar ps3">
+    <div class="ph">
+      <div class="phl"><span class="pico">📈</span><span class="pname">S3 — Sinergia</span><div class="pdesc" style="margin-left:50px">Multiplicación · Interés compuesto · Gestión pasiva</div></div>
+      <div class="phr"><div class="ptlbl">Valor a acumular (50×) · VP</div><div class="ptval" id="s3meta-vp">$0</div><div class="pdesc">VF al retiro: <span id="s3meta-vf" style="color:#8f5e06;font-weight:700">$0</span></div></div>
+    </div>
+    <div class="pexpl">
+      <strong>¿Qué es?</strong> El pilar que multiplica el patrimonio. Portafolios de inversión orientados a capturar rentabilidad en mercados financieros.<br><br>
+      <strong>Objetivo:</strong> Hacer crecer el capital con estrategia, diversificación y tiempo, sin gestión activa constante. Meta: <strong>50 veces el ingreso mensual</strong>.<br><br>
+      <strong>Características clave:</strong>
+      <ul>
+        <li>Captura de rentabilidad en mercados financieros</li>
+        <li>Generación de <strong>interés compuesto</strong> en el tiempo</li>
+        <li>Diversificación por clases de activos y geografías</li>
+        <li>Estructura por <strong>horizontes de tiempo</strong></li>
+        <li><strong>Gestión pasiva</strong> — sin presión de monitoreo constante</li>
+      </ul>
+      <span style="color:#8f5e06;font-weight:600">En la Sesión 2 diseñaremos el portafolio específico y los horizontes de inversión.</span>
+    </div>
+    <div class="fld"><label>Notas S3</label><textarea id="s3nota" placeholder="Observaciones sobre este pilar para el cliente..."></textarea></div>
+  </div>
+
+  <!-- METAS DEL CLIENTE -->
+  <div class="card">
+    <div class="ctit">🎯 Metas y objetivos del cliente</div>
+    <div class="ibox">Registra las metas concretas del cliente (vivienda, carro, viaje, educación...). Cada meta se <strong>asocia al pilar que la financia según su horizonte</strong>: metas de corto plazo van a <strong>S1 (Seguridad)</strong>, las de mediano/largo plazo a <strong>S3 (Sinergia)</strong>. El sistema calcula la <strong>cuota mensual</strong> que debe ahorrar para lograrla, considerando la rentabilidad esperada.</div>
+    <div class="meta-head">
+      <span style="width:21%">Meta</span>
+      <span style="width:22%">Monto objetivo</span>
+      <span style="width:10%">Plazo (años)</span>
+      <span style="width:11%">Rent. % E.A.</span>
+      <span style="width:16%">Pilar</span>
+      <span style="width:15%;text-align:right">Cuota/mes</span>
+      <span style="width:5%"></span>
+    </div>
+    <div id="metas-list"></div>
+    <button class="btn-add" onclick="addMeta()" style="margin-top:6px">+ Agregar meta</button>
+    <div class="krow" style="margin-top:14px"><div class="kr">
+      <div class="kc"><div class="klbl">Nº de metas</div><div class="kval" style="color:#2b4fd8" id="kpi-nmetas">0</div></div>
+      <div class="kc"><div class="klbl">Monto total de metas</div><div class="kval" style="color:#0e2038" id="kpi-metas-monto">$0</div></div>
+      <div class="kc"><div class="klbl">Cuota mensual total requerida</div><div class="kval" id="kpi-metas-cuota">$0</div><div class="ksub" id="kpi-metas-cuota-sub">para lograr todas las metas</div></div>
+    </div></div>
+  </div>
+
+  <div class="navrow"><div class="navl"><button class="btn btn-o" onclick="goTab(2)">← Anterior</button></div><div class="navr"><button class="btn btn-p" onclick="goTab(4)">Ver Diagnóstico →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 4 — DIAGNÓSTICO + DESCARGA
+══════════════════════════════════════════════ -->
+<div class="pnl" id="pnl-4">
+  <div id="diag-content"></div>
+  <div class="navrow">
+    <div class="navl"><button class="btn btn-o" onclick="goTab(3)">← Anterior</button></div>
+    <div class="navr" style="display:table-cell;vertical-align:middle;text-align:right">
+      <button class="btn btn-o" onclick="descargarJSON()" style="margin-right:10px">⬇ Guardar JSON (Sesión 2)</button>
+      <button class="btn btn-p" onclick="descargarPDF()" style="margin-right:10px">⬇ PDF Diagnóstico</button>
+      <button class="btn btn-b" onclick="goTab(5)">Continuar → Propuesta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 5 — PROPUESTA M2
+══════════════════════════════════════════════ -->
+<div class="pnl" id="pnl-5">
+
+  <!-- FLUJOS DISPONIBLES STICKY -->
+  <div class="fsticky">
+    <div class="fsticky-t">💰 Recursos disponibles para asignar</div>
+    <div class="frow"><div class="fr">
+      <div class="fc" id="fc-fcl">
+        <div class="fc-lbl"><span class="dot dot-g"></span>Flujo mensual</div>
+        <div class="fc-total" id="fi-fcl-tot">Total: $0</div>
+        <div class="fc-usado" id="fi-fcl-uso">Asignado: $0</div>
+        <div class="fc-disp" id="fi-fcl-dis" style="color:#14804f">$0</div>
+        <div class="fc-bar"><div class="fc-fill" id="fb-fcl" style="background:#1e8c5a;width:0%"></div></div>
+      </div>
+      <div class="fc" id="fc-nm">
+        <div class="fc-lbl"><span class="dot dot-a"></span>Flujos no mensuales</div>
+        <div class="fc-total" id="fi-nm-tot">Total año: $0</div>
+        <div class="fc-usado" id="fi-nm-uso">Asignado: $0</div>
+        <div class="fc-disp" id="fi-nm-dis" style="color:#8f5e06">$0</div>
+        <div class="fc-bar"><div class="fc-fill" id="fb-nm" style="background:#c98a10;width:0%"></div></div>
+      </div>
+      <div class="fc" id="fc-cap">
+        <div class="fc-lbl"><span class="dot dot-b"></span>Capital disponible</div>
+        <div class="fc-total" id="fi-cap-tot">Total: $0</div>
+        <div class="fc-usado" id="fi-cap-uso">Asignado: $0</div>
+        <div class="fc-disp" id="fi-cap-dis" style="color:#2b4fd8">$0</div>
+        <div class="fc-bar"><div class="fc-fill" id="fb-cap" style="background:#2b4fd8;width:0%"></div></div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- PILAR S1 -->
+  <div class="pilar ps1">
+    <div class="ph">
+      <div class="phl"><span class="pico">🛡️</span><span class="pname">S1 — Seguridad</span><div class="pdesc" style="margin-left:50px">Meta: <span id="s1meta2" style="color:#14804f;font-weight:700">$0 – $0</span></div></div>
+      <div class="phr"><div class="ptlbl">Total asignado</div><div class="ptval" id="s1tot">$0</div></div>
+    </div>
+    <div class="asig3"><div class="asig3r">
+      <div class="asig3c"><div class="asig-lbl"><span class="dot dot-g"></span>Desde flujo mensual</div><div class="pref"><span class="sym">$</span><input type="text" id="s1f" placeholder="0" oninput="fn(this);recalc()"></div><div class="asig-saldo" id="s1f-s">FCL disp.: $0</div></div>
+      <div class="asig3c"><div class="asig-lbl"><span class="dot dot-a"></span>Desde flujos no mensuales</div><div class="pref"><span class="sym">$</span><input type="text" id="s1n" placeholder="0" oninput="fn(this);recalc()"></div><div class="asig-saldo" id="s1n-s">No mens. disp.: $0</div></div>
+      <div class="asig3c"><div class="asig-lbl"><span class="dot dot-b"></span>Desde capital disponible</div><div class="pref"><span class="sym">$</span><input type="text" id="s1c" placeholder="0" oninput="fn(this);recalc()"></div><div class="asig-saldo" id="s1c-s">Capital disp.: $0</div></div>
+    </div></div>
+    <div style="margin-top:14px"><div style="font-size:10px;color:#5a7184;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Vehículos financieros</div><div id="vh-s1"></div><button class="btn-add" onclick="addVh('s1')">+ Agregar vehículo</button></div>
+    <div class="fld" style="margin-top:12px"><label>Notas S1</label><textarea id="s1nota2" placeholder="Productos específicos, condiciones, plazo..."></textarea></div>
+  </div>
+
+  <!-- PILAR S2 -->
+  <div class="pilar ps2">
+    <div class="ph">
+      <div class="phl"><span class="pico">🏛️</span><span class="pname">S2 — Solidez</span><div class="pdesc" style="margin-left:50px">Meta a acumular (70×): VP <span id="s2meta-vp2" style="color:#2b4fd8;font-weight:700">$0</span> · VF al retiro <span id="s2meta-vf2" style="color:#2b4fd8;font-weight:700">$0</span></div></div>
+      <div class="phr"><div class="ptlbl">Total asignado</div><div class="ptval" id="s2tot">$0</div></div>
+    </div>
+    <div class="asig3"><div class="asig3r">
+      <div class="asig3c"><div class="asig-lbl"><span class="dot dot-g"></span>Desde flujo mensual</div><div class="pref"><span class="sym">$</span><input type="text" id="s2f" placeholder="0" oninput="fn(this);recalc()"></div><div class="asig-saldo" id="s2f-s">FCL disp.: $0</div></div>
+      <div class="asig3c"><div class="asig-lbl"><span class="dot dot-a"></span>Desde flujos no mensuales</div><div class="pref"><span class="sym">$</span><input type="text" id="s2n" placeholder="0" oninput="fn(this);recalc()"></div><div class="asig-saldo" id="s2n-s">No mens. disp.: $0</div></div>
+      <div class="asig3c"><div class="asig-lbl"><span class="dot dot-b"></span>Desde capital disponible</div><div class="pref"><span class="sym">$</span><input type="text" id="s2c" placeholder="0" oninput="fn(this);recalc()"></div><div class="asig-saldo" id="s2c-s">Capital disp.: $0</div></div>
+    </div></div>
+    <div style="margin-top:14px"><div style="font-size:10px;color:#5a7184;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Vehículos financieros</div><div id="vh-s2"></div><button class="btn-add" onclick="addVh('s2')">+ Agregar vehículo</button></div>
+    <div class="fld" style="margin-top:12px"><label>Notas S2</label><textarea id="s2nota2" placeholder="Productos específicos, condiciones, plazo..."></textarea></div>
+  </div>
+
+  <!-- PILAR S3 -->
+  <div class="pilar ps3">
+    <div class="ph">
+      <div class="phl"><span class="pico">📈</span><span class="pname">S3 — Sinergia</span><div class="pdesc" style="margin-left:50px">Meta a acumular (50×): VP <span id="s3meta-vp2" style="color:#8f5e06;font-weight:700">$0</span> · VF al retiro <span id="s3meta-vf2" style="color:#8f5e06;font-weight:700">$0</span></div></div>
+      <div class="phr"><div class="ptlbl">Total asignado</div><div class="ptval" id="s3tot">$0</div></div>
+    </div>
+    <div class="asig3"><div class="asig3r">
+      <div class="asig3c"><div class="asig-lbl"><span class="dot dot-g"></span>Desde flujo mensual</div><div class="pref"><span class="sym">$</span><input type="text" id="s3f" placeholder="0" oninput="fn(this);recalc()"></div><div class="asig-saldo" id="s3f-s">FCL disp.: $0</div></div>
+      <div class="asig3c"><div class="asig-lbl"><span class="dot dot-a"></span>Desde flujos no mensuales</div><div class="pref"><span class="sym">$</span><input type="text" id="s3n" placeholder="0" oninput="fn(this);recalc()"></div><div class="asig-saldo" id="s3n-s">No mens. disp.: $0</div></div>
+      <div class="asig3c"><div class="asig-lbl"><span class="dot dot-b"></span>Desde capital disponible</div><div class="pref"><span class="sym">$</span><input type="text" id="s3c" placeholder="0" oninput="fn(this);recalc()"></div><div class="asig-saldo" id="s3c-s">Capital disp.: $0</div></div>
+    </div></div>
+    <div style="margin-top:14px"><div style="font-size:10px;color:#5a7184;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Vehículos financieros</div><div id="vh-s3"></div><button class="btn-add" onclick="addVh('s3')">+ Agregar vehículo</button></div>
+    <div class="fld" style="margin-top:12px"><label>Notas S3</label><textarea id="s3nota2" placeholder="Productos específicos, condiciones, plazo..."></textarea></div>
+  </div>
+
+  <!-- PROYECCIÓN ANUAL -->
+  <div class="card">
+    <div class="ctit ctit2">Proyección de flujos — Año 1</div>
+    <div style="overflow-x:auto"><table class="ptable" id="ptable"><thead><tr><th style="text-align:left">Mes</th><th>FCL</th><th class="cs1">S1</th><th class="cs2">S2</th><th class="cs3">S3</th><th>Extra</th><th>Total pilar</th></tr></thead><tbody id="ptbody"></tbody></table></div>
+  </div>
+
+  <div class="navrow">
+    <div class="navl"><button class="btn btn-o" onclick="goTab(4)">← Anterior</button></div>
+    <div class="navr"><button class="btn btn-b" onclick="descargarPropuestaCompleta()">⬇ Descargar Propuesta (PDF + JSON)</button></div>
+  </div>
+</div>
+
+</div><!-- /ct -->
+</div><!-- /mfw -->
+
+<script>
+// ═══ CATEGORÍAS DE GASTOS ═══════════════════════════════════════
+const CATS = [
+  { id:'vivienda', label:'Vivienda', tag:'esencial', icon:'🏠',
+    items:['Arriendo / Hipoteca','Administración','Servicios públicos (agua, luz, gas)','Internet / Telefonía'] },
+  { id:'alimentacion', label:'Alimentación', tag:'esencial', icon:'🛒',
+    items:['Mercado mensual','Restaurantes / Comidas fuera'] },
+  { id:'transporte', label:'Transporte', tag:'esencial', icon:'🚗',
+    items:['Gasolina / ACPM','Peajes / Parqueaderos','Transporte público','Cuota vehículo'] },
+  { id:'salud', label:'Salud', tag:'esencial', icon:'🏥',
+    items:['Medicina prepagada / EPS adicional','Medicamentos regulares','Consultas y copagos'] },
+  { id:'educacion', label:'Educación', tag:'esencial', icon:'🎓',
+    items:['Colegio / Universidad hijos','Cursos y capacitación propia'] },
+  { id:'deudas', label:'Servicio de deudas', tag:'esencial', icon:'💳',
+    items:['Cuota tarjeta de crédito','Crédito personal / libranza','Crédito hipotecario'] },
+  { id:'ocio', label:'Ocio y entretenimiento', tag:'no esencial', icon:'🎬',
+    items:['Streaming (Netflix, Spotify, etc.)','Salidas / Entretenimiento','Viajes y vacaciones'] },
+  { id:'ropa', label:'Ropa y cuidado personal', tag:'no esencial', icon:'👗',
+    items:['Ropa y calzado','Peluquería / Estética / Gimnasio'] },
+  { id:'otros', label:'Otros gastos', tag:'no esencial', icon:'📦', items:[] },
+];
+
+// Factores de conversión a base MENSUAL según periodicidad del gasto
+const PER_F = { mensual:1, trimestral:3, semestral:6, anual:12 };
+const PER_LBL = { mensual:'Mensual', trimestral:'Trimestral', semestral:'Semestral', anual:'Anual' };
+function monthlyVal(it){ return (it.val||0) / (PER_F[it.per||'mensual']||1); }
+
+let catData = {}; // { catId: { items:[{name,val,per}] } }
+let deudasCount = 0, vhCount = {s1:0,s2:0,s3:0}, actCount = {liq:0,noliq:0};
+const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+function initCats(){
+  catData = {};
+  CATS.forEach(cat=>{
+    catData[cat.id] = { items: cat.items.map(n=>({name:n,val:0,per:'mensual'})) };
+  });
+  renderCats();
+}
+
+// Asegura que todo item tenga periodicidad (compatibilidad con JSON antiguos)
+function normPer(){
+  Object.keys(catData).forEach(k=>{
+    (catData[k].items||[]).forEach(it=>{ if(!it.per) it.per='mensual'; });
+  });
+}
+
+function renderCats(){
+  normPer();
+  const wrap = document.getElementById('cats-wrap');
+  wrap.innerHTML = '';
+  CATS.forEach(cat=>{
+    const tag = cat.tag==='esencial'?'<span class="acord-tag tag-esencial">Esencial</span>':'<span class="acord-tag tag-noesencial">No esencial</span>';
+    const total = catData[cat.id].items.reduce((a,it)=>a+monthlyVal(it),0);
+    const div = document.createElement('div');
+    div.className='acord';
+    div.id='cat-'+cat.id;
+    div.innerHTML=`
+      <div class="acord-hdr" onclick="toggleCat('${cat.id}')">
+        <div class="acord-l">
+          ${tag}<span style="font-size:16px;margin-right:8px;vertical-align:middle">${cat.icon}</span>
+          <span class="acord-title">${cat.label}</span>
+          <span class="acord-sub" id="cat-sub-${cat.id}">${total>0?'  Total: '+fmt(total)+'/mes':''}</span>
+        </div>
+        <div class="acord-r"><span class="acord-arrow" id="arr-${cat.id}">▶</span></div>
+      </div>
+      <div class="acord-body" id="body-${cat.id}">
+        <div id="items-${cat.id}"></div>
+        <button class="btn-add" onclick="addItemCat('${cat.id}')" style="margin-top:6px">+ Agregar gasto</button>
+        <div class="total-cat" id="total-cat-${cat.id}">${total>0?'Subtotal: '+fmt(total)+'/mes':''}</div>
+      </div>`;
+    wrap.appendChild(div);
+    renderItems(cat.id);
+  });
+}
+
+function renderItems(catId){
+  const wrap = document.getElementById('items-'+catId);
+  if(!wrap) return;
+  wrap.innerHTML='';
+  catData[catId].items.forEach((it,idx)=>{
+    const pv = it.per||'mensual';
+    const opt=(v)=>`<option value="${v}"${pv===v?' selected':''}>${PER_LBL[v]}</option>`;
+    const hint = pv!=='mensual' ? '= '+fmt(monthlyVal(it))+'/mes' : '';
+    const row = document.createElement('div');
+    row.className='gasto-row';
+    row.innerHTML=`<div class="gasto-r">
+      <div class="gasto-name"><input type="text" value="${it.name}" placeholder="Nombre del gasto" onchange="catData['${catId}'].items[${idx}].name=this.value"></div>
+      <div class="gasto-val">
+        <div class="pref"><span class="sym">$</span><input type="text" value="${it.val>0?it.val.toLocaleString('es-CO'):''}" placeholder="0" oninput="fn(this);catData['${catId}'].items[${idx}].val=pn(this.id);updCat('${catId}');updHint('${catId}',${idx})" id="gi-${catId}-${idx}"></div>
+        <div class="mhint" id="mh-${catId}-${idx}" style="font-size:9px;color:#5a7184;margin-top:2px">${hint}</div>
+      </div>
+      <div class="gasto-per"><select onchange="catData['${catId}'].items[${idx}].per=this.value;updCat('${catId}');updHint('${catId}',${idx})">${opt('mensual')}${opt('trimestral')}${opt('semestral')}${opt('anual')}</select></div>
+      <div class="gasto-del"><button class="btn-del" onclick="delItemCat('${catId}',${idx})">✕</button></div>
+    </div>`;
+    wrap.appendChild(row);
+  });
+}
+
+function updHint(catId,idx){
+  const it=catData[catId].items[idx];
+  const el=document.getElementById('mh-'+catId+'-'+idx);
+  if(!el||!it) return;
+  el.textContent=(it.per&&it.per!=='mensual')?('= '+fmt(monthlyVal(it))+'/mes'):'';
+}
+
+function updCat(catId){
+  const total = catData[catId].items.reduce((a,it)=>a+monthlyVal(it),0);
+  const sub = document.getElementById('cat-sub-'+catId);
+  const tot = document.getElementById('total-cat-'+catId);
+  if(sub) sub.textContent = total>0?'  Total: '+fmt(total)+'/mes':'';
+  if(tot) tot.textContent = total>0?'Subtotal: '+fmt(total)+'/mes':'';
+  calcFlujo();
+}
+
+function toggleCat(catId){
+  const body = document.getElementById('body-'+catId);
+  const arr = document.getElementById('arr-'+catId);
+  const open = body.classList.toggle('open');
+  if(arr) arr.classList.toggle('open', open);
+}
+
+function addItemCat(catId){
+  catData[catId].items.push({name:'',val:0,per:'mensual'});
+  renderItems(catId);
+}
+
+function delItemCat(catId, idx){
+  catData[catId].items.splice(idx,1);
+  renderItems(catId);
+  updCat(catId);
+}
+
+// Total de gastos en BASE MENSUAL
+function totalGastos(){
+  return CATS.reduce((a,cat)=>a+catData[cat.id].items.reduce((b,it)=>b+monthlyVal(it),0),0);
+}
+
+// ═══ FORMAT ══════════════════════════════════════════════════════
+function fn(el){
+  let r=el.value.replace(/\./g,'').replace(/[^0-9]/g,'');
+  el.value=r?parseInt(r).toLocaleString('es-CO'):'';
+}
+function fnm(el){fn(el); calcExtras();}
+function pn(id){
+  const v=(document.getElementById(id)||{value:'0'}).value;
+  return parseInt(v.replace(/\./g,'').replace(/[^0-9]/g,'')||'0');
+}
+function pnv(el){return parseInt((el.value||'').replace(/\./g,'').replace(/[^0-9]/g,'')||'0');}
+function fmt(n){return '$'+Math.round(n).toLocaleString('es-CO')}
+function gv(id){return (document.getElementById(id)||{value:''}).value||''}
+function setTxt(id,t){const el=document.getElementById(id); if(el) el.textContent=t;}
+
+// ═══ ACTIVOS (PATRIMONIO) ════════════════════════════════════════
+function addActivo(t, nombre, valor){
+  actCount[t]++;
+  const id=actCount[t];
+  const ph = t==='liq' ? 'Ej. Cuenta de ahorros, CDT, efectivo, fondo...' : 'Ej. Vivienda, vehículo, lote, negocio...';
+  const div=document.createElement('div');
+  div.id='act-'+t+'-'+id;
+  div.className='vh-row';
+  div.innerHTML=`<div class="vh-r">
+    <div class="vh-n"><input type="text" id="actn-${t}-${id}" placeholder="${ph}" value="${nombre?String(nombre).replace(/"/g,'&quot;'):''}"></div>
+    <div class="vh-v"><div class="pref"><span class="sym">$</span><input type="text" id="actv-${t}-${id}" placeholder="0" oninput="fn(this);calcPatrimonio()" value="${valor>0?valor.toLocaleString('es-CO'):''}"></div></div>
+    <div class="vh-d"><button class="btn-del" onclick="delActivo('${t}',${id})">✕</button></div>
+  </div>`;
+  document.getElementById('act-'+t).appendChild(div);
+}
+function delActivo(t,id){document.getElementById('act-'+t+'-'+id)?.remove();calcPatrimonio();}
+function getActivos(t){
+  const arr=[];
+  for(let i=1;i<=actCount[t];i++) if(document.getElementById('act-'+t+'-'+i)){
+    const n=gv('actn-'+t+'-'+i), v=pn('actv-'+t+'-'+i);
+    if(n||v>0) arr.push({n:n,v:v});
+  }
+  return arr;
+}
+function totalActivos(t){return getActivos(t).reduce((a,x)=>a+x.v,0);}
+function calcPatrimonio(){
+  const liq=totalActivos('liq'), nol=totalActivos('noliq');
+  const deu=getDeudas().reduce((a,d)=>a+d.saldo,0);
+  setTxt('kpi-liq',fmt(liq));
+  setTxt('kpi-noliq',fmt(nol));
+  setTxt('kpi-patbruto',fmt(liq+nol));
+  const neto=liq+nol-deu;
+  const el=document.getElementById('kpi-patneto');
+  if(el){el.textContent=fmt(neto); el.style.color=neto>=0?'#14804f':'#c62828';}
+}
+function activosDefault(){
+  addActivo('liq','Cuenta de ahorros',0);
+  addActivo('liq','Efectivo',0);
+  addActivo('noliq','Vivienda',0);
+  addActivo('noliq','Vehículo',0);
+}
+
+// ═══ METAS DEL CLIENTE ═══════════════════════════════════════════
+let metasCount = 0;
+// Cuota mensual (ahorro) necesaria para alcanzar 'monto' en 'plazo' años
+// con rentabilidad anual 'rentPct'. Fórmula de valor futuro de anualidad.
+function cuotaMeta(monto, plazo, rentPct){
+  const meses = (plazo||0)*12;
+  if(meses<=0 || monto<=0) return 0;
+  const r = Math.pow(1+(rentPct||0)/100, 1/12) - 1; // tasa mensual efectiva
+  if(r===0) return monto/meses;
+  return monto * r / (Math.pow(1+r, meses) - 1);
+}
+function addMeta(nombre, monto, plazo, rent, pilar){
+  metasCount++;
+  const id=metasCount;
+  const pil = pilar || 's3';
+  const opt=(v,lbl)=>`<option value="${v}"${pil===v?' selected':''}>${lbl}</option>`;
+  const div=document.createElement('div');
+  div.id='meta-'+id;
+  div.className='meta-row';
+  div.innerHTML=`<div class="meta-r">
+    <div class="meta-c" style="width:21%"><input type="text" id="metan-${id}" placeholder="Ej. Comprar vivienda" value="${nombre?String(nombre).replace(/"/g,'&quot;'):''}"></div>
+    <div class="meta-c" style="width:22%"><div class="pref"><span class="sym">$</span><input type="text" id="metam-${id}" placeholder="0" oninput="fn(this);calcMetas()" value="${monto>0?monto.toLocaleString('es-CO'):''}"></div></div>
+    <div class="meta-c" style="width:10%"><input type="text" id="metap-${id}" placeholder="5" oninput="soloNum(this);calcMetas()" value="${plazo||''}"></div>
+    <div class="meta-c" style="width:11%"><input type="text" id="metar-${id}" placeholder="8" oninput="calcMetas()" value="${(rent!==undefined&&rent!=='')?rent:'8'}"></div>
+    <div class="meta-c" style="width:16%"><select id="metapil-${id}" onchange="calcMetas()">${opt('s1','S1 Seguridad')}${opt('s3','S3 Sinergia')}${opt('s2','S2 Solidez')}</select></div>
+    <div class="meta-cuota" id="metacuo-${id}">$0</div>
+    <div class="meta-del"><button class="btn-del" onclick="delMeta(${id})">✕</button></div>
+  </div>`;
+  document.getElementById('metas-list').appendChild(div);
+  calcMetas();
+}
+function soloNum(el){el.value=el.value.replace(/[^0-9.]/g,'');}
+function delMeta(id){document.getElementById('meta-'+id)?.remove();calcMetas();}
+function pnum(id){return parseFloat((gv(id)||'').toString().replace(',','.').replace(/[^0-9.]/g,''))||0;}
+function getMetas(){
+  const arr=[];
+  for(let i=1;i<=metasCount;i++) if(document.getElementById('meta-'+i)){
+    const nombre=gv('metan-'+i), monto=pn('metam-'+i), plazo=pnum('metap-'+i), rent=pnum('metar-'+i), pilar=gv('metapil-'+i);
+    if(nombre||monto>0) arr.push({nombre,monto,plazo,rent,pilar,cuota:cuotaMeta(monto,plazo,rent)});
+  }
+  return arr;
+}
+const PILAR_LBL={s1:'S1 Seguridad',s2:'S2 Solidez',s3:'S3 Sinergia'};
+function calcMetas(){
+  let totMonto=0, totCuota=0, n=0;
+  for(let i=1;i<=metasCount;i++){
+    if(!document.getElementById('meta-'+i)) continue;
+    n++;
+    const monto=pn('metam-'+i), plazo=pnum('metap-'+i), rent=pnum('metar-'+i);
+    const cuo=cuotaMeta(monto,plazo,rent);
+    const el=document.getElementById('metacuo-'+i);
+    if(el) el.textContent=fmt(cuo);
+    totMonto+=monto; totCuota+=cuo;
+  }
+  setTxt('kpi-nmetas', n);
+  setTxt('kpi-metas-monto', fmt(totMonto));
+  setTxt('kpi-metas-cuota', fmt(totCuota));
+  const fcl=pn('ing1')+pn('ing2')-totalGastos();
+  const el=document.getElementById('kpi-metas-cuota-sub');
+  if(el){
+    if(totCuota>0 && fcl>0){
+      const pct=(totCuota/fcl*100);
+      el.textContent=pct.toFixed(0)+'% del flujo de caja libre';
+      el.style.color = pct>100 ? '#c62828' : pct>70 ? '#8f5e06' : '#5a7184';
+    } else { el.textContent='para lograr todas las metas'; el.style.color='#5a7184'; }
+  }
+  const cuoEl=document.getElementById('kpi-metas-cuota');
+  if(cuoEl) cuoEl.style.color = (totCuota>fcl && fcl>0) ? '#c62828' : '#14804f';
+}
+function metasDefault(){
+  addMeta('Comprar vivienda',0,5,8,'s3');
+  addMeta('Comprar carro',0,3,6,'s1');
+  addMeta('Viajar',0,2,5,'s1');
+  addMeta('Educación de los hijos',0,12,9,'s3');
+}
+
+// ═══ METAS DE ACUMULACIÓN 3S (VP / VF) ═══════════════════════════
+function infl(){
+  let v=(gv('inflacion')||'4.5').toString().replace('%','').replace(',','.').trim();
+  v=parseFloat(v);
+  if(isNaN(v)||v<0) v=4.5;
+  return v/100;
+}
+function aniosRetiro(){
+  const e=parseInt(gv('edad'))||0;
+  const r=parseInt(gv('edadretiro'))||0;
+  return (r>e)?(r-e):0;
+}
+function metas3S(){
+  const ing=pn('ing1')+pn('ing2');
+  const vpS2=ing*70, vpS3=ing*50, vpTot=ing*120;
+  const n=aniosRetiro(), i=infl();
+  const factor=Math.pow(1+i,n); // proyección a valor futuro por inflación
+  return {ing,n,i,factor,vpS2,vpS3,vpTot,vfS2:vpS2*factor,vfS3:vpS3*factor,vfTot:vpTot*factor};
+}
+
+function updMetas(){
+  const ing=pn('ing1')+pn('ing2');
+  // Meta S1 (3x – 6x)
+  const m3=fmt(ing*3), m6=fmt(ing*6);
+  setTxt('s1meta', m3+' – '+m6);
+  setTxt('s1meta2', m3+' – '+m6);
+  // Metas S2/S3 (VP y VF)
+  const m=metas3S();
+  setTxt('aniosret', m.n>0?(m.n+' años'):'—');
+  setTxt('vp-tot', fmt(m.vpTot));
+  setTxt('vf-tot', fmt(m.vfTot));
+  setTxt('vf-sub', m.n>0?('inflación '+(m.i*100).toFixed(1).replace('.',',')+'% · '+m.n+' años'):'define edad y edad de retiro');
+  setTxt('n-ret', m.n>0?(m.n+' años'):'—');
+  setTxt('n-sub', (gv('edad')||'?')+' → '+(gv('edadretiro')||'?')+' años retiro');
+  setTxt('s2meta-vp', fmt(m.vpS2)); setTxt('s2meta-vf', fmt(m.vfS2));
+  setTxt('s3meta-vp', fmt(m.vpS3)); setTxt('s3meta-vf', fmt(m.vfS3));
+  setTxt('s2meta-vp2', fmt(m.vpS2)); setTxt('s2meta-vf2', fmt(m.vfS2));
+  setTxt('s3meta-vp2', fmt(m.vpS3)); setTxt('s3meta-vf2', fmt(m.vfS3));
+}
+
+// ═══ CALCULOS ════════════════════════════════════════════════════
+function calcEdad(){
+  const v=gv('fecnac'); if(!v) return;
+  const hoy=new Date(), nac=new Date(v);
+  let e=hoy.getFullYear()-nac.getFullYear();
+  if(hoy.getMonth()-nac.getMonth()<0||(hoy.getMonth()-nac.getMonth()===0&&hoy.getDate()<nac.getDate())) e--;
+  document.getElementById('edad').value=e;
+  updMetas();
+}
+function toggleHijos(){
+  document.getElementById('nhijos-wrap').style.display=gv('hijos')==='si'?'block':'none';
+}
+function calcFlujo(){
+  const ing=pn('ing1')+pn('ing2');
+  const gas=totalGastos();
+  const fcl=ing-gas;
+  document.getElementById('kpi-ing').textContent=fmt(ing);
+  document.getElementById('kpi-gas').textContent=fmt(gas);
+  const fclEl=document.getElementById('kpi-fcl');
+  fclEl.textContent=fmt(fcl);
+  fclEl.style.color=fcl>=0?'#14804f':'#c62828';
+  const pct=ing>0?(fcl/ing*100).toFixed(1)+'% de ingresos':'—';
+  document.getElementById('kpi-fcl-pct').textContent=pct;
+  updMetas();
+}
+function calcExtras(){
+  let t=0;
+  for(let i=1;i<=12;i++) t+=pn('m'+i);
+  document.getElementById('total-extras').textContent=fmt(t);
+  return t;
+}
+function getMesesArr(){
+  const arr=[];
+  for(let i=1;i<=12;i++) arr.push(pn('m'+i));
+  return arr;
+}
+
+// ═══ DEUDAS ══════════════════════════════════════════════════════
+function addDeuda(){
+  deudasCount++;
+  const id=deudasCount;
+  const div=document.createElement('div');
+  div.id='deu-'+id;
+  div.style.cssText='background:#f7fafc;border:1px solid #dbe3ec;border-radius:8px;padding:12px;margin-bottom:9px';
+  div.innerHTML=`<div style="display:table;width:100%;border-spacing:8px 0"><div style="display:table-row">
+    <div style="display:table-cell;width:35%;vertical-align:top"><div class="fld"><label>Tipo</label><select id="dti-${id}"><option>Tarjeta de crédito</option><option>Crédito hipotecario</option><option>Crédito vehículo</option><option>Crédito personal</option><option>Libranza</option><option>Otro</option></select></div></div>
+    <div style="display:table-cell;width:27%;vertical-align:top"><div class="fld"><label>Saldo total</label><div class="pref"><span class="sym">$</span><input type="text" id="dsa-${id}" placeholder="0" oninput="fn(this);calcDeudas()"></div></div></div>
+    <div style="display:table-cell;width:27%;vertical-align:top"><div class="fld"><label>Cuota mensual (ref.)</label><div class="pref"><span class="sym">$</span><input type="text" id="dcu-${id}" placeholder="0" oninput="fn(this);calcDeudas()"></div></div></div>
+    <div style="display:table-cell;width:11%;vertical-align:middle;text-align:right"><button class="btn-del" onclick="delDeuda(${id})">✕</button></div>
+  </div></div>`;
+  document.getElementById('deudas-list').appendChild(div);
+}
+function delDeuda(id){document.getElementById('deu-'+id)?.remove();calcDeudas();}
+function calcDeudas(){
+  let ts=0,tc=0;
+  for(let i=1;i<=deudasCount;i++) if(document.getElementById('deu-'+i)){ts+=pn('dsa-'+i);tc+=pn('dcu-'+i);}
+  document.getElementById('kpi-deuda').textContent=fmt(ts);
+  document.getElementById('kpi-cuota').textContent=fmt(tc);
+  calcPatrimonio();
+}
+function getDeudas(){
+  const arr=[];
+  for(let i=1;i<=deudasCount;i++) if(document.getElementById('deu-'+i)) arr.push({tipo:gv('dti-'+i),saldo:pn('dsa-'+i),cuota:pn('dcu-'+i)});
+  return arr;
+}
+
+// ═══ VEHÍCULOS M2 ════════════════════════════════════════════════
+function addVh(p){
+  vhCount[p]++;
+  const id=vhCount[p];
+  const div=document.createElement('div');
+  div.id='vh-'+p+'-'+id;
+  div.className='vh-row';
+  div.innerHTML=`<div class="vh-r">
+    <div class="vh-n"><input type="text" id="vhn-${p}-${id}" placeholder="Nombre del producto o vehículo"></div>
+    <div class="vh-v"><div class="pref"><span class="sym">$</span><input type="text" id="vhv-${p}-${id}" placeholder="Monto mensual" oninput="fn(this)"></div></div>
+    <div class="vh-d"><button class="btn-del" onclick="delVh('${p}',${id})">✕</button></div>
+  </div>`;
+  document.getElementById('vh-'+p).appendChild(div);
+}
+function delVh(p,id){document.getElementById('vh-'+p+'-'+id)?.remove();}
+function getVh(p){
+  const arr=[];
+  for(let i=1;i<=vhCount[p];i++) if(document.getElementById('vh-'+p+'-'+i)) arr.push({n:gv('vhn-'+p+'-'+i),v:pn('vhv-'+p+'-'+i)});
+  return arr;
+}
+
+// ═══ RECALC M2 ═══════════════════════════════════════════════════
+function recalc(){
+  const fcl=pn('ing1')+pn('ing2')-totalGastos();
+  const nm=calcExtras();
+  const cap=pn('capdisponible');
+  const s1f=pn('s1f'),s2f=pn('s2f'),s3f=pn('s3f');
+  const s1n=pn('s1n'),s2n=pn('s2n'),s3n=pn('s3n');
+  const s1c=pn('s1c'),s2c=pn('s2c'),s3c=pn('s3c');
+  const uf=s1f+s2f+s3f, un=s1n+s2n+s3n, uc=s1c+s2c+s3c;
+  const df=fcl-uf, dn=nm-un, dc=cap-uc;
+  // sticky
+  setFC('fcl',fcl,uf,df,'#14804f','#1e8c5a');
+  setFC('nm',nm,un,dn,'#8f5e06','#c98a10');
+  setFC('cap',cap,uc,dc,'#2b4fd8','#2b4fd8');
+  // totals
+  document.getElementById('s1tot').textContent=fmt(s1f+s1n+s1c);
+  document.getElementById('s2tot').textContent=fmt(s2f+s2n+s2c);
+  document.getElementById('s3tot').textContent=fmt(s3f+s3n+s3c);
+  // saldos inline
+  setSaldo('s1f-s','FCL disp.',df);setSaldo('s2f-s','FCL disp.',df);setSaldo('s3f-s','FCL disp.',df);
+  setSaldo('s1n-s','No mens.',dn);setSaldo('s2n-s','No mens.',dn);setSaldo('s3n-s','No mens.',dn);
+  setSaldo('s1c-s','Capital',dc);setSaldo('s2c-s','Capital',dc);setSaldo('s3c-s','Capital',dc);
+  // proy
+  buildProy();
+}
+function setFC(k,tot,uso,dis,colTxt,colBar){
+  document.getElementById('fi-'+k+'-tot').textContent='Total: '+fmt(tot);
+  document.getElementById('fi-'+k+'-uso').textContent='Asignado: '+fmt(uso);
+  const de=document.getElementById('fi-'+k+'-dis');
+  de.textContent=fmt(dis);
+  de.style.color=dis<0?'#c62828':dis===0?'#8f5e06':colTxt;
+  const pct=tot>0?Math.min(100,Math.round(uso/tot*100)):0;
+  const bar=document.getElementById('fb-'+k);
+  bar.style.width=pct+'%';
+  bar.style.background=dis<0?'#c62828':colBar;
+}
+function setSaldo(id,lbl,val){
+  const el=document.getElementById(id); if(!el) return;
+  el.textContent=lbl+': '+fmt(val);
+  el.style.color=val<0?'#c62828':val===0?'#8f5e06':'#14804f';
+}
+
+// ═══ PROYECCIÓN ══════════════════════════════════════════════════
+function buildProy(){
+  const fcl=pn('ing1')+pn('ing2')-totalGastos();
+  const s1f=pn('s1f'),s2f=pn('s2f'),s3f=pn('s3f');
+  const s1n=pn('s1n'),s2n=pn('s2n'),s3n=pn('s3n');
+  const meses=getMesesArr();
+  let rows='',acS1=0,acS2=0,acS3=0,acE=0;
+  MESES.forEach((m,i)=>{
+    const ex=meses[i];
+    const s1=s1f+(ex>0?s1n:0), s2=s2f+(ex>0?s2n:0), s3=s3f+(ex>0?s3n:0);
+    const tp=s1+s2+s3+(ex>0?ex:0);
+    acS1+=s1;acS2+=s2;acS3+=s3;acE+=ex;
+    rows+=`<tr>
+      <td>${m}</td><td>${fmt(fcl)}</td>
+      <td class="cs1">${fmt(s1)}</td><td class="cs2">${fmt(s2)}</td><td class="cs3">${fmt(s3)}</td>
+      <td style="color:${ex>0?'#8f5e06':'#b9c6d2'}">${ex>0?fmt(ex):'–'}</td>
+      <td style="color:#0e2038;font-weight:700">${fmt(tp)}</td>
+    </tr>`;
+  });
+  rows+=`<tr class="tot"><td>TOTAL AÑO</td><td>${fmt(fcl*12)}</td><td class="cs1">${fmt(acS1)}</td><td class="cs2">${fmt(acS2)}</td><td class="cs3">${fmt(acS3)}</td><td style="color:#8f5e06">${fmt(acE)}</td><td>${fmt(acS1+acS2+acS3+acE)}</td></tr>`;
+  document.getElementById('ptbody').innerHTML=rows;
+}
+
+// ═══ DIAGNÓSTICO ═════════════════════════════════════════════════
+function buildDiag(){
+  const ing=pn('ing1')+pn('ing2');
+  const gas=totalGastos();
+  const fcl=ing-gas;
+  const cap=pn('capdisponible');
+  const nm=calcExtras();
+  const ahorro=pn('ahorroamt');
+  const deudas=getDeudas();
+  const totalDeuda=deudas.reduce((a,d)=>a+d.saldo,0);
+  const totalCuota=deudas.reduce((a,d)=>a+d.cuota,0);
+  const meta3=ing*3, meta6=ing*6;
+  const tasaAhorro=ing>0?(ahorro/ing*100):0;
+  const m=metas3S();
+  const actLiq=getActivos('liq'), actNoLiq=getActivos('noliq');
+  const totLiq=actLiq.reduce((a,x)=>a+x.v,0), totNoLiq=actNoLiq.reduce((a,x)=>a+x.v,0);
+  const patNeto=totLiq+totNoLiq-totalDeuda;
+  const metas=getMetas();
+  const totMetaMonto=metas.reduce((a,x)=>a+x.monto,0), totMetaCuota=metas.reduce((a,x)=>a+x.cuota,0);
+  const pillTag={s1:'<span class="tag tv">S1</span>',s2:'<span class="tag tb">S2</span>',s3:'<span class="tag ta">S3</span>'};
+  // Gastos por tipo (base mensual)
+  const gasEsencial=CATS.filter(c=>c.tag==='esencial').reduce((a,c)=>a+catData[c.id].items.reduce((b,it)=>b+monthlyVal(it),0),0);
+  const gasNoEsencial=CATS.filter(c=>c.tag==='no esencial').reduce((a,c)=>a+catData[c.id].items.reduce((b,it)=>b+monthlyVal(it),0),0);
+
+  // GASTOS DETALLADOS (mensualizados)
+  let gastosHTML='';
+  CATS.forEach(cat=>{
+    const total=catData[cat.id].items.reduce((a,it)=>a+monthlyVal(it),0);
+    if(total===0) return;
+    const tag=cat.tag==='esencial'?'<span class="tag tv">Esencial</span>':'<span class="tag ta">No esencial</span>';
+    const items=catData[cat.id].items.filter(it=>it.val>0).map(it=>{
+      const perLbl=(it.per&&it.per!=='mensual')?` <span style="color:#5a7184;font-size:9px">(${PER_LBL[it.per].toLowerCase()})</span>`:'';
+      return `<tr><td style="padding-left:24px;color:#5a7184">${it.name||'—'}${perLbl}</td><td style="text-align:right;color:#33475b">${fmt(monthlyVal(it))}</td></tr>`;
+    }).join('');
+    gastosHTML+=`<tr><td>${tag} <strong style="color:#0e2038">${cat.icon} ${cat.label}</strong></td><td style="text-align:right;color:#8f5e06;font-weight:700">${fmt(total)}</td></tr>${items}`;
+  });
+
+  // ACTIVOS
+  const filaAct=(arr,color)=>arr.filter(x=>x.v>0||x.n).map(x=>`<tr><td style="padding-left:24px;color:#5a7184">${x.n||'—'}</td><td style="text-align:right;color:${color}">${fmt(x.v)}</td></tr>`).join('');
+
+  document.getElementById('diag-content').innerHTML=`
+    <div class="card">
+      <div class="ctit">Diagnóstico Financiero — ${gv('nombre')||'Cliente'}</div>
+      <div style="background:#f1f5f9;border-radius:9px;padding:14px 18px;margin-bottom:16px">
+        <div style="font-size:14px;font-weight:800;color:#0e2038;margin-bottom:3px">${gv('nombre')||'—'}</div>
+        <div style="font-size:11px;color:#5a7184">${gv('profesion')||'—'} · ${gv('edad')||'—'} años · ${gv('ciudad')||'—'} · ${gv('fondo')||'—'}</div>
+      </div>
+
+      <div class="krow"><div class="kr">
+        <div class="kc"><div class="klbl">Ingresos mensuales</div><div class="kval">${fmt(ing)}</div></div>
+        <div class="kc"><div class="klbl">Gastos mensuales</div><div class="kval" style="color:#c62828">${fmt(gas)}</div></div>
+        <div class="kc"><div class="klbl">Flujo de caja libre</div><div class="kval" style="color:${fcl>=0?'#14804f':'#c62828'}">${fmt(fcl)}</div><div class="ksub">${ing>0?(fcl/ing*100).toFixed(1)+'% ing.':''}</div></div>
+        <div class="kc"><div class="klbl">Capital disponible</div><div class="kval" style="color:#2b4fd8">${fmt(cap)}</div></div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="ctit">Expectativas del cliente</div>
+      <div class="g2"><div class="g2r">
+        <div class="g2c"><div style="background:#f7fafc;border:1px solid #dbe3ec;border-radius:9px;padding:12px"><div class="klbl">Objetivo principal</div><div style="font-size:13px;font-weight:700;color:#0e2038;margin-top:3px">${gv('objetivo')||'No definido'}</div></div></div>
+        <div class="g2c"><div style="background:#f7fafc;border:1px solid #dbe3ec;border-radius:9px;padding:12px"><div class="klbl">Horizonte esperado</div><div style="font-size:13px;font-weight:700;color:#0e2038;margin-top:3px">${gv('horizonte')||'No definido'}</div></div></div>
+      </div></div>
+      ${gv('expectativas')?`<div class="ibox" style="margin-bottom:0"><strong>En palabras del cliente:</strong><br>"${gv('expectativas')}"</div>`:'<div style="color:#5a7184;font-size:12px">Sin expectativas registradas.</div>'}
+    </div>
+
+    <div class="card">
+      <div class="ctit">Detalle de gastos <span style="color:#5a7184;font-weight:400;text-transform:none">(todo en base mensual)</span></div>
+      <div class="g2"><div class="g2r">
+        <div class="g2c"><div class="kc" style="background:#f7fafc;border:1px solid #dbe3ec;border-radius:9px;padding:12px;text-align:center;display:block"><div class="klbl">Gastos esenciales</div><div class="kval">${fmt(gasEsencial)}</div><div class="ksub">${ing>0?(gasEsencial/ing*100).toFixed(0)+'% del ingreso':''}</div></div></div>
+        <div class="g2c"><div class="kc" style="background:#f7fafc;border:1px solid #dbe3ec;border-radius:9px;padding:12px;text-align:center;display:block"><div class="klbl">Gastos no esenciales</div><div class="kval" style="color:#8f5e06">${fmt(gasNoEsencial)}</div><div class="ksub">${ing>0?(gasNoEsencial/ing*100).toFixed(0)+'% del ingreso':''}</div></div></div>
+      </div></div>
+      <table class="rtable" style="margin-top:14px">
+        <tr><th>Categoría</th><th style="text-align:right">Monto / mes</th></tr>
+        ${gastosHTML||'<tr><td colspan="2" style="color:#5a7184;text-align:center">Sin gastos registrados</td></tr>'}
+        <tr><td><strong>TOTAL GASTOS</strong></td><td style="text-align:right;color:#c62828;font-weight:800">${fmt(gas)}</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="ctit">Patrimonio del cliente</div>
+      <div class="krow" style="margin-bottom:14px"><div class="kr">
+        <div class="kc"><div class="klbl">Activos líquidos</div><div class="kval">${fmt(totLiq)}</div></div>
+        <div class="kc"><div class="klbl">Activos no líquidos</div><div class="kval" style="color:#2b4fd8">${fmt(totNoLiq)}</div></div>
+        <div class="kc"><div class="klbl">Total activos</div><div class="kval" style="color:#0e2038">${fmt(totLiq+totNoLiq)}</div></div>
+        <div class="kc"><div class="klbl">Patrimonio neto</div><div class="kval" style="color:${patNeto>=0?'#14804f':'#c62828'}">${fmt(patNeto)}</div><div class="ksub">activos − deudas</div></div>
+      </div></div>
+      <table class="rtable">
+        <tr><th>Activo</th><th style="text-align:right">Valor</th></tr>
+        ${(actLiq.length?`<tr><td><span class="tag tv">Líquido</span> <strong style="color:#0e2038">💧 Activos líquidos</strong></td><td style="text-align:right;color:#14804f;font-weight:700">${fmt(totLiq)}</td></tr>`+filaAct(actLiq,'#33475b'):'')}
+        ${(actNoLiq.length?`<tr><td><span class="tag tb">No líquido</span> <strong style="color:#0e2038">🏠 Activos no líquidos</strong></td><td style="text-align:right;color:#2b4fd8;font-weight:700">${fmt(totNoLiq)}</td></tr>`+filaAct(actNoLiq,'#33475b'):'')}
+        ${(!actLiq.length&&!actNoLiq.length)?'<tr><td colspan="2" style="color:#5a7184;text-align:center">Sin activos registrados</td></tr>':''}
+        <tr><td><strong>PATRIMONIO NETO (activos − deudas)</strong></td><td style="text-align:right;color:${patNeto>=0?'#14804f':'#c62828'};font-weight:800">${fmt(patNeto)}</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="ctit">Hábitos y deudas</div>
+      <table class="rtable">
+        <tr><th colspan="2">Ahorros</th></tr>
+        <tr><td>¿Ahorra actualmente?</td><td>${gv('ahorra')==='si'?'<span class="tag tv">Sí</span>':'<span class="tag tr2">No</span>'}</td></tr>
+        <tr><td>Ahorro mensual</td><td style="color:#14804f;font-weight:700">${fmt(ahorro)}</td></tr>
+        <tr><td>Tasa de ahorro</td><td style="color:${tasaAhorro>=20?'#14804f':tasaAhorro>=10?'#8f5e06':'#c62828'};font-weight:700">${tasaAhorro.toFixed(1)}%</td></tr>
+        <tr><td>Capital ahorrado total</td><td>${fmt(pn('capitalahorrado'))}</td></tr>
+      </table>
+      ${deudas.length?`<table class="rtable" style="margin-top:12px">
+        <tr><th>Deuda</th><th style="text-align:right">Saldo</th><th style="text-align:right">Cuota</th></tr>
+        ${deudas.map(d=>`<tr><td>${d.tipo}</td><td style="text-align:right;color:#c62828">${fmt(d.saldo)}</td><td style="text-align:right;color:#8f5e06">${fmt(d.cuota)}</td></tr>`).join('')}
+        <tr><td><strong>Total</strong></td><td style="text-align:right;color:#c62828;font-weight:800">${fmt(totalDeuda)}</td><td style="text-align:right;color:#8f5e06;font-weight:800">${fmt(totalCuota)}</td></tr>
+      </table>`:'<div style="color:#5a7184;font-size:12px;margin-top:10px">Sin deudas registradas.</div>'}
+    </div>
+
+    <div class="card">
+      <div class="ctit">🎯 Metas y objetivos del cliente</div>
+      ${metas.length?`
+      <div class="krow" style="margin-bottom:14px"><div class="kr">
+        <div class="kc"><div class="klbl">Nº de metas</div><div class="kval" style="color:#2b4fd8">${metas.length}</div></div>
+        <div class="kc"><div class="klbl">Monto total metas</div><div class="kval" style="color:#0e2038">${fmt(totMetaMonto)}</div></div>
+        <div class="kc"><div class="klbl">Cuota mensual requerida</div><div class="kval" style="color:${(totMetaCuota>fcl&&fcl>0)?'#c62828':'#14804f'}">${fmt(totMetaCuota)}</div><div class="ksub">${(fcl>0&&totMetaCuota>0)?(totMetaCuota/fcl*100).toFixed(0)+'% del FCL':''}</div></div>
+      </div></div>
+      <table class="rtable">
+        <tr><th>Meta</th><th>Pilar</th><th style="text-align:right">Monto</th><th style="text-align:right">Plazo</th><th style="text-align:right">Cuota/mes</th></tr>
+        ${metas.map(x=>`<tr><td><strong style="color:#0e2038">${x.nombre||'—'}</strong></td><td>${pillTag[x.pilar]||''}</td><td style="text-align:right;color:#33475b">${fmt(x.monto)}</td><td style="text-align:right;color:#5a7184">${x.plazo?x.plazo+' años':'—'}</td><td style="text-align:right;color:#14804f;font-weight:700">${fmt(x.cuota)}</td></tr>`).join('')}
+        <tr><td colspan="2"><strong>TOTAL</strong></td><td style="text-align:right;font-weight:800;color:#0e2038">${fmt(totMetaMonto)}</td><td></td><td style="text-align:right;font-weight:800;color:${(totMetaCuota>fcl&&fcl>0)?'#c62828':'#14804f'}">${fmt(totMetaCuota)}</td></tr>
+      </table>
+      ${(totMetaCuota>fcl&&fcl>0)?'<div class="ibox" style="border-left-color:#c62828;background:#fbe4e4;margin-top:10px;margin-bottom:0"><strong>Atención:</strong> la cuota mensual requerida para todas las metas supera el flujo de caja libre. Hay que priorizar metas, ampliar plazos o aumentar el flujo disponible.</div>':''}
+      `:'<div style="color:#5a7184;font-size:12px">Sin metas registradas.</div>'}
+    </div>
+
+    <div class="card">
+      <div class="ctit">Estrategia 3S — Metas de acumulación</div>
+      <div style="background:#f7fafc;border:1px solid #dbe3ec;border-radius:9px;padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;color:#5a7184;margin-bottom:4px;font-weight:700">META SEGURIDAD (S1)</div>
+        <div style="font-size:13px;color:#1c2b3a">Rango: <strong style="color:#14804f">${fmt(meta3)}</strong> – <strong style="color:#14804f">${fmt(meta6)}</strong> <span style="color:#5a7184;font-size:11px">(3x – 6x ingreso mensual)</span></div>
+        <div style="font-size:11px;color:#5a7184;margin-top:6px">Capital disponible hoy: <strong style="color:#2b4fd8">${fmt(cap)}</strong></div>
+      </div>
+      <table class="rtable">
+        <tr><th>Pilar (S2 + S3)</th><th style="text-align:right">Valor presente (VP)</th><th style="text-align:right">Valor futuro (VF)</th></tr>
+        <tr><td>S2 — Solidez <span style="color:#5a7184;font-size:10px">(70×)</span></td><td style="text-align:right;color:#2b4fd8">${fmt(m.vpS2)}</td><td style="text-align:right;color:#2b4fd8;font-weight:700">${fmt(m.vfS2)}</td></tr>
+        <tr><td>S3 — Sinergia <span style="color:#5a7184;font-size:10px">(50×)</span></td><td style="text-align:right;color:#8f5e06">${fmt(m.vpS3)}</td><td style="text-align:right;color:#8f5e06;font-weight:700">${fmt(m.vfS3)}</td></tr>
+        <tr><td><strong>Total a acumular (120×)</strong></td><td style="text-align:right;font-weight:800;color:#0e2038">${fmt(m.vpTot)}</td><td style="text-align:right;font-weight:800;color:#0e2038">${fmt(m.vfTot)}</td></tr>
+      </table>
+      <div style="font-size:11px;color:#5a7184;margin-top:8px">Tiempo para acumular: <strong style="color:#8f5e06">${m.n>0?m.n+' años':'— (define edad y edad de retiro)'}</strong> · Inflación de descuento: <strong style="color:#0e2038">${(m.i*100).toFixed(1).replace('.',',')}% E.A.</strong></div>
+      ${gv('s1nota')?`<div class="ibox" style="margin-top:10px;margin-bottom:8px"><strong>Notas S1:</strong> ${gv('s1nota')}</div>`:''}
+      ${gv('s2nota')?`<div class="ibox ibox2" style="margin-bottom:8px"><strong>Notas S2:</strong> ${gv('s2nota')}</div>`:''}
+      ${gv('s3nota')?`<div class="ibox" style="border-left-color:#c98a10;background:#fdf8ec;margin-bottom:0"><strong>Notas S3:</strong> ${gv('s3nota')}</div>`:''}
+    </div>
+  `;
+}
+
+// ═══ NAVEGACIÓN ══════════════════════════════════════════════════
+function goTab(idx){
+  document.querySelectorAll('#mfw .pnl').forEach((p,i)=>p.classList.toggle('on',i===idx+1));
+  document.querySelectorAll('#mfw .tab').forEach((t,i)=>{
+    t.classList.remove('on','on2','done');
+    if(i===idx) t.classList.add(idx>=5?'on2':'on');
+    else if(i<idx) t.classList.add('done');
+  });
+  document.getElementById('pfill').style.width=((idx+1)/6*100)+'%';
+  document.getElementById('hdr-badge').textContent=idx<5?'SESIÓN 1':'SESIÓN 2';
+  document.getElementById('hdr-badge').className=idx<5?'badge':'badge badge2';
+  document.getElementById('hdr-sub').textContent=idx<5?'Módulo 1 — Levantamiento':'Módulo 2 — Propuesta 3S';
+  if(idx===2) calcPatrimonio();
+  if(idx===3){ updMetas(); calcMetas(); }
+  if(idx===4) buildDiag();
+  if(idx===5){ recalc(); updMetas(); }
+  window.scrollTo(0,0);
+}
+
+function iniciarNuevo(){
+  document.getElementById('pnl-home').classList.remove('on');
+  document.getElementById('tabs-bar').style.display='block';
+  document.getElementById('pbar-wrap').style.display='block';
+  initCats();
+  activosDefault();
+  metasDefault();
+  goTab(0);
+}
+
+// ═══ JSON ════════════════════════════════════════════════════════
+function buildData(incluirM2){
+  const meses=getMesesArr();
+  const data={
+    nombre:gv('nombre'),edad:gv('edad'),fecnac:gv('fecnac'),estadocivil:gv('estadocivil'),
+    profesion:gv('profesion'),vinculacion:gv('vinculacion'),hijos:gv('hijos'),nhijos:gv('nhijos'),
+    dependientes:gv('dependientes'),ciudad:gv('ciudad'),fondo:gv('fondo'),semanas:gv('semanas'),
+    ibc:pn('ibc'),edadretiro:gv('edadretiro'),inflacion:gv('inflacion'),
+    objetivo:gv('objetivo'),horizonte:gv('horizonte'),expectativas:gv('expectativas'),
+    ing1:pn('ing1'),ing2:pn('ing2'),ing2desc:gv('ing2desc'),
+    catData: catData,
+    ahorra:gv('ahorra'),ahorroamt:pn('ahorroamt'),dondeahorra:gv('dondeahorra'),
+    capitalahorrado:pn('capitalahorrado'),capdisponible:pn('capdisponible'),
+    tieneinv:gv('tieneinv'),invdesc:gv('invdesc'),
+    activosLiq:getActivos('liq'),activosNoLiq:getActivos('noliq'),
+    metas:getMetas(),
+    deudas:getDeudas(),
+    meses:meses,
+    s1nota:gv('s1nota'),s2nota:gv('s2nota'),s3nota:gv('s3nota'),
+    fcl:pn('ing1')+pn('ing2')-totalGastos(),
+    gasTotal:totalGastos(),
+    extraTotal:calcExtras()
+  };
+  if(incluirM2){
+    data.propuesta={
+      s1:{fcl:pn('s1f'),noMensual:pn('s1n'),capital:pn('s1c'),vehiculos:getVh('s1'),nota:gv('s1nota2')},
+      s2:{fcl:pn('s2f'),noMensual:pn('s2n'),capital:pn('s2c'),vehiculos:getVh('s2'),nota:gv('s2nota2')},
+      s3:{fcl:pn('s3f'),noMensual:pn('s3n'),capital:pn('s3c'),vehiculos:getVh('s3'),nota:gv('s3nota2')}
+    };
+  }
+  return data;
+}
+function bajarJSON(data,sufijo){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='Mentoria_'+((gv('nombre')||'cliente').replace(/\s+/g,'_'))+'_'+sufijo+'.json';
+  a.click();
+}
+function descargarJSON(){
+  bajarJSON(buildData(false),'S1');
+}
+function descargarPropuestaCompleta(){
+  // Descarga doble: primero el JSON completo (S1 + propuesta), luego el PDF
+  bajarJSON(buildData(true),'Propuesta');
+  setTimeout(descargarPDFPropuesta, 700);
+}
+
+function cargarJSON(event){
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const d=JSON.parse(e.target.result);
+      // Mostrar tabs
+      document.getElementById('pnl-home').classList.remove('on');
+      document.getElementById('tabs-bar').style.display='block';
+      document.getElementById('pbar-wrap').style.display='block';
+      initCats();
+      // Cargar campos
+      const campos=['nombre','fecnac','estadocivil','profesion','vinculacion','hijos','nhijos','dependientes','ciudad','fondo','semanas','edadretiro','inflacion','ing2desc','dondeahorra','tieneinv','invdesc','s1nota','s2nota','s3nota','objetivo','horizonte','expectativas'];
+      campos.forEach(f=>{const el=document.getElementById(f);if(el&&d[f]!==undefined&&d[f]!=='') el.value=d[f];});
+      if(d.edad) document.getElementById('edad').value=d.edad;
+      ['ibc','ing1','ing2','ahorroamt','capitalahorrado','capdisponible'].forEach(f=>{
+        const el=document.getElementById(f);
+        if(el&&d[f]) el.value=d[f].toLocaleString('es-CO');
+      });
+      if(d.meses) d.meses.forEach((v,i)=>{const el=document.getElementById('m'+(i+1));if(el) el.value=v>0?v.toLocaleString('es-CO'):'';});
+      if(d.catData){
+        catData=d.catData;
+        normPer();
+        renderCats();
+      }
+      // Activos
+      if(d.activosLiq&&d.activosLiq.length) d.activosLiq.forEach(x=>addActivo('liq',x.n,x.v));
+      if(d.activosNoLiq&&d.activosNoLiq.length) d.activosNoLiq.forEach(x=>addActivo('noliq',x.n,x.v));
+      if((!d.activosLiq||!d.activosLiq.length)&&(!d.activosNoLiq||!d.activosNoLiq.length)) activosDefault();
+      // Metas
+      if(d.metas&&d.metas.length) d.metas.forEach(x=>addMeta(x.nombre,x.monto,x.plazo,x.rent,x.pilar));
+      else metasDefault();
+      if(d.deudas) d.deudas.forEach(de=>{
+        addDeuda();
+        const id=deudasCount;
+        const ti=document.getElementById('dti-'+id);
+        if(ti) ti.value=de.tipo;
+        const sa=document.getElementById('dsa-'+id);
+        if(sa) sa.value=de.saldo.toLocaleString('es-CO');
+        const cu=document.getElementById('dcu-'+id);
+        if(cu) cu.value=de.cuota.toLocaleString('es-CO');
+      });
+      // Propuesta (si el JSON viene de una descarga de propuesta)
+      if(d.propuesta){
+        [['s1',d.propuesta.s1],['s2',d.propuesta.s2],['s3',d.propuesta.s3]].forEach(([p,o])=>{
+          if(!o) return;
+          const set=(id,v)=>{const el=document.getElementById(id);if(el&&v) el.value=v.toLocaleString('es-CO');};
+          set(p+'f',o.fcl); set(p+'n',o.noMensual); set(p+'c',o.capital);
+          const nt=document.getElementById(p+'nota2'); if(nt&&o.nota) nt.value=o.nota;
+          if(o.vehiculos) o.vehiculos.forEach(v=>{
+            addVh(p);
+            const id=vhCount[p];
+            const n=document.getElementById('vhn-'+p+'-'+id); if(n) n.value=v.n;
+            const val=document.getElementById('vhv-'+p+'-'+id); if(val&&v.v) val.value=v.v.toLocaleString('es-CO');
+          });
+        });
+      }
+      calcFlujo(); calcExtras(); calcDeudas(); calcPatrimonio();
+      toggleHijos();
+      goTab(5); // Va directo a propuesta
+    }catch(err){alert('Error al leer el archivo JSON. Verifica que sea válido.');}
+  };
+  reader.readAsText(file);
+}
+
+// ═══ PDF — PALETA CLARA (alto contraste) ════════════════════════
+// Colores compartidos por ambos PDF
+const PDF_NAVY=[14,32,56], PDF_VERDE=[20,128,79], PDF_AZUL=[43,79,216], PDF_AMBAR=[143,94,6], PDF_ROJO=[198,40,40], PDF_GRIS=[100,116,132], PDF_TXT=[28,43,60], PDF_SECBG=[238,242,247];
+
+function pdfHelpers(doc){
+  const W=210,M=18;
+  const st={y:34};
+  function chk(extra){ if(st.y>(278-(extra||0))){ doc.addPage(); st.y=20; } }
+  function sec(t,c){
+    chk(12);
+    doc.setFillColor(...PDF_SECBG);
+    doc.roundedRect(M,st.y,W-M*2,6,1,1,'F');
+    doc.setFontSize(7);doc.setTextColor(...(c||PDF_VERDE));doc.setFont(undefined,'bold');
+    doc.text(t,M+3,st.y+4.5);
+    doc.setFont(undefined,'normal');
+    st.y+=10;
+  }
+  function row2(l1,v1,l2,v2){
+    chk();
+    doc.setFontSize(7);doc.setTextColor(...PDF_GRIS);doc.text(l1+':',M,st.y);
+    doc.setTextColor(...PDF_TXT);doc.setFont(undefined,'bold');doc.text(String(v1||'—'),M+42,st.y);doc.setFont(undefined,'normal');
+    if(l2){doc.setTextColor(...PDF_GRIS);doc.text(l2+':',105,st.y);doc.setTextColor(...PDF_TXT);doc.setFont(undefined,'bold');doc.text(String(v2||'—'),147,st.y);doc.setFont(undefined,'normal');}
+    st.y+=5.5;
+  }
+  function parr(txt,maxW){
+    if(!txt) return;
+    doc.setFontSize(7);doc.setTextColor(...PDF_TXT);
+    const lines=doc.splitTextToSize(txt, maxW||(W-M*2-4));
+    lines.forEach(l=>{chk();doc.text(l,M+2,st.y);st.y+=4.2;});
+    st.y+=1.5;
+  }
+  function sub(txt,val,col){
+    chk();
+    doc.setFontSize(6.5);doc.setTextColor(...PDF_GRIS);doc.text('  • '+txt,M+3,st.y);
+    if(val!==undefined){doc.setTextColor(...(col||PDF_TXT));doc.text(val,M+62,st.y);}
+    st.y+=4;
+  }
+  function footer(tit){
+    const pages=doc.internal.getNumberOfPages();
+    for(let p=1;p<=pages;p++){
+      doc.setPage(p);
+      doc.setFontSize(6);doc.setTextColor(...PDF_GRIS);
+      doc.text('Finanzas Inteligentes — '+tit+' — Confidencial',M,291);
+      doc.text('Pág. '+p+' / '+pages,W-M,291,{align:'right'});
+    }
+  }
+  return {W,M,st,chk,sec,row2,parr,sub,footer};
+}
+
+function pdfHeader(doc,titulo,accentRGB){
+  const W=210,M=18;
+  doc.setFillColor(...PDF_NAVY);doc.rect(0,0,W,26,'F');
+  doc.setFontSize(8);doc.setTextColor(...accentRGB);doc.setFont(undefined,'bold');
+  doc.text('FINANZAS INTELIGENTES',M,10);doc.setFont(undefined,'normal');
+  doc.setFontSize(13);doc.setTextColor(255,255,255);doc.text(titulo,M,18);
+  doc.setFontSize(7);doc.setTextColor(180,200,215);doc.text(`${gv('nombre')||'—'}  |  ${new Date().toLocaleDateString('es-CO')}`,M,24);
+}
+
+// ═══ PDF DIAGNÓSTICO ═════════════════════════════════════════════
+function descargarPDF(){
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Diagnóstico Financiero — Sesión 1',[53,201,138]);
+  const h=pdfHelpers(doc);
+
+  // EXPECTATIVAS DEL CLIENTE
+  h.sec('EXPECTATIVAS DEL CLIENTE',PDF_AZUL);
+  h.row2('Objetivo principal',gv('objetivo')||'No definido','Horizonte',gv('horizonte')||'No definido');
+  if(gv('expectativas')){
+    doc.setFontSize(6.5);doc.setTextColor(...PDF_GRIS);doc.text('En palabras del cliente:',h.M,h.st.y);h.st.y+=4;
+    h.parr('"'+gv('expectativas')+'"');
+  }
+  h.st.y+=2;
+
+  h.sec('DATOS PERSONALES');
+  h.row2('Nombre',gv('nombre'),'Edad',gv('edad')+' años');
+  h.row2('Profesión',gv('profesion'),'Vinculación',gv('vinculacion'));
+  h.row2('Estado civil',gv('estadocivil'),'Dependientes',gv('dependientes'));
+  h.row2('Fondo pensiones',gv('fondo'),'Semanas cot.',gv('semanas'));
+  h.st.y+=2;
+
+  const ing=pn('ing1')+pn('ing2'),gas=totalGastos(),fcl=ing-gas;
+  h.sec('ESTRUCTURA FINANCIERA',PDF_AMBAR);
+  h.row2('Ingresos mensuales',fmt(ing),'Gastos mensuales',fmt(gas));
+  h.chk();
+  doc.setFontSize(7);doc.setTextColor(...PDF_GRIS);doc.text('Flujo de caja libre:',h.M,h.st.y);
+  doc.setTextColor(...(fcl>=0?PDF_VERDE:PDF_ROJO));doc.setFont(undefined,'bold');
+  doc.text(fmt(fcl),h.M+42,h.st.y);doc.setFont(undefined,'normal');h.st.y+=5.5;
+
+  // Gastos por cat (mensualizados)
+  h.sec('DETALLE DE GASTOS (BASE MENSUAL)');
+  CATS.forEach(cat=>{
+    const tot=catData[cat.id].items.reduce((a,it)=>a+monthlyVal(it),0);
+    if(!tot) return;
+    h.chk();
+    doc.setFontSize(7);doc.setTextColor(...PDF_TXT);doc.setFont(undefined,'bold');doc.text(cat.label+':',h.M,h.st.y);
+    doc.text(fmt(tot),h.M+42,h.st.y);doc.setFont(undefined,'normal');h.st.y+=5;
+    catData[cat.id].items.filter(it=>it.val>0).forEach(it=>{
+      const per=(it.per&&it.per!=='mensual')?' ('+PER_LBL[it.per].toLowerCase()+')':'';
+      h.sub(it.name+per,fmt(monthlyVal(it)));
+    });
+  });
+  h.st.y+=2;
+
+  // PATRIMONIO
+  const actLiq=getActivos('liq'), actNoLiq=getActivos('noliq');
+  const totLiq=actLiq.reduce((a,x)=>a+x.v,0), totNoLiq=actNoLiq.reduce((a,x)=>a+x.v,0);
+  const totalDeudaP=getDeudas().reduce((a,d)=>a+d.saldo,0);
+  h.sec('PATRIMONIO DEL CLIENTE',PDF_AZUL);
+  h.row2('Activos líquidos',fmt(totLiq),'Activos no líquidos',fmt(totNoLiq));
+  actLiq.filter(x=>x.v>0||x.n).forEach(x=>h.sub('[Líquido] '+(x.n||'—'),fmt(x.v),PDF_VERDE));
+  actNoLiq.filter(x=>x.v>0||x.n).forEach(x=>h.sub('[No líquido] '+(x.n||'—'),fmt(x.v),PDF_AZUL));
+  h.row2('Total activos',fmt(totLiq+totNoLiq),'Total deudas',fmt(totalDeudaP));
+  h.chk();
+  doc.setFontSize(7);doc.setTextColor(...PDF_GRIS);doc.text('PATRIMONIO NETO:',h.M,h.st.y);
+  const pnet=totLiq+totNoLiq-totalDeudaP;
+  doc.setTextColor(...(pnet>=0?PDF_VERDE:PDF_ROJO));doc.setFont(undefined,'bold');doc.setFontSize(8);
+  doc.text(fmt(pnet),h.M+42,h.st.y);doc.setFont(undefined,'normal');h.st.y+=6;
+
+  h.sec('HÁBITOS Y CAPITAL');
+  h.row2('Capital disponible',fmt(pn('capdisponible')),'Ahorro mensual',fmt(pn('ahorroamt')));
+  h.row2('Total ahorrado',fmt(pn('capitalahorrado')),'Flujos ext. año',fmt(calcExtras()));
+  const deus=getDeudas();
+  if(deus.length){h.st.y+=2;h.sec('DEUDAS',PDF_ROJO);deus.forEach(d=>{h.row2(d.tipo,fmt(d.saldo),'Cuota',fmt(d.cuota));});}
+  h.st.y+=2;
+
+  // METAS DEL CLIENTE
+  const metasD=getMetas();
+  const pilCol={s1:PDF_VERDE,s2:PDF_AZUL,s3:PDF_AMBAR};
+  if(metasD.length){
+    h.sec('METAS Y OBJETIVOS DEL CLIENTE',PDF_AZUL);
+    metasD.forEach(x=>{
+      h.chk();
+      doc.setFontSize(7);doc.setTextColor(...PDF_TXT);doc.setFont(undefined,'bold');
+      doc.text((x.nombre||'—')+' ['+(PILAR_LBL[x.pilar]||'')+']',h.M,h.st.y);doc.setFont(undefined,'normal');
+      doc.setTextColor(...(pilCol[x.pilar]||PDF_TXT));
+      doc.text('Cuota: '+fmt(x.cuota)+'/mes',h.M+120,h.st.y);
+      h.st.y+=4.5;
+      doc.setFontSize(6.5);doc.setTextColor(...PDF_GRIS);
+      doc.text('   Monto: '+fmt(x.monto)+'  ·  Plazo: '+(x.plazo?x.plazo+' años':'—')+'  ·  Rent.: '+x.rent+'% E.A.',h.M,h.st.y);
+      h.st.y+=5;
+    });
+    const totMC=metasD.reduce((a,x)=>a+x.monto,0), totCC=metasD.reduce((a,x)=>a+x.cuota,0);
+    h.row2('Monto total metas',fmt(totMC),'Cuota mensual total',fmt(totCC));
+    if(totCC>fcl && fcl>0){
+      h.chk();doc.setFontSize(6.5);doc.setTextColor(...PDF_ROJO);
+      doc.text('Atención: la cuota mensual de las metas supera el flujo de caja libre. Priorizar o ampliar plazos.',h.M,h.st.y);h.st.y+=5;
+    }
+    h.st.y+=2;
+  }
+
+  const m=metas3S();
+  h.sec('METAS 3S — ACUMULACIÓN');
+  h.row2('Meta S1 mínima (3x)',fmt(ing*3),'Meta S1 ideal (6x)',fmt(ing*6));
+  h.row2('S2 — Solidez (70x) VP',fmt(m.vpS2),'VF al retiro',fmt(m.vfS2));
+  h.row2('S3 — Sinergia (50x) VP',fmt(m.vpS3),'VF al retiro',fmt(m.vfS3));
+  h.row2('Total a acumular (120x) VP',fmt(m.vpTot),'VF objetivo total',fmt(m.vfTot));
+  h.row2('Años para acumular',m.n>0?m.n+' años':'—','Inflación descuento',(m.i*100).toFixed(1)+'% E.A.');
+
+  h.footer('Diagnóstico Sesión 1');
+  doc.save('Diagnostico_'+(gv('nombre')||'cliente').replace(/\s+/g,'_')+'.pdf');
+}
+
+// ═══ PDF PROPUESTA ═══════════════════════════════════════════════
+function descargarPDFPropuesta(){
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Propuesta Estrategia 3S — Sesión 2',[124,150,240]);
+  const h=pdfHelpers(doc);
+
+  // EXPECTATIVAS (para que la propuesta responda a lo que pidió el cliente)
+  h.sec('OBJETIVO Y EXPECTATIVAS DEL CLIENTE',PDF_AZUL);
+  h.row2('Objetivo principal',gv('objetivo')||'No definido','Horizonte',gv('horizonte')||'No definido');
+  if(gv('expectativas')) h.parr('"'+gv('expectativas')+'"');
+  h.st.y+=2;
+
+  const fcl=pn('ing1')+pn('ing2')-totalGastos();
+  const nm=calcExtras(),cap=pn('capdisponible');
+  h.sec('RECURSOS DISPONIBLES');
+  h.row2('FCL mensual',fmt(fcl),'Flujos no mensuales/año',fmt(nm));
+  h.row2('Capital disponible',fmt(cap),'Total recursos',fmt(fcl+nm+cap));
+  h.st.y+=2;
+
+  // Patrimonio resumido
+  const totLiq=totalActivos('liq'), totNoLiq=totalActivos('noliq');
+  const totDeu=getDeudas().reduce((a,d)=>a+d.saldo,0);
+  h.sec('PATRIMONIO ACTUAL',PDF_AZUL);
+  h.row2('Activos líquidos',fmt(totLiq),'Activos no líquidos',fmt(totNoLiq));
+  h.row2('Total activos',fmt(totLiq+totNoLiq),'Patrimonio neto',fmt(totLiq+totNoLiq-totDeu));
+  h.st.y+=2;
+
+  // METAS DEL CLIENTE
+  const metasP=getMetas();
+  const pilColP={s1:PDF_VERDE,s2:PDF_AZUL,s3:PDF_AMBAR};
+  if(metasP.length){
+    h.sec('METAS Y OBJETIVOS DEL CLIENTE',PDF_AZUL);
+    metasP.forEach(x=>{
+      h.chk();
+      doc.setFontSize(7);doc.setTextColor(...PDF_TXT);doc.setFont(undefined,'bold');
+      doc.text((x.nombre||'—')+' ['+(PILAR_LBL[x.pilar]||'')+']',h.M,h.st.y);doc.setFont(undefined,'normal');
+      doc.setTextColor(...(pilColP[x.pilar]||PDF_TXT));
+      doc.text('Cuota: '+fmt(x.cuota)+'/mes',h.M+120,h.st.y);
+      h.st.y+=4.5;
+      doc.setFontSize(6.5);doc.setTextColor(...PDF_GRIS);
+      doc.text('   Monto: '+fmt(x.monto)+'  ·  Plazo: '+(x.plazo?x.plazo+' años':'—')+'  ·  Rent.: '+x.rent+'% E.A.',h.M,h.st.y);
+      h.st.y+=5;
+    });
+    const totCP=metasP.reduce((a,x)=>a+x.cuota,0);
+    h.row2('Monto total metas',fmt(metasP.reduce((a,x)=>a+x.monto,0)),'Cuota mensual total',fmt(totCP));
+    h.st.y+=2;
+  }
+
+  // Metas de acumulación 3S
+  const mm=metas3S();
+  h.sec('METAS DE ACUMULACIÓN 3S',PDF_AZUL);
+  h.row2('Años para acumular',mm.n>0?mm.n+' años':'—','Inflación descuento',(mm.i*100).toFixed(1)+'% E.A.');
+  h.row2('S2 — Solidez (70x) VP',fmt(mm.vpS2),'VF al retiro',fmt(mm.vfS2));
+  h.row2('S3 — Sinergia (50x) VP',fmt(mm.vpS3),'VF al retiro',fmt(mm.vfS3));
+  h.row2('Total a acumular (120x) VP',fmt(mm.vpTot),'VF objetivo total',fmt(mm.vfTot));
+  h.st.y+=2;
+
+  [[PDF_VERDE,'S1 — SEGURIDAD','s1f','s1n','s1c','s1nota2','s1'],[PDF_AZUL,'S2 — SOLIDEZ','s2f','s2n','s2c','s2nota2','s2'],[PDF_AMBAR,'S3 — SINERGIA','s3f','s3n','s3c','s3nota2','s3']].forEach(([col,title,f,n,c,nota,pk])=>{
+    const vf=pn(f),vn=pn(n),vc=pn(c);
+    h.sec(title,col);
+    h.row2('Desde FCL mensual',fmt(vf),'Desde no mensuales',fmt(vn));
+    h.row2('Desde capital',fmt(vc),'TOTAL',fmt(vf+vn+vc));
+    const vh=getVh(pk);
+    if(vh.length){vh.forEach(v=>{h.sub(v.n+': '+fmt(v.v),undefined,col);});}
+    const nt=gv(nota);
+    if(nt){h.parr('Nota: '+nt);}
+    h.st.y+=2;
+  });
+
+  h.footer('Propuesta Sesión 2');
+  doc.save('Propuesta_3S_'+(gv('nombre')||'cliente').replace(/\s+/g,'_')+'.pdf');
+}
+</script>
