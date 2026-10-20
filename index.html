@@ -381,13 +381,59 @@ input[readonly]{opacity:.6; cursor:not-allowed}
   </div>
 
   <div class="card">
-    <div class="ctit">Gastos</div>
-    <div class="ibox">Cada gasto puede ser mensual, trimestral, semestral o anual. Todo se convierte a base mensual para el diagnóstico. Si el cliente paga cuotas de crédito, regístralas en <b>Servicio de deudas</b> y no las repitas en el paso 3.</div>
+    <div class="ctit">Gastos de vida</div>
+    <div class="ibox">Cada gasto puede ser mensual, trimestral, semestral o anual. Todo se convierte a base mensual para el diagnóstico. Las <b>cuotas de crédito</b>, las <b>primas de seguros</b> y el <b>ahorro</b> no van aquí: tienen su propia sección más abajo, se registran una sola vez y entran solas al flujo de caja.</div>
     <div id="list-gastos"></div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Deudas</div>
+    <div class="ibox">La <b>cuota mensual</b> entra al presupuesto como gasto esencial (Servicio de deudas). El <b>saldo</b> resta en el patrimonio neto. Con la tasa y el plazo restante el sistema calcula los intereses que faltan por pagar y en qué orden conviene atacarlas. Si tiene crédito hipotecario, regístralo aquí y no en Vivienda.</div>
+    <div class="rowhead"><span style="flex:1.5">Tipo</span><span style="flex:1.4">Entidad</span><span style="flex:1.4">Saldo</span><span style="flex:1.3">Cuota mensual</span><span style="flex:1">Tasa % E.A.</span><span style="flex:1">Meses</span><span style="width:46px"></span></div>
+    <div id="list-deudas"></div>
+    <button class="btn-add" onclick="addDeuda()">+ Añadir deuda</button>
+    <div id="deuda-alertas"></div>
     <div class="krow">
+      <div class="kc"><div class="klbl">Saldo total</div><div class="kval text-red" id="k-deuda">$0</div></div>
+      <div class="kc"><div class="klbl">Cuota mensual</div><div class="kval text-orange" id="k-cuota">$0</div><div class="ksub" id="k-cuota-sub">entra al flujo de caja</div></div>
+      <div class="kc"><div class="klbl">Tasa promedio</div><div class="kval" id="k-tasa">—</div><div class="ksub">ponderada por saldo</div></div>
+      <div class="kc"><div class="klbl">Intereses por pagar</div><div class="kval text-red" id="k-int">$0</div><div class="ksub">si mantiene el plan actual</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Seguros vigentes</div>
+    <div class="ibox">La <b>prima mensual</b> entra al presupuesto como gasto esencial (Seguros y protección). La <b>suma asegurada</b> mide el porcentaje de protección real: la necesidad se calcula como deudas totales + gastos mensuales × 12 × años de sostenimiento de la familia. La medicina prepagada va en Salud, no aquí.</div>
+    <div class="rowhead"><span style="flex:1.6">Tipo</span><span style="flex:1.6">Aseguradora</span><span style="flex:1.6">Suma asegurada</span><span style="flex:1.4">Prima mensual</span><span style="width:46px"></span></div>
+    <div id="list-seguros"></div>
+    <div class="btn-group" style="margin-top:8px"><button class="btn-add" onclick="addSeguro()">+ Añadir seguro</button></div>
+    <div class="g3" style="margin-top:24px">
+      <div><label for="aniosSost">Años de sostenimiento de la familia</label><input type="number" id="aniosSost" min="1" max="30" value="5"></div>
+    </div>
+    <div class="krow">
+      <div class="kc"><div class="klbl">Suma asegurada</div><div class="kval text-blue" id="k-cobertura">$0</div><div class="ksub" id="k-primas-sub">—</div></div>
+      <div class="kc"><div class="klbl">Necesidad de protección</div><div class="kval" id="k-necesidad">$0</div></div>
+      <div class="kc"><div class="klbl">Brecha</div><div class="kval text-red" id="k-brecha">$0</div><div class="ksub" id="k-brecha-sub">—</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Ahorro e inversión actual</div>
+    <div class="ibox">Lo que el cliente ya separa cada mes: cuenta de ahorros, CDT, fondos, pensión voluntaria, acciones. Sale del flujo libre y alimenta el indicador de ahorro. El saldo acumulado de esas cuentas va en el paso 3 (patrimonio).</div>
+    <div class="rowhead"><span style="flex:2">Concepto</span><span style="flex:1.8">Dónde lo guarda</span><span style="flex:1.4">Valor</span><span style="flex:1.3">Cada cuánto</span><span style="width:46px"></span></div>
+    <div id="list-ahorros"></div>
+    <button class="btn-add" onclick="addAhorro()">+ Añadir ahorro</button>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Flujo de caja del mes</div>
+    <div id="flujo-tabla"></div>
+    <div class="krow" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
       <div class="kc"><div class="klbl">Ingresos totales</div><div class="kval" id="k-ing">$0</div><div class="ksub" id="k-ing-sub">—</div></div>
-      <div class="kc"><div class="klbl">Gastos mensuales</div><div class="kval text-red" id="k-gas">$0</div><div class="ksub" id="k-gas-sub">—</div></div>
-      <div class="kc"><div class="klbl">Flujo de caja libre</div><div class="kval text-green" id="k-fcl">$0</div><div class="ksub" id="k-fcl-sub">—</div></div>
+      <div class="kc"><div class="klbl">Egresos del mes</div><div class="kval text-red" id="k-gas">$0</div><div class="ksub" id="k-gas-sub">—</div></div>
+      <div class="kc"><div class="klbl">Capacidad de ahorro</div><div class="kval text-green" id="k-fcl">$0</div><div class="ksub" id="k-fcl-sub">—</div></div>
+      <div class="kc"><div class="klbl">Ahorra hoy</div><div class="kval text-blue" id="k-aho">$0</div><div class="ksub" id="k-aho-sub">—</div></div>
+      <div class="kc"><div class="klbl">Sin asignar</div><div class="kval" id="k-libre">$0</div><div class="ksub" id="k-libre-sub">—</div></div>
     </div>
   </div>
 
@@ -403,15 +449,6 @@ input[readonly]{opacity:.6; cursor:not-allowed}
 
 <!-- ═════════ 3. PATRIMONIO ═════════ -->
 <div class="pnl" id="pnl-3">
-  <div class="card">
-    <div class="ctit">Hábito de ahorro</div>
-    <div class="g3">
-      <div><label for="ahorra">¿Ahorra actualmente?</label><select id="ahorra"><option value="No">No</option><option value="Sí">Sí</option></select></div>
-      <div><label for="ahorroMensual">Cuánto ahorra al mes</label><div class="pref"><span class="sym">$</span><input type="text" class="money" id="ahorroMensual" placeholder="0"></div></div>
-      <div><label for="dondeAhorra">Dónde lo guarda</label><select id="dondeAhorra"><option value="">Seleccionar…</option><option>Cuenta de ahorros</option><option>Efectivo</option><option>CDT</option><option>Fondo de inversión colectiva</option><option>Fondo de pensión voluntaria</option><option>Acciones</option><option>Criptomonedas</option><option>No ahorra</option></select></div>
-    </div>
-  </div>
-
   <div class="card">
     <div class="ctit">Patrimonio: qué tiene y qué es líquido</div>
     <div class="ibox">Una sola lista para todo lo que el cliente posee. La <b>clase</b> define si el dinero está disponible o inmovilizado, y la casilla <b>disponible</b> marca lo que se puede mover hoy hacia la propuesta. El capital disponible para invertir se calcula solo con lo que marques.</div>
@@ -431,33 +468,12 @@ input[readonly]{opacity:.6; cursor:not-allowed}
   </div>
 
   <div class="card">
-    <div class="ctit">Deudas</div>
-    <div class="ibox">Con la tasa y el plazo restante el sistema calcula los intereses que faltan por pagar y en qué orden conviene atacarlas.</div>
-    <div class="rowhead"><span style="flex:1.5">Tipo</span><span style="flex:1.4">Entidad</span><span style="flex:1.4">Saldo</span><span style="flex:1.3">Cuota mensual</span><span style="flex:1">Tasa % E.A.</span><span style="flex:1">Meses</span><span style="width:46px"></span></div>
-    <div id="list-deudas"></div>
-    <button class="btn-add" onclick="addDeuda()">+ Añadir deuda</button>
-    <div id="deuda-alertas"></div>
+    <div class="ctit">Patrimonio neto</div>
+    <div class="ibox">Las deudas se registran una sola vez, en el paso 2 (presupuesto). Aquí se restan de los activos para obtener el patrimonio neto.</div>
     <div class="krow">
-      <div class="kc"><div class="klbl">Saldo total</div><div class="kval text-red" id="k-deuda">$0</div></div>
-      <div class="kc"><div class="klbl">Cuota mensual</div><div class="kval text-orange" id="k-cuota">$0</div><div class="ksub">ya contada en el presupuesto</div></div>
-      <div class="kc"><div class="klbl">Tasa promedio</div><div class="kval" id="k-tasa">—</div><div class="ksub">ponderada por saldo</div></div>
-      <div class="kc"><div class="klbl">Intereses por pagar</div><div class="kval text-red" id="k-int">$0</div><div class="ksub">si mantiene el plan actual</div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="ctit">Seguros vigentes</div>
-    <div class="ibox">Sirve para medir el porcentaje de protección real. La necesidad se calcula como: deudas totales + gastos mensuales × 12 × años de sostenimiento de la familia.</div>
-    <div class="rowhead"><span style="flex:1.6">Tipo</span><span style="flex:1.6">Aseguradora</span><span style="flex:1.6">Suma asegurada</span><span style="flex:1.4">Prima mensual</span><span style="width:46px"></span></div>
-    <div id="list-seguros"></div>
-    <div class="btn-group" style="margin-top:8px"><button class="btn-add" onclick="addSeguro()">+ Añadir seguro</button></div>
-    <div class="g3" style="margin-top:24px">
-      <div><label for="aniosSost">Años de sostenimiento de la familia</label><input type="number" id="aniosSost" min="1" max="30" value="5"></div>
-    </div>
-    <div class="krow">
-      <div class="kc"><div class="klbl">Suma asegurada</div><div class="kval text-blue" id="k-cobertura">$0</div></div>
-      <div class="kc"><div class="klbl">Necesidad de protección</div><div class="kval" id="k-necesidad">$0</div></div>
-      <div class="kc"><div class="klbl">Brecha</div><div class="kval text-red" id="k-brecha">$0</div><div class="ksub" id="k-brecha-sub">—</div></div>
+      <div class="kc"><div class="klbl">Total activos</div><div class="kval" id="k-activos">$0</div></div>
+      <div class="kc"><div class="klbl">Deudas</div><div class="kval text-red" id="k-deuda3">$0</div><div class="ksub"><a href="#" onclick="goTab(2); return false" style="color:var(--apple-blue)">Editar en el presupuesto</a></div></div>
+      <div class="kc"><div class="klbl">Patrimonio neto</div><div class="kval" id="k-patneto">$0</div></div>
     </div>
   </div>
 
@@ -698,7 +714,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
 </div>
 <script>
 /* ══════════════════════════════════════════════════════════════
-   MENTORÍA FINANCIERA 3S — v3.0
+   MENTORÍA FINANCIERA 3S — v3.1
    Un solo archivo. Estado en memoria + autoguardado en el navegador.
    ══════════════════════════════════════════════════════════════ */
 
@@ -712,18 +728,19 @@ const ORIGEN_LBL = { mensual:'Flujo mensual', extra:'Extraordinario', capital:'C
 const VEHICULOS = ['Cuenta de ahorros','CDT','Fondo de inversión colectiva','Fondo de pensión voluntaria',
   'Seguro de vida con ahorro','Acciones y bolsa','Propiedad raíz','Cesión de derechos fiduciarios',
   'Producto internacional','Fondo de capital privado','Criptomonedas','Otro'];
-const TIPOS_SEGURO = ['Vida','Vida con ahorro','Invalidez','Enfermedades graves','Salud / prepagada','Otro'];
+const TIPOS_SEGURO = ['Vida','Vida con ahorro','Invalidez','Enfermedades graves','Otro'];
+const DONDE_AHORRO = ['Cuenta de ahorros','Efectivo'].concat(VEHICULOS.filter(v=>v!=='Cuenta de ahorros'));
 const TIPOS_DEUDA = ['Tarjeta de crédito','Crédito de libre inversión','Crédito hipotecario','Crédito de vehículo',
   'Libranza','Crédito educativo','Deuda con familiares','Otro'];
 
 const CATS = [
-  { id:'vivienda',    label:'Vivienda',                 icon:'🏠', esencial:true,  items:['Arriendo o cuota hipotecaria','Administración','Servicios públicos','Internet y telefonía'] },
+  { id:'vivienda',    label:'Vivienda',                 icon:'🏠', esencial:true,  items:['Arriendo','Administración','Servicios públicos','Internet y telefonía'] },
   { id:'alimentacion',label:'Alimentación',             icon:'🛒', esencial:true,  items:['Mercado','Restaurantes y domicilios'] },
   { id:'transporte',  label:'Transporte',               icon:'🚗', esencial:true,  items:['Gasolina','Peajes y parqueaderos','Transporte público o apps','Seguro e impuestos del vehículo'] },
   { id:'salud',       label:'Salud',                    icon:'🏥', esencial:true,  items:['Medicina prepagada','Medicamentos','Consultas y copagos'] },
   { id:'educacion',   label:'Educación',                icon:'🎓', esencial:true,  items:['Colegio o universidad de los hijos','Formación propia'] },
-  { id:'deudas',      label:'Servicio de deudas',       icon:'💳', esencial:true,  items:['Cuota de tarjeta de crédito','Crédito personal o libranza','Cuota hipotecaria'] },
-  { id:'proteccion',  label:'Seguros y protección',     icon:'🛡️', esencial:true,  items:['Primas de seguros'] },
+  { id:'deudas',      label:'Servicio de deudas',       icon:'💳', esencial:true,  items:[], auto:'deudas' },   /* se alimenta de la tabla de deudas */
+  { id:'proteccion',  label:'Seguros y protección',     icon:'🛡️', esencial:true,  items:[], auto:'seguros' },  /* se alimenta de la tabla de seguros */
   { id:'ocio',        label:'Ocio y entretenimiento',   icon:'🎬', esencial:false, items:['Suscripciones','Salidas y planes','Viajes y vacaciones'] },
   { id:'personal',    label:'Ropa y cuidado personal',  icon:'👗', esencial:false, items:['Ropa y calzado','Peluquería y estética','Gimnasio'] },
   { id:'otros',       label:'Otros gastos',             icon:'📦', esencial:false, items:[] }
@@ -735,7 +752,7 @@ function estadoVacio(){
   const gastos = {};
   CATS.forEach(c => gastos[c.id] = c.items.map((n,i) => ({ id:c.id+'_'+i, nombre:n, monto:0, per:'mensual' })));
   return {
-    version:'3.0',
+    version:'3.1',
     meta:{ asesor:'', creado:new Date().toISOString() },
     cliente:{ nombre:'', fecnac:'', edad:'', estadocivil:'', profesion:'', vinculacion:'', dependientes:'',
               ciudad:'', objetivo:'', horizonte:'', expectativas:'' },
@@ -745,7 +762,8 @@ function estadoVacio(){
     gastos: gastos,
     extraordinarios:[0,0,0,0,0,0,0,0,0,0,0,0],
     patrimonio:{ items:[], deudas:[], seguros:[] },
-    habitos:{ ahorra:'No', ahorroMensual:0, dondeAhorra:'' },
+    ahorros:[],
+    habitos:{ ahorra:'No', ahorroMensual:0, dondeAhorra:'' },   /* solo para leer archivos viejos */
     params:{ inflacion:4.5, tasadesc:8, aniosSost:5, rentaRet:8, mejoraIng:0, mejoraGasto:0 },
     metas:[],
     propuesta:{ vehiculos:[], notas:{ s1:'', s2:'', s3:'' } }
@@ -804,8 +822,6 @@ const CAMPOS = [
   ['pareja_nom','familia.pareja_nom','txt'], ['pareja_ing','familia.pareja_ing','money'],
   ['pareja_seguro','familia.pareja_seguro','txt'],
   ['ing1','ingresos.principal','money'],
-  ['ahorra','habitos.ahorra','txt'], ['ahorroMensual','habitos.ahorroMensual','money'],
-  ['dondeAhorra','habitos.dondeAhorra','txt'],
   ['inflacion','params.inflacion','float'], ['tasadesc','params.tasadesc','float'],
   ['aniosSost','params.aniosSost','int'],
   ['rentaRet','params.rentaRet','float'], ['mejoraIng','params.mejoraIng','money'], ['mejoraGasto','params.mejoraGasto','float'],
@@ -931,7 +947,7 @@ function updGasto(cid,i,f,v){
 function delGasto(cid,i){ S.gastos[cid].splice(i,1); renderGastos(); calcularTodo(); guardar(); }
 function renderGastos(){
   let html = '';
-  CATS.forEach(cat=>{
+  CATS.filter(cat=>!cat.auto).forEach(cat=>{
     const items = S.gastos[cat.id] || [];
     const sub = items.reduce((a,g)=> a + mensual(g), 0);
     const tag = cat.esencial ? '<span class="tag tag-es">Esencial</span>' : '<span class="tag tag-no">No esencial</span>';
@@ -1039,13 +1055,86 @@ function delSeguro(i){ S.patrimonio.seguros.splice(i,1); renderSeguros(); calcul
 function renderSeguros(){
   const h = S.patrimonio.seguros.map((s,i)=>`
     <div class="rowt">
-      <div style="flex:1.6"><select onchange="updSeguro(${i},'tipo',this.value)">${TIPOS_SEGURO.map(t=>`<option${s.tipo===t?' selected':''}>${t}</option>`).join('')}</select></div>
+      <div style="flex:1.6"><select onchange="updSeguro(${i},'tipo',this.value)">${(TIPOS_SEGURO.includes(s.tipo)?TIPOS_SEGURO:TIPOS_SEGURO.concat([s.tipo])).map(t=>`<option${s.tipo===t?' selected':''}>${t}</option>`).join('')}</select></div>
       <div style="flex:1.6"><input type="text" placeholder="Aseguradora" value="${esc(s.aseguradora)}" oninput="updSeguro(${i},'aseguradora',this.value)"></div>
       <div style="flex:1.6" class="pref"><span class="sym">$</span><input type="text" placeholder="0" value="${s.suma?fmtC(s.suma):''}" oninput="fmtIn(this); updSeguro(${i},'suma',numEl(this))"></div>
       <div style="flex:1.4" class="pref"><span class="sym">$</span><input type="text" placeholder="0" value="${s.prima?fmtC(s.prima):''}" oninput="fmtIn(this); updSeguro(${i},'prima',numEl(this))"></div>
       <div style="width:46px"><button class="btn-del" onclick="delSeguro(${i})">✕</button></div>
     </div>`).join('');
   $('list-seguros').innerHTML = h || '<div class="empty">Sin seguros registrados. Sin este dato la protección se calcula en 0%.</div>';
+}
+
+/* ─────────── AHORRO E INVERSIÓN ACTUAL ─────────── */
+function addAhorro(){
+  S.ahorros.push({ id:'a_'+Date.now(), nombre:'', vehiculo:DONDE_AHORRO[0], monto:0, per:'mensual' });
+  renderAhorros(); guardar();
+}
+function updAhorro(i,f,v){ S.ahorros[i][f] = v; calcularTodo(); guardar(); }
+function delAhorro(i){ S.ahorros.splice(i,1); renderAhorros(); calcularTodo(); guardar(); }
+function renderAhorros(){
+  const h = S.ahorros.map((a,i)=>`
+    <div class="rowt">
+      <div style="flex:2"><input type="text" placeholder="Ej. Ahorro programado" value="${esc(a.nombre)}" oninput="updAhorro(${i},'nombre',this.value)"></div>
+      <div style="flex:1.8"><select onchange="updAhorro(${i},'vehiculo',this.value)">${(DONDE_AHORRO.includes(a.vehiculo)?DONDE_AHORRO:DONDE_AHORRO.concat([a.vehiculo])).map(v=>`<option${a.vehiculo===v?' selected':''}>${esc(v)}</option>`).join('')}</select></div>
+      <div style="flex:1.4" class="pref"><span class="sym">$</span><input type="text" placeholder="0" value="${a.monto?fmtC(a.monto):''}" oninput="fmtIn(this); updAhorro(${i},'monto',numEl(this))"></div>
+      <div style="flex:1.3"><select onchange="updAhorro(${i},'per',this.value)">
+        ${Object.keys(PER_F).map(p=>`<option value="${p}"${a.per===p?' selected':''}>${PER_LBL[p]}</option>`).join('')}
+      </select></div>
+      <div style="width:46px"><button class="btn-del" onclick="delAhorro(${i})">✕</button></div>
+    </div>`).join('');
+  $('list-ahorros').innerHTML = h || '<div class="empty">No ahorra actualmente. Si separa algo cada mes, regístralo aquí.</div>';
+}
+
+/* ─────────── CONSOLIDACIÓN DE ARCHIVOS ANTERIORES ───────────
+   Hasta la v3.0 las cuotas y las primas se pedían dos veces (presupuesto y paso 3)
+   y el ahorro estaba aparte. Aquí se pasa todo a una sola fuente sin perder montos. */
+function consolidar(s){
+  if(!Array.isArray(s.ahorros)) s.ahorros = [];
+  const P = s.patrimonio;
+  /* Cuotas de deuda que estaban como gastos */
+  const gD = (s.gastos.deudas||[]).filter(g=>g.monto>0);
+  if(gD.length){
+    const enLista = P.deudas.reduce((a,d)=> a + (d.cuota||0), 0);
+    const enGasto = gD.reduce((a,g)=> a + mensual(g), 0);
+    if(enLista === 0){
+      gD.forEach((g,i)=>{
+        const n = (g.nombre||'').toLowerCase();
+        const tipo = n.includes('tarjeta') ? 'Tarjeta de crédito' : n.includes('hipotec') ? 'Crédito hipotecario'
+          : n.includes('libranza') ? 'Libranza' : n.includes('vehíc') || n.includes('vehic') ? 'Crédito de vehículo' : 'Otro';
+        const libre = P.deudas.find(d=> !d.cuota);
+        if(libre && P.deudas.length === gD.length){ libre.cuota = mensual(g); }
+        else P.deudas.push({ id:'d_m'+i, tipo, entidad:g.nombre||'', saldo:0, cuota:mensual(g), tasa:0, meses:0 });
+      });
+    } else if(enGasto - enLista > 1){
+      P.deudas.push({ id:'d_mdif', tipo:'Otro', entidad:'Cuotas que estaban en el presupuesto', saldo:0, cuota:Math.round(enGasto - enLista), tasa:0, meses:0 });
+    }
+  }
+  s.gastos.deudas = [];
+  /* Primas de seguros que estaban como gastos */
+  const gP = (s.gastos.proteccion||[]).filter(g=>g.monto>0);
+  if(gP.length){
+    const enLista = P.seguros.reduce((a,x)=> a + (x.prima||0), 0);
+    const enGasto = gP.reduce((a,g)=> a + mensual(g), 0);
+    if(enLista === 0){
+      gP.forEach((g,i)=>{
+        const libre = P.seguros.find(x=> !x.prima);
+        if(libre && P.seguros.length === gP.length) libre.prima = mensual(g);
+        else P.seguros.push({ id:'s_m'+i, tipo:'Otro', aseguradora:g.nombre||'', suma:0, prima:mensual(g) });
+      });
+    } else if(enGasto - enLista > 1){
+      P.seguros.push({ id:'s_mdif', tipo:'Otro', aseguradora:'Primas que estaban en el presupuesto', suma:0, prima:Math.round(enGasto - enLista) });
+    }
+  }
+  s.gastos.proteccion = [];
+  /* Hábito de ahorro (campo único) → lista de ahorros */
+  const h = s.habitos || {};
+  if(h.ahorroMensual > 0 && s.ahorros.length === 0){
+    const d = h.dondeAhorra && h.dondeAhorra !== 'No ahorra' ? (h.dondeAhorra === 'Acciones' ? 'Acciones y bolsa' : h.dondeAhorra) : 'Cuenta de ahorros';
+    s.ahorros.push({ id:'a_m', nombre:'Ahorro actual', vehiculo:d, monto:h.ahorroMensual, per:'mensual' });
+  }
+  s.habitos = { ahorra:'No', ahorroMensual:0, dondeAhorra:'' };
+  s.version = '3.1';
+  return s;
 }
 </script>
 <script>
@@ -1146,15 +1235,22 @@ function computo(){
   const ing = ingresoTotal();
   const ingPasivo = S.ingresos.fuentes.filter(f=>f.tipo==='pasivo').reduce((a,f)=> a + (f.valor||0), 0);
 
-  const porCat = CATS.map(c=>({
-    id:c.id, label:c.label, icon:c.icon, esencial:c.esencial,
-    total:(S.gastos[c.id]||[]).reduce((a,g)=> a + mensual(g), 0),
-    items:(S.gastos[c.id]||[]).filter(g=> g.monto > 0)
-  }));
+  /* Las categorías automáticas toman sus filas de las tablas de deudas y seguros */
+  const filasAuto = {
+    deudas:  ()=> S.patrimonio.deudas.filter(d=>d.cuota>0).map(d=>({ nombre:d.tipo + (d.entidad?' · '+d.entidad:''), monto:d.cuota, per:'mensual' })),
+    seguros: ()=> S.patrimonio.seguros.filter(x=>x.prima>0).map(x=>({ nombre:x.tipo + (x.aseguradora?' · '+x.aseguradora:''), monto:x.prima, per:'mensual' }))
+  };
+  const porCat = CATS.map(c=>{
+    const lista = c.auto ? filasAuto[c.auto]() : (S.gastos[c.id]||[]);
+    return { id:c.id, label:c.label, icon:c.icon, esencial:c.esencial,
+      total:lista.reduce((a,g)=> a + mensual(g), 0),
+      items:lista.filter(g=> g.monto > 0) };
+  });
   const gastos      = porCat.reduce((a,c)=> a + c.total, 0);
   const gEsencial   = porCat.filter(c=>c.esencial).reduce((a,c)=> a + c.total, 0);
   const gNoEsencial = gastos - gEsencial;
-  const fcl = ing - gastos;
+  const gVida       = porCat.filter(c=>!CATS.find(k=>k.id===c.id).auto).reduce((a,c)=> a + c.total, 0);
+  const fcl = ing - gastos;   /* capacidad de ahorro: lo que queda después de todos los egresos */
   const extras = S.extraordinarios.reduce((a,v)=> a + (v||0), 0);
 
   const items = S.patrimonio.items;
@@ -1184,7 +1280,8 @@ function computo(){
   const metasMonto = metasCli.reduce((a,m)=> a + (m.monto||0), 0);
   const metasAporte = metasCli.reduce((a,m)=> a + metaAporte(m), 0);
 
-  const ahorro = S.habitos.ahorroMensual || 0;
+  const ahorro = (S.ahorros||[]).reduce((a,x)=> a + mensual(x), 0);
+  const libre  = fcl - ahorro;   /* lo que no tiene destino: se diluye */
   const patInvertido = liquidos + inversiones;
 
   /* Indicadores */
@@ -1219,7 +1316,7 @@ function computo(){
   const porPilar = { s1:{mensual:0,extra:0,capital:0}, s2:{mensual:0,extra:0,capital:0}, s3:{mensual:0,extra:0,capital:0} };
   V.forEach(v=>{ if(porPilar[v.pilar]) porPilar[v.pilar][v.tipo] += (v.monto||0); });
 
-  return { ing, ingPasivo, porCat, gastos, gEsencial, gNoEsencial, fcl, extras,
+  return { ing, ingPasivo, porCat, gastos, gEsencial, gNoEsencial, gVida, fcl, libre, extras,
     liquidos, inversiones, noLiquidos, capDisp, activos, patNeto, patInvertido,
     deudas:D, cobertura, primas, necesidad, aniosSost, M3S, metasCli, metasMonto, metasAporte,
     ahorro, I, puntajes:{ pLiq, pEnd, pAho, pPro, pAva }, score,
@@ -1239,6 +1336,15 @@ function calcularTodo(){
   const fclEl = $('k-fcl');
   if(fclEl){ fclEl.textContent = fmt(C.fcl); fclEl.className = 'kval ' + (C.fcl >= 0 ? 'text-green' : 'text-red'); }
   setTxt('k-fcl-sub', C.ing > 0 ? pctTxt(pct(C.fcl,C.ing)) + ' del ingreso' : '—');
+  setTxt('k-aho', fmt(C.ahorro));
+  setTxt('k-aho-sub', C.ing > 0 ? pctTxt(C.I.ahorroReal) + ' del ingreso' : '—');
+  const lEl = $('k-libre');
+  if(lEl){ lEl.textContent = fmt(C.libre); lEl.className = 'kval ' + (C.libre < 0 ? 'text-red' : C.libre > C.ing*0.05 ? 'text-orange' : 'text-green'); }
+  setTxt('k-libre-sub', C.ing <= 0 ? '—'
+    : C.libre < 0 ? 'El ahorro supera la capacidad: revisa ingresos o gastos'
+    : C.libre > C.ing*0.05 ? 'Dinero sin destino que se diluye'
+    : 'Flujo bien asignado');
+  pintarFlujo(C);
   setTxt('k-extras', fmt(C.extras));
 
   /* Paso 3 */
@@ -1248,6 +1354,12 @@ function calcularTodo(){
   setTxt('k-capdisp', fmt(C.capDisp));
   setTxt('k-deuda', fmt(C.deudas.saldo));
   setTxt('k-cuota', fmt(C.deudas.cuota));
+  setTxt('k-cuota-sub', C.ing > 0 ? pctTxt(C.I.cargaDeuda) + ' del ingreso · entra al flujo' : 'entra al flujo de caja');
+  setTxt('k-primas-sub', 'Primas: ' + fmt(C.primas) + '/mes (entran al flujo)');
+  setTxt('k-activos', fmt(C.activos));
+  setTxt('k-deuda3', fmt(C.deudas.saldo));
+  const pnEl = $('k-patneto');
+  if(pnEl){ pnEl.textContent = fmt(C.patNeto); pnEl.className = 'kval ' + (C.patNeto >= 0 ? 'text-green' : 'text-red'); }
   setTxt('k-tasa', C.deudas.saldo > 0 ? pctTxt(C.deudas.tasaProm) + ' E.A.' : '—');
   setTxt('k-int', fmt(C.deudas.intereses));
   setTxt('k-cobertura', fmt(C.cobertura));
@@ -1292,6 +1404,22 @@ function calcularTodo(){
   pintarPilaresResumen(C);
   renderCamino(C);
   return C;
+}
+/* Cascada del flujo de caja en el presupuesto */
+function pintarFlujo(C){
+  const box = $('flujo-tabla'); if(!box) return;
+  const cuotas = C.deudas.cuota, primas = C.primas;
+  const R = 'style="text-align:right"';
+  const fila = (lbl, v, signo, cls) => `<tr${cls?' class="'+cls+'"':''}><td>${lbl}</td><td ${R}>${signo}${fmt(Math.abs(v))}</td><td ${R}>${C.ing>0?pctTxt(pct(v,C.ing)):'—'}</td></tr>`;
+  box.innerHTML = '<table class="rtable"><tr><th>Concepto</th><th ' + R + '>Mensual</th><th ' + R + '>% ingreso</th></tr>' +
+    fila('Ingresos totales', C.ing, '', '') +
+    fila('Gastos de vida', C.gVida, '− ', 'sub') +
+    fila('Cuotas de deudas', cuotas, '− ', 'sub') +
+    fila('Primas de seguros', primas, '− ', 'sub') +
+    `<tr class="tot"><td>Capacidad de ahorro</td><td ${R} class="${C.fcl>=0?'text-green':'text-red'}">${C.fcl<0?'− ':''}${fmt(Math.abs(C.fcl))}</td><td ${R}>${C.ing>0?pctTxt(pct(C.fcl,C.ing)):'—'}</td></tr>` +
+    fila('Ahorro e inversión actual', C.ahorro, '− ', 'sub') +
+    `<tr class="tot"><td>Sin asignar</td><td ${R} class="${C.libre<0?'text-red':''}">${C.libre<0?'− ':''}${fmt(Math.abs(C.libre))}</td><td ${R}>${C.ing>0?pctTxt(pct(C.libre,C.ing)):'—'}</td></tr>` +
+    '</table>';
 }
 function fuente(k, total, asignado, color){
   const disp = total - asignado;
@@ -1724,7 +1852,7 @@ function renderDiagnostico(){
       <div style="flex:1; min-width:260px">
         <div style="font-size:15px; line-height:1.6; color:var(--text-sub)">
           ${esc(cli.profesion)||'—'} · ${cli.edad||'—'} años · ${esc(cli.ciudad)||'—'}${cli.dependientes?' · '+cli.dependientes+' dependientes':''}<br>
-          Ingreso de ${fmt(C.ing)} al mes, gasto de ${fmt(C.gastos)} y un flujo libre de <b style="color:${C.fcl>=0?'var(--apple-green)':'var(--apple-red)'}">${fmt(C.fcl)}</b>.
+          Ingreso de ${fmt(C.ing)} al mes, egresos de ${fmt(C.gastos)} (incluye ${fmt(C.deudas.cuota)} en cuotas y ${fmt(C.primas)} en seguros) y una capacidad de ahorro de <b style="color:${C.fcl>=0?'var(--apple-green)':'var(--apple-red)'}">${fmt(C.fcl)}</b>, de la cual hoy ahorra ${fmt(C.ahorro)}.
           Patrimonio neto de <b>${fmt(C.patNeto)}</b>.
         </div>
       </div>
@@ -1825,7 +1953,7 @@ function renderDiagnostico(){
 
 /* ══════════ JSON ══════════ */
 function exportarJSON(){
-  const payload = { app:'mentoria3s', version:'3.0', exportado:new Date().toISOString(), S:S };
+  const payload = { app:'mentoria3s', version:'3.1', exportado:new Date().toISOString(), S:S };
   const blob = new Blob([JSON.stringify(payload,null,2)], { type:'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -1839,7 +1967,7 @@ function importarJSON(ev){
   r.onload = e => {
     try{
       const j = JSON.parse(e.target.result);
-      S = migrar(j);
+      S = consolidar(migrar(j));
       metasBase(); pintarTodo(); goTab(1); guardar();
       showToast('Asesoría cargada.');
     }catch(err){
@@ -2102,6 +2230,7 @@ function pdfDiagnostico(){
   st.par2('Gasto esencial', fmt(C.gEsencial) + '  (' + pctTxt(pct(C.gEsencial,C.ing)) + ')',
           'Gasto no esencial', fmt(C.gNoEsencial) + '  (' + pctTxt(pct(C.gNoEsencial,C.ing)) + ')');
   st.par2('Flujos extraordinarios del año', fmt(C.extras), 'Ahorro mensual actual', fmt(C.ahorro));
+  st.par2('Cuotas de deudas', fmt(C.deudas.cuota), 'Sin asignar (después del ahorro)', fmt(C.libre));
   st.y += 2;
 
   /* Gráfico */
@@ -2285,7 +2414,7 @@ function pintarTodo(){
   metasBase();
   pintarCampos();
   renderHijos(); renderIngresos(); renderGastos(); renderMeses();
-  renderPatrimonio(); renderDeudas(); renderSeguros();
+  renderPatrimonio(); renderDeudas(); renderSeguros(); renderAhorros();
   renderMetas(); renderVh();
   calcularTodo(); renderMatriz(filtroMatriz);
 }
@@ -2294,7 +2423,7 @@ document.addEventListener('DOMContentLoaded', function(){
   let guardado = null;
   try{ guardado = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); }catch(e){}
   if(guardado){
-    try{ S = normalizar(guardado); }catch(e){ S = estadoVacio(); }
+    try{ S = consolidar(normalizar(guardado)); }catch(e){ S = estadoVacio(); }
     if(S.cliente.nombre){
       $('continuar-box').style.display = 'block';
       $('continuar-nom').textContent = S.cliente.nombre;
