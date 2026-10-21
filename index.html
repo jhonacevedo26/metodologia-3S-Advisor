@@ -215,6 +215,21 @@ input[readonly]{opacity:.6; cursor:not-allowed}
 .fc-det{font-size:12px; color:var(--text-sub)}
 .fc-bar{height:6px; background:var(--border-light); border-radius:3px; margin-top:12px; overflow:hidden}
 .fc-fill{height:100%; border-radius:3px; transition:width .4s}
+/* "Con qué se cuenta" queda fijo debajo de la cabecera en el paso 7 */
+.fc-sticky{position:sticky; top:var(--hdr-h,72px); z-index:50; transition:padding .2s, box-shadow .2s}
+.fc-sticky.stuck{padding-top:14px; padding-bottom:14px; box-shadow:0 8px 24px rgba(0,0,0,.10)}
+.fc-sticky.stuck .ctit{font-size:13px; margin-bottom:10px; color:var(--text-sub)}
+.fc-sticky.stuck .g3{gap:12px}
+.fc-sticky.stuck .fc{padding:10px 14px; min-width:0}
+.fc-sticky.stuck .ctit + .g3{margin-bottom:0}
+.fc-sticky.stuck .fc-dis{font-size:19px; margin:4px 0 0}
+.fc-sticky.stuck .fc-bar{margin-top:6px}
+/* Campo "Otro" editable */
+.otro-wrap{position:relative}
+.otro-wrap input{padding-right:40px}
+.otro-x{position:absolute; right:6px; top:50%; transform:translateY(-50%); border:none; background:transparent;
+  color:var(--text-sub); font-size:14px; cursor:pointer; padding:6px 8px; border-radius:6px}
+.otro-x:hover{background:var(--border-light)}
 /* ═══════════ INICIO ═══════════ */
 .hero{max-width:760px; margin:60px auto; text-align:center}
 .hero h1{font-size:38px; font-weight:700; letter-spacing:-1px; margin-bottom:14px}
@@ -257,6 +272,16 @@ input[readonly]{opacity:.6; cursor:not-allowed}
   .mesgrid{grid-template-columns:repeat(3,1fr)}
   .tip .tipbox{width:250px; left:auto; right:0}
   .hero h1{font-size:28px}
+}
+@media(max-width:860px){
+  .fc-sticky.stuck .g3{grid-template-columns:repeat(3,1fr); gap:6px}
+  .fc-sticky.stuck{padding:10px 12px}
+  .fc-sticky.stuck .fc{padding:8px; min-width:0}
+  .fc-sticky.stuck .fc-lbl{font-size:9px; letter-spacing:0; line-height:1.2}
+  .fc-sticky.stuck .fc-dis{font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .fc-sticky.stuck .fc-bar{display:none}
+  .fc-sticky.stuck .fc-det{display:none}
+  .fc-sticky.stuck .ctit{display:none}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
 </style>
@@ -622,7 +647,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
     <div id="cam-prop"></div>
   </div>
 
-  <div class="card">
+  <div class="card fc-sticky" id="fc-sticky">
     <div class="ctit">Con qué se cuenta</div>
     <div class="g3">
       <div class="fc" id="fc-mensual">
@@ -638,7 +663,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
         <div class="fc-bar"><div class="fc-fill" id="fc-e-bar" style="background:var(--apple-orange); width:0%"></div></div>
       </div>
       <div class="fc" id="fc-cap">
-        <div class="fc-lbl">Capital disponible</div>
+        <div class="fc-lbl">Dinero disponible</div>
         <div class="fc-dis text-blue" id="fc-c-dis">$0</div>
         <div class="fc-det" id="fc-c-det">—</div>
         <div class="fc-bar"><div class="fc-fill" id="fc-c-bar" style="background:var(--apple-indigo); width:0%"></div></div>
@@ -650,14 +675,14 @@ input[readonly]{opacity:.6; cursor:not-allowed}
     <div class="ctit">Vehículos de la propuesta</div>
     <div class="ibox">Cada línea es un producto concreto con su pilar, su origen de recursos y la meta que financia. Los totales por pilar y la matriz de meses se arman solos con lo que registres aquí.</div>
     <div class="rowhead">
-      <span style="flex:.9">Pilar</span><span style="flex:1.3">Origen</span><span style="flex:2">Producto o vehículo</span>
-      <span style="flex:1.4">Monto</span><span style="flex:1">Mes</span><span style="flex:1.6">Meta</span><span style="width:46px"></span>
+      <span style="flex:.9">Pilar</span><span style="flex:1.6">Meta</span><span style="flex:1.3">Origen de recursos</span>
+      <span style="flex:2">Producto financiero</span><span style="flex:1.4">Monto</span><span style="flex:1">Mes</span><span style="width:46px"></span>
     </div>
     <div id="list-vh"></div>
     <div class="btn-group" style="margin-top:8px">
       <button class="btn-add" onclick="addVh('mensual')">+ Aporte mensual</button>
       <button class="btn-add" onclick="addVh('extra')">+ Aporte extraordinario</button>
-      <button class="btn-add" onclick="addVh('capital')">+ Capital inicial</button>
+      <button class="btn-add" onclick="addVh('capital')">+ Dinero disponible</button>
     </div>
     <div class="krow" id="pilares-resumen"></div>
   </div>
@@ -676,7 +701,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
     <div class="matrix-ctrls">
       <button class="btn-mat bm-mensual act" id="bm-mensual" onclick="renderMatriz('mensual')">Mensual</button>
       <button class="btn-mat bm-nomens" id="bm-extra" onclick="renderMatriz('extra')">Extraordinarios</button>
-      <button class="btn-mat bm-capital" id="bm-capital" onclick="renderMatriz('capital')">Capital inicial</button>
+      <button class="btn-mat bm-capital" id="bm-capital" onclick="renderMatriz('capital')">Dinero disponible</button>
       <button class="btn-mat bm-todos" id="bm-todos" onclick="renderMatriz('todos')">Todos</button>
     </div>
     <div class="matrix-wrap" id="matriz"></div>
@@ -724,7 +749,7 @@ const PER_F = { mensual:1, trimestral:3, semestral:6, anual:12 };
 const PER_LBL = { mensual:'Mensual', trimestral:'Trimestral', semestral:'Semestral', anual:'Anual' };
 const PILAR_LBL = { s1:'S1 Seguridad', s2:'S2 Solidez', s3:'S3 Sinergia' };
 const CLASE_LBL = { liquido:'Líquido', inversion:'Inversión', noliquido:'No líquido' };
-const ORIGEN_LBL = { mensual:'Flujo mensual', extra:'Extraordinario', capital:'Capital inicial' };
+const ORIGEN_LBL = { mensual:'Flujo mensual', extra:'Extraordinario', capital:'Dinero disponible' };
 const VEHICULOS = ['Cuenta de ahorros','CDT','Fondo de inversión colectiva','Fondo de pensión voluntaria',
   'Seguro de vida con ahorro','Acciones y bolsa','Propiedad raíz','Cesión de derechos fiduciarios',
   'Producto internacional','Fondo de capital privado','Criptomonedas','Otro'];
@@ -1066,16 +1091,26 @@ function renderSeguros(){
 
 /* ─────────── AHORRO E INVERSIÓN ACTUAL ─────────── */
 function addAhorro(){
-  S.ahorros.push({ id:'a_'+Date.now(), nombre:'', vehiculo:DONDE_AHORRO[0], monto:0, per:'mensual' });
+  S.ahorros.push({ id:'a_'+Date.now(), nombre:'', vehiculo:DONDE_AHORRO[0], vehiculoOtro:'', monto:0, per:'mensual' });
   renderAhorros(); guardar();
 }
 function updAhorro(i,f,v){ S.ahorros[i][f] = v; calcularTodo(); guardar(); }
 function delAhorro(i){ S.ahorros.splice(i,1); renderAhorros(); calcularTodo(); guardar(); }
+function cambiarDonde(i,v){
+  updAhorro(i,'vehiculo',v);
+  if(v === 'Otro'){ renderAhorros(); const el = $('aho-otro-'+i); if(el) el.focus(); }
+}
+/* Texto de "dónde lo guarda" para mostrar en reportes */
+function dondeTxt(a){ return a.vehiculo === 'Otro' ? (a.vehiculoOtro || 'Otro') : a.vehiculo; }
 function renderAhorros(){
+  /* Valores que no están en la lista (archivos viejos) pasan a "Otro" con su texto */
+  S.ahorros.forEach(a=>{ if(a.vehiculo && !DONDE_AHORRO.includes(a.vehiculo)){ a.vehiculoOtro = a.vehiculo; a.vehiculo = 'Otro'; } });
   const h = S.ahorros.map((a,i)=>`
     <div class="rowt">
       <div style="flex:2"><input type="text" placeholder="Ej. Ahorro programado" value="${esc(a.nombre)}" oninput="updAhorro(${i},'nombre',this.value)"></div>
-      <div style="flex:1.8"><select onchange="updAhorro(${i},'vehiculo',this.value)">${(DONDE_AHORRO.includes(a.vehiculo)?DONDE_AHORRO:DONDE_AHORRO.concat([a.vehiculo])).map(v=>`<option${a.vehiculo===v?' selected':''}>${esc(v)}</option>`).join('')}</select></div>
+      <div style="flex:1.8">${ a.vehiculo === 'Otro'
+        ? `<div class="otro-wrap"><input type="text" id="aho-otro-${i}" placeholder="Escribe dónde lo guarda" value="${esc(a.vehiculoOtro)}" oninput="updAhorro(${i},'vehiculoOtro',this.value)"><button type="button" class="otro-x" title="Volver a la lista" onclick="updAhorro(${i},'vehiculo','${DONDE_AHORRO[0]}'); renderAhorros()">▾</button></div>`
+        : `<select onchange="cambiarDonde(${i},this.value)">${DONDE_AHORRO.map(v=>`<option${a.vehiculo===v?' selected':''}>${esc(v)}</option>`).join('')}</select>` }</div>
       <div style="flex:1.4" class="pref"><span class="sym">$</span><input type="text" placeholder="0" value="${a.monto?fmtC(a.monto):''}" oninput="fmtIn(this); updAhorro(${i},'monto',numEl(this))"></div>
       <div style="flex:1.3"><select onchange="updAhorro(${i},'per',this.value)">
         ${Object.keys(PER_F).map(p=>`<option value="${p}"${a.per===p?' selected':''}>${PER_LBL[p]}</option>`).join('')}
@@ -1467,7 +1502,7 @@ function pintarPilaresResumen(C){
     const tot = a.mensual + a.extra + a.capital;
     return `<div class="kc"><div class="klbl">${PILAR_LBL[p]}</div>
       <div class="kval ${col[p]}">${fmt(tot)}</div>
-      <div class="ksub">${fmt(a.mensual)}/mes · ${fmt(a.extra)} extra · ${fmt(a.capital)} capital<br>Meta: ${fmt(metas[p])}</div></div>`;
+      <div class="ksub">${fmt(a.mensual)}/mes · ${fmt(a.extra)} extra · ${fmt(a.capital)} disponible<br>Meta: ${fmt(metas[p])}</div></div>`;
   }).join('');
 }
 
@@ -1486,6 +1521,7 @@ function renderVh(){
     return `<div class="rowt">
       <div style="flex:.9"><select onchange="updVh(${i},'pilar',this.value)" style="padding:10px 8px; font-size:13px">
         ${['s1','s2','s3'].map(p=>`<option value="${p}"${v.pilar===p?' selected':''}>${p.toUpperCase()}</option>`).join('')}</select></div>
+      <div style="flex:1.6"><select class="sel-meta" data-i="${i}" onchange="updVh(${i},'metaId',this.value)" style="padding:10px 8px; font-size:13px"></select></div>
       <div style="flex:1.3"><select onchange="updVh(${i},'tipo',this.value)" style="color:${colT}; font-weight:600; padding:10px 8px; font-size:13px">
         ${Object.keys(ORIGEN_LBL).map(t=>`<option value="${t}"${v.tipo===t?' selected':''}>${ORIGEN_LBL[t]}</option>`).join('')}</select></div>
       <div style="flex:2"><input type="text" placeholder="Ej. Seguro de vida con ahorro" value="${esc(v.nombre)}" oninput="updVh(${i},'nombre',this.value)"></div>
@@ -1493,7 +1529,6 @@ function renderVh(){
       <div style="flex:1">${ v.tipo === 'mensual'
         ? '<span style="color:var(--text-sub); font-size:13px">Todos</span>'
         : `<select onchange="updVh(${i},'mes',parseInt(this.value,10))" style="padding:10px 8px; font-size:13px">${MESES.map((m,k)=>`<option value="${k+1}"${v.mes===k+1?' selected':''}>${m}</option>`).join('')}</select>` }</div>
-      <div style="flex:1.6"><select class="sel-meta" data-i="${i}" onchange="updVh(${i},'metaId',this.value)" style="padding:10px 8px; font-size:13px"></select></div>
       <div style="width:46px"><button class="btn-del" onclick="delVh(${i})">✕</button></div>
     </div>`;
   }).join('');
@@ -2029,7 +2064,7 @@ function migrarIndex(d){
       const o = d.propuesta[p]; if(!o) return;
       (o.vehiculos||[]).forEach((v,i)=> s.propuesta.vehiculos.push({ id:'v_'+p+i, pilar:p, tipo:'mensual', nombre:v.n||'', monto:v.v||0, mes:1, metaId:'' }));
       if(o.noMensual > 0) s.propuesta.vehiculos.push({ id:'v_'+p+'n', pilar:p, tipo:'extra', nombre:'Aporte extraordinario', monto:o.noMensual, mes:6, metaId:'' });
-      if(o.capital > 0) s.propuesta.vehiculos.push({ id:'v_'+p+'c', pilar:p, tipo:'capital', nombre:'Capital inicial', monto:o.capital, mes:1, metaId:'' });
+      if(o.capital > 0) s.propuesta.vehiculos.push({ id:'v_'+p+'c', pilar:p, tipo:'capital', nombre:'Dinero disponible', monto:o.capital, mes:1, metaId:'' });
       s.propuesta.notas[p] = o.nota || '';
     });
   }
@@ -2333,7 +2368,7 @@ function pdfPropuesta(){
   st.sec('RECURSOS DISPONIBLES', P_GREEN);
   st.par2('Flujo de caja libre', fmt(C.fcl), 'Asignado al mes', fmt(C.asigMensual));
   st.par2('Flujos extraordinarios del año', fmt(C.extras), 'Asignado extraordinario', fmt(C.asigExtra));
-  st.par2('Capital disponible', fmt(C.capDisp), 'Asignado de capital', fmt(C.asigCapital));
+  st.par2('Dinero disponible', fmt(C.capDisp), 'Asignado del disponible', fmt(C.asigCapital));
   st.dest('Flujo mensual sin asignar', fmt(C.fcl - C.asigMensual), (C.fcl - C.asigMensual) >= 0 ? P_GREEN : P_RED);
 
   /* Camino hacia la renta pasiva */
@@ -2372,12 +2407,12 @@ function pdfPropuesta(){
     if(!vs.length && tot === 0 && !S.propuesta.notas[p]) return;
     st.sec(PILAR_LBL[p].toUpperCase(), colP[p]);
     st.par2('Aporte mensual', fmt(a.mensual), 'Extraordinario', fmt(a.extra));
-    st.par2('Capital inicial', fmt(a.capital), 'Total del pilar', fmt(tot));
+    st.par2('Dinero disponible', fmt(a.capital), 'Total del pilar', fmt(tot));
     if(vs.length){
-      st.tabla(['Producto o vehículo','Origen','Mes','Meta','Monto'],
-        vs.map(v=>({ c:[v.nombre||'—', ORIGEN_LBL[v.tipo], v.tipo==='mensual'?'Todos':MESES[(v.mes||1)-1],
-          metasNom[v.metaId] || 'Sin meta', fmt(v.monto)] })),
-        [56,32,16,44,30], [4]);
+      st.tabla(['Meta','Origen de recursos','Producto financiero','Monto','Mes'],
+        vs.map(v=>({ c:[metasNom[v.metaId] || 'Sin meta', ORIGEN_LBL[v.tipo], v.nombre||'—', fmt(v.monto),
+          v.tipo==='mensual'?'Todos':MESES[(v.mes||1)-1]] })),
+        [44,32,56,30,16], [3]);
     }
     if(S.propuesta.notas[p]) st.par('Nota: ' + S.propuesta.notas[p]);
   });
@@ -2418,7 +2453,21 @@ function pintarTodo(){
   renderMetas(); renderVh();
   calcularTodo(); renderMatriz(filtroMatriz);
 }
+/* Altura real de la cabecera (cambia en pantallas pequeñas) y estado "fijo" de la tarjeta de recursos */
+function medirCabecera(){
+  const h = document.querySelector('.hdr');
+  if(h) document.documentElement.style.setProperty('--hdr-h', h.offsetHeight + 'px');
+  revisarFijo();
+}
+function revisarFijo(){
+  const el = $('fc-sticky'); if(!el || !el.offsetParent) return;
+  const h = document.querySelector('.hdr'), top = h ? h.offsetHeight : 0;
+  el.classList.toggle('stuck', el.getBoundingClientRect().top <= top + 1 && window.scrollY > 0);
+}
+window.addEventListener('resize', medirCabecera);
+window.addEventListener('scroll', revisarFijo, { passive:true });
 document.addEventListener('DOMContentLoaded', function(){
+  medirCabecera();
   bindCampos();
   let guardado = null;
   try{ guardado = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); }catch(e){}
