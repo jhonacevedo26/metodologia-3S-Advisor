@@ -225,6 +225,8 @@ input[readonly]{opacity:.6; cursor:not-allowed}
 .fc-sticky.stuck .fc-dis{font-size:19px; margin:4px 0 0}
 .fc-sticky.stuck .fc-bar{margin-top:6px}
 /* Campo "Otro" editable */
+.pct-box{display:inline-flex; align-items:center; gap:6px; justify-content:flex-end}
+.pct-in{width:84px; text-align:right; padding:8px 10px}
 .otro-wrap{position:relative}
 .otro-wrap input{padding-right:40px}
 .otro-x{position:absolute; right:6px; top:50%; transform:translateY(-50%); border:none; background:transparent;
@@ -476,7 +478,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
 <div class="pnl" id="pnl-3">
   <div class="card">
     <div class="ctit">Patrimonio: qué tiene y qué es líquido</div>
-    <div class="ibox">Una sola lista para todo lo que el cliente posee. La <b>clase</b> define si el dinero está disponible o inmovilizado, y la casilla <b>disponible</b> marca lo que se puede mover hoy hacia la propuesta. El capital disponible para invertir se calcula solo con lo que marques.</div>
+    <div class="ibox">Una sola lista para todo lo que el cliente posee. La <b>clase</b> define si el dinero es líquido o está inmovilizado, y la casilla <b>disponible</b> marca lo que se puede usar en la propuesta o en una emergencia. El capital disponible suma todo lo marcado, <b>aunque no sea líquido</b> (por ejemplo, cesantías). Ese total llega al paso 7 como <b>Dinero disponible</b>, y ahí decides a qué pilar y producto asignarlo.</div>
     <div class="rowhead"><span style="flex:1.3">Clase</span><span style="flex:1.9">Nombre</span><span style="flex:1.6">Vehículo</span><span style="flex:1.4">Valor</span><span style="flex:1">Disponible</span><span style="width:46px"></span></div>
     <div id="list-patrimonio"></div>
     <div class="btn-group" style="margin-top:8px">
@@ -488,7 +490,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
       <div class="kc"><div class="klbl">Líquidos</div><div class="kval text-green" id="k-liq">$0</div></div>
       <div class="kc"><div class="klbl">Inversiones actuales</div><div class="kval text-blue" id="k-inv">$0</div></div>
       <div class="kc"><div class="klbl">No líquidos</div><div class="kval" id="k-noliq">$0</div></div>
-      <div class="kc"><div class="klbl">Capital disponible para invertir</div><div class="kval text-blue" id="k-capdisp">$0</div><div class="ksub">solo lo marcado como disponible</div></div>
+      <div class="kc"><div class="klbl">Capital disponible para invertir</div><div class="kval text-blue" id="k-capdisp">$0</div><div class="ksub" id="k-capdisp-sub">todo lo marcado como disponible</div></div>
     </div>
   </div>
 
@@ -552,7 +554,21 @@ input[readonly]{opacity:.6; cursor:not-allowed}
 
   <div class="card">
     <div class="ctit">Hacia dónde se distribuye el dinero: los tres pilares</div>
-    <div id="cam-distrib" style="margin-bottom:24px"></div>
+    <div class="ibox">Define qué porcentaje del aporte mensual va a cada pilar. <b>Los tres pilares reciben dinero al mismo tiempo.</b> Cuando S1 completa el fondo de imprevistos, su porcentaje pasa a S2 y S3. Este reparto es la guía: en el paso 7 eliges el producto concreto de cada pilar y ajustas los montos.</div>
+    <div id="cam-distrib" style="margin-bottom:24px">
+      <table class="rtable">
+        <tr><th>Pilar</th><th>Para qué</th><th style="text-align:right">% del aporte</th><th style="text-align:right">Por mes</th></tr>
+        <tr><td style="white-space:nowrap"><b class="text-green">S1 — Seguridad</b></td><td id="rep-s1-txt">Fondo de imprevistos</td>
+          <td style="text-align:right"><div class="pct-box"><input type="number" class="pct-in" id="rep-s1" min="0" max="100" step="1" oninput="updReparto('s1',this.value)"><span>%</span></div></td><td style="text-align:right" id="rep-s1-m"><b>$0</b></td></tr>
+        <tr><td style="white-space:nowrap"><b class="text-blue">S2 — Solidez</b></td><td>Retiro y protección de la familia</td>
+          <td style="text-align:right"><div class="pct-box"><input type="number" class="pct-in" id="rep-s2" min="0" max="100" step="1" oninput="updReparto('s2',this.value)"><span>%</span></div></td><td style="text-align:right" id="rep-s2-m"><b>$0</b></td></tr>
+        <tr><td style="white-space:nowrap"><b class="text-orange">S3 — Sinergia</b></td><td>Crecimiento con diversificación y tiempo</td>
+          <td style="text-align:right"><div class="pct-box"><input type="number" class="pct-in" id="rep-s3" min="0" max="100" step="1" oninput="updReparto('s3',this.value)"><span>%</span></div></td><td style="text-align:right" id="rep-s3-m"><b>$0</b></td></tr>
+        <tr class="tot"><td colspan="2">Total del aporte mensual</td><td style="text-align:right" id="rep-tot">100%</td><td style="text-align:right" id="rep-tot-m">$0</td></tr>
+      </table>
+      <div id="rep-aviso"></div>
+      <div class="btn-group" style="margin-top:12px; align-items:center"><button class="btn-add" onclick="repartoSugerido()">Usar reparto sugerido</button><span class="ksub" id="rep-modo"></span></div>
+    </div>
     <div class="pilar" id="pil-s1">
       <div class="p-left">
         <div class="p-name">🛡️ S1 — Seguridad
@@ -683,6 +699,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
       <button class="btn-add" onclick="addVh('mensual')">+ Aporte mensual</button>
       <button class="btn-add" onclick="addVh('extra')">+ Aporte extraordinario</button>
       <button class="btn-add" onclick="addVh('capital')">+ Dinero disponible</button>
+      <button class="btn-add" style="background:var(--apple-blue); color:#fff" onclick="cargarReparto()">Cargar reparto del paso 4</button>
     </div>
     <div class="krow" id="pilares-resumen"></div>
   </div>
@@ -789,7 +806,8 @@ function estadoVacio(){
     patrimonio:{ items:[], deudas:[], seguros:[] },
     ahorros:[],
     habitos:{ ahorra:'No', ahorroMensual:0, dondeAhorra:'' },   /* solo para leer archivos viejos */
-    params:{ inflacion:4.5, tasadesc:8, aniosSost:5, rentaRet:8, mejoraIng:0, mejoraGasto:0 },
+    params:{ inflacion:4.5, tasadesc:8, aniosSost:5, rentaRet:8, mejoraIng:0, mejoraGasto:0,
+              reparto:{ auto:true, s1:30, s2:40, s3:30 } },
     metas:[],
     propuesta:{ vehiculos:[], notas:{ s1:'', s2:'', s3:'' } }
   };
@@ -1020,7 +1038,7 @@ function renderPatrimonio(){
       <div style="flex:1.3"><select onchange="updPat(${i},'clase',this.value)">
         ${Object.keys(CLASE_LBL).map(c=>`<option value="${c}"${p.clase===c?' selected':''}>${CLASE_LBL[c]}</option>`).join('')}
       </select></div>
-      <div style="flex:1.9"><input type="text" placeholder="${p.clase==='noliquido'?'Ej. Apartamento':'Ej. Ahorros Bancolombia'}" value="${esc(p.nombre)}" oninput="updPat(${i},'nombre',this.value)"></div>
+      <div style="flex:1.9"><input type="text" placeholder="${p.clase==='noliquido'?'Ej. Apartamento o cesantías':'Ej. Ahorros Bancolombia'}" value="${esc(p.nombre)}" oninput="updPat(${i},'nombre',this.value)"></div>
       <div style="flex:1.6">${ p.clase==='inversion'
         ? `<select onchange="updPat(${i},'vehiculo',this.value)">${VEHICULOS.map(v=>`<option${p.vehiculo===v?' selected':''}>${v}</option>`).join('')}</select>`
         : `<input type="text" placeholder="Opcional" value="${esc(p.vehiculo)}" oninput="updPat(${i},'vehiculo',this.value)">` }</div>
@@ -1293,7 +1311,10 @@ function computo(){
   const liquidos    = suma(p=>p.clase==='liquido');
   const inversiones = suma(p=>p.clase==='inversion');
   const noLiquidos  = suma(p=>p.clase==='noliquido');
-  const capDisp     = suma(p=>p.disponible && p.clase!=='noliquido');
+  /* Dinero disponible para la propuesta = todo lo marcado como disponible, sea líquido o no.
+     El asesor decide en el paso 7 a qué pilar lo asigna. */
+  const capDisp     = suma(p=>p.disponible);
+  const noLiqDisp   = suma(p=>p.disponible && p.clase==='noliquido');
   const activos = liquidos + inversiones + noLiquidos;
 
   const D = analisisDeudas();
@@ -1352,7 +1373,7 @@ function computo(){
   V.forEach(v=>{ if(porPilar[v.pilar]) porPilar[v.pilar][v.tipo] += (v.monto||0); });
 
   return { ing, ingPasivo, porCat, gastos, gEsencial, gNoEsencial, gVida, fcl, libre, extras,
-    liquidos, inversiones, noLiquidos, capDisp, activos, patNeto, patInvertido,
+    liquidos, inversiones, noLiquidos, capDisp, noLiqDisp, activos, patNeto, patInvertido,
     deudas:D, cobertura, primas, necesidad, aniosSost, M3S, metasCli, metasMonto, metasAporte,
     ahorro, I, puntajes:{ pLiq, pEnd, pAho, pPro, pAva }, score,
     asigMensual, asigExtra, asigCapital, porPilar };
@@ -1387,6 +1408,7 @@ function calcularTodo(){
   setTxt('k-inv', fmt(C.inversiones));
   setTxt('k-noliq', fmt(C.noLiquidos));
   setTxt('k-capdisp', fmt(C.capDisp));
+  setTxt('k-capdisp-sub', C.noLiqDisp > 0 ? 'incluye ' + fmt(C.noLiqDisp) + ' de activos no líquidos' : 'todo lo marcado como disponible');
   setTxt('k-deuda', fmt(C.deudas.saldo));
   setTxt('k-cuota', fmt(C.deudas.cuota));
   setTxt('k-cuota-sub', C.ing > 0 ? pctTxt(C.I.cargaDeuda) + ' del ingreso · entra al flujo' : 'entra al flujo de caja');
@@ -1493,6 +1515,28 @@ function pintarAlertasDeuda(C){
   }
   box.innerHTML = h;
 }
+/* Aporte mensual sugerido por pilar: flujo libre × % del paso 4 */
+function sugeridoMensual(C, p){
+  const B = baseCamino(C);
+  return Math.max(0, C.fcl) * B.rep[p] / 100;
+}
+function cargarReparto(){
+  const C = computo();
+  const ya = S.propuesta.vehiculos.some(v=> v.tipo === 'mensual' && v.monto > 0);
+  if(ya && !confirm('Ya hay aportes mensuales en la propuesta. ¿Agregar además las líneas del reparto del paso 4?')) return;
+  const nom = { s1:'Fondo de imprevistos', s2:'Retiro y protección', s3:'Crecimiento' };
+  const meta = { s1:'m_s1', s2:'m_s2', s3:'m_s3' };
+  let n = 0;
+  ['s1','s2','s3'].forEach(p=>{
+    const m = Math.round(sugeridoMensual(C, p) / 1000) * 1000;
+    if(m <= 0) return;
+    S.propuesta.vehiculos.push({ id:'v_'+Date.now()+p, pilar:p, tipo:'mensual', nombre:nom[p], monto:m, mes:1, metaId:meta[p] });
+    n++;
+  });
+  if(!n){ showToast('No hay flujo mensual para repartir.'); return; }
+  renderVh(); calcularTodo(); renderMatriz(filtroMatriz); guardar();
+  showToast('Reparto cargado. Ahora cambia cada línea por el producto concreto.');
+}
 function pintarPilaresResumen(C){
   const box = $('pilares-resumen'); if(!box) return;
   const metas = { s1:C.M3S.s1ideal, s2:C.M3S.vpS2, s3:C.M3S.vpS3 };
@@ -1500,9 +1544,13 @@ function pintarPilaresResumen(C){
   box.innerHTML = ['s1','s2','s3'].map(p=>{
     const a = C.porPilar[p];
     const tot = a.mensual + a.extra + a.capital;
+    const sug = sugeridoMensual(C, p), dif = a.mensual - sug;
+    const difTxt = sug <= 0 && a.mensual <= 0 ? '' : Math.abs(dif) < 1000 ? ' · <span class="text-green">en línea</span>'
+      : ' · <span class="' + (dif > 0 ? 'text-orange' : 'text-red') + '">' + (dif > 0 ? '+' : '−') + fmt(Math.abs(dif)) + '</span>';
     return `<div class="kc"><div class="klbl">${PILAR_LBL[p]}</div>
       <div class="kval ${col[p]}">${fmt(tot)}</div>
-      <div class="ksub">${fmt(a.mensual)}/mes · ${fmt(a.extra)} extra · ${fmt(a.capital)} disponible<br>Meta: ${fmt(metas[p])}</div></div>`;
+      <div class="ksub">${fmt(a.mensual)}/mes · ${fmt(a.extra)} extra · ${fmt(a.capital)} disponible<br>
+      Sugerido (paso 4): ${fmt(sug)}/mes${difTxt}<br>Meta: ${fmt(metas[p])}</div></div>`;
   }).join('');
 }
 
@@ -1583,43 +1631,65 @@ function renderMatriz(filtro){
 /* ══════════ CAMINO HACIA LA RENTA PASIVA ══════════
    Todo en pesos de hoy: la rentabilidad se usa descontada la inflación (tasa real) y
    los aportes se asumen ajustados cada año con la inflación.
-   Primero se completa el fondo de imprevistos (S1) y el resto se acumula hacia la meta 120×. */
+   El aporte se reparte entre S1, S2 y S3 al mismo tiempo según los porcentajes del paso 4.
+   S1 recibe su parte hasta completar el fondo de imprevistos; después ese porcentaje pasa a S2 y S3,
+   que acumulan hacia la meta 120×. */
+/* Reparto sugerido: con S1 incompleto 30/40/30; con S1 completo todo a S2 y S3 en proporción 70:50 */
+function repartoSug(gap){ return gap > 0 ? { s1:30, s2:40, s3:30 } : { s1:0, s2:58, s3:42 }; }
+function repartoActivo(gap){
+  const r = S.params.reparto || {};
+  return r.auto ? repartoSug(gap) : { s1:numTxt(r.s1), s2:numTxt(r.s2), s3:numTxt(r.s3) };
+}
+function updReparto(p, v){
+  const r = S.params.reparto, act = repartoActivo(baseCamino(computo()).gap);
+  if(r.auto){ r.s1 = act.s1; r.s2 = act.s2; r.s3 = act.s3; r.auto = false; }
+  r[p] = Math.max(0, Math.min(100, numTxt(v)));
+  calcularTodo(); guardar();
+}
+function repartoSugerido(){
+  S.params.reparto.auto = true;
+  calcularTodo(); guardar();
+}
 function tasaReal(){
   const r = numTxt(S.params.tasadesc)/100, i = numTxt(S.params.inflacion)/100;
   return Math.pow((1+r)/(1+i), 1/12) - 1;
 }
 function baseCamino(C){
+  const gap = Math.max(0, C.M3S.s1ideal - C.liquidos);
+  const r = repartoActivo(gap);
   return {
     K0: C.inversiones + Math.max(0, C.liquidos - C.M3S.s1ideal),
-    gap: Math.max(0, C.M3S.s1ideal - C.liquidos),
+    gap: gap,
     target: C.M3S.vpTot,
     A0: Math.max(0, C.fcl) + C.extras/12,
-    rr: tasaReal()
+    rr: tasaReal(),
+    /* Si los % suman más de 100, la proyección no reparte más dinero del que hay */
+    p1: r.s1/Math.max(100, r.s1+r.s2+r.s3), p23: (r.s2 + r.s3)/Math.max(100, r.s1+r.s2+r.s3), rep: r
   };
+}
+/* Un mes de aportes: S1 toma su parte hasta llenar el fondo; lo demás va a S2+S3 */
+function pasoMes(B, A, st){
+  st.K *= (1 + B.rr);
+  const aS1 = A * B.p1;
+  const aFondo = Math.min(aS1, st.g);
+  st.g -= aFondo;
+  st.K += A * B.p23 + (aS1 - aFondo);
 }
 function simMeses(B, A, maxM){
   maxM = maxM || 720;
   if(B.target <= 0) return null;
-  let K = B.K0, g = B.gap;
-  if(K >= B.target && g <= 0) return 0;
+  const st = { K:B.K0, g:B.gap };
+  if(st.K >= B.target) return 0;
   for(let m=1; m<=maxM; m++){
-    K *= (1 + B.rr);
-    let a = A;
-    if(g > 0){ const t = Math.min(a,g); g -= t; a -= t; }
-    K += a;
-    if(g <= 0 && K >= B.target) return m;
+    pasoMes(B, A, st);
+    if(st.K >= B.target) return m;
   }
   return null;
 }
 function capitalEn(B, A, meses){
-  let K = B.K0, g = B.gap;
-  for(let m=1; m<=meses; m++){
-    K *= (1 + B.rr);
-    let a = A;
-    if(g > 0){ const t = Math.min(a,g); g -= t; a -= t; }
-    K += a;
-  }
-  return K;
+  const st = { K:B.K0, g:B.gap };
+  for(let m=1; m<=meses; m++) pasoMes(B, A, st);
+  return st.K;
 }
 function aporteRequerido(B, n){
   if(n <= 0 || B.target <= 0) return null;
@@ -1762,22 +1832,39 @@ function renderCamino(C){
   }
   if($('cam-palancas')) $('cam-palancas').innerHTML = tablaPalancas(Z);
 
-  const dis = $('cam-distrib');
-  if(dis){
-    if(B.A0 > 0 && C.ing > 0){
-      const mS1 = B.gap > 0 ? Math.ceil(B.gap / B.A0) : 0;
-      dis.innerHTML = '<table class="rtable"><tr><th>Pilar</th><th>Cómo se usa tu aporte</th><th ' + TH + '>Por mes</th></tr>' +
-        (B.gap > 0 ? '<tr><td>S1 — Seguridad</td><td>Primero se completa el fondo de imprevistos (faltan ' + fmt(B.gap) + '): ' + fmtTiempo(mS1) + '</td><td ' + TH + '>' + fmt(Math.min(B.A0, B.gap)) + '</td></tr>'
-          : '<tr><td>S1 — Seguridad</td><td>Fondo de imprevistos completo</td><td ' + TH + '>—</td></tr>') +
-        '<tr><td>S2 — Solidez (70 de cada 120)</td><td>Retiro y protección de la familia</td><td ' + TH + '>' + fmt(B.A0 * 70/120) + '</td></tr>' +
-        '<tr><td>S3 — Sinergia (50 de cada 120)</td><td>Crecimiento con diversificación y tiempo</td><td ' + TH + '>' + fmt(B.A0 * 50/120) + '</td></tr></table>' +
-        '<div class="ksub" style="margin-top:10px">Una vez completo S1, el aporte se reparte entre S2 y S3 en la proporción de la metodología. El monto por mes de S2 y S3 corresponde a ese reparto.</div>';
-    } else dis.innerHTML = '';
-  }
+  pintarReparto(B);
 
   const pp = $('cam-prop');
   if(pp) pp.innerHTML = textoCamino(Z, C, true).map((t,i)=> '<div class="ibox" style="margin-bottom:16px">' + t + '</div>').join('') +
     (C.ing > 0 ? '<div class="ctit-sub" style="margin-top:8px">Cuánto adelantas con cada mejora</div>' + tablaPalancas(Z) : '');
+}
+
+function pintarReparto(B){
+  if(!$('rep-s1')) return;
+  const r = B.rep, A = B.A0;
+  ['s1','s2','s3'].forEach(p=>{
+    const el = $('rep-'+p);
+    if(document.activeElement !== el) el.value = Math.round(r[p]*10)/10;
+    const c = $('rep-'+p+'-m'); if(c) c.innerHTML = '<b>' + fmt(A * r[p]/100) + '</b>';
+  });
+  const tot = r.s1 + r.s2 + r.s3;
+  const tEl = $('rep-tot');
+  if(tEl){ tEl.textContent = pctTxt(tot); tEl.className = Math.abs(tot-100) < 0.05 ? 'text-green' : 'text-red'; tEl.style.textAlign = 'right'; }
+  setTxt('rep-tot-m', fmt(A * tot/100));
+  const aS1 = A * r.s1/100;
+  let t1;
+  if(B.gap <= 0) t1 = 'Fondo de imprevistos completo' + (r.s1 > 0 ? '. Su porcentaje pasa a S2 y S3.' : '.');
+  else if(aS1 <= 0) t1 = 'Fondo de imprevistos: faltan ' + fmt(B.gap) + ' y no está recibiendo aporte.';
+  else t1 = 'Fondo de imprevistos: faltan ' + fmt(B.gap) + '. Se completa en ' + fmtTiempo(Math.ceil(B.gap / aS1)) + ' y luego su porcentaje pasa a S2 y S3.';
+  setTxt('rep-s1-txt', t1);
+  const av = $('rep-aviso');
+  if(av){
+    if(Math.abs(tot-100) >= 0.05) av.innerHTML = '<div class="ibox warn" style="margin:16px 0 0">Los porcentajes suman ' + pctTxt(tot) + '. ' + (tot < 100 ? 'Queda ' + pctTxt(100-tot) + ' del aporte sin pilar (' + fmt(A*(100-tot)/100) + ' al mes).' : 'Se está repartiendo más del 100% del aporte.') + ' Ajusta para que sumen 100%.</div>';
+    else if(B.gap > 0 && r.s1 <= 0) av.innerHTML = '<div class="ibox warn" style="margin:16px 0 0">El fondo de imprevistos no está completo y S1 no recibe aporte. Ante una emergencia el cliente tendría que endeudarse o sacar dinero de S2 o S3.</div>';
+    else if(A <= 0) av.innerHTML = '<div class="ibox" style="margin:16px 0 0">Hoy no hay aporte mensual disponible. Los porcentajes quedan listos para cuando se libere flujo.</div>';
+    else av.innerHTML = '';
+  }
+  setTxt('rep-modo', S.params.reparto.auto ? 'Usando el reparto sugerido' : 'Reparto personalizado');
 }
 
 /* ══════════ GRÁFICO DE GASTOS ══════════ */
@@ -2024,6 +2111,7 @@ function normalizar(s){
   const base = estadoVacio();
   const out = Object.assign(base, s);
   out.params = Object.assign(base.params, s.params||{});
+  out.params.reparto = Object.assign(estadoVacio().params.reparto, (s.params||{}).reparto||{});
   out.patrimonio = Object.assign(base.patrimonio, s.patrimonio||{});
   out.propuesta = Object.assign(base.propuesta, s.propuesta||{});
   out.propuesta.notas = Object.assign({s1:'',s2:'',s3:''}, (s.propuesta||{}).notas||{});
