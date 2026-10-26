@@ -215,7 +215,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
 .fc-det{font-size:12px; color:var(--text-sub)}
 .fc-bar{height:6px; background:var(--border-light); border-radius:3px; margin-top:12px; overflow:hidden}
 .fc-fill{height:100%; border-radius:3px; transition:width .4s}
-/* "Con qué se cuenta" queda fijo debajo de la cabecera en el paso 7 */
+/* "Con qué se cuenta" queda fijo debajo de la cabecera en el paso 6 (propuesta) */
 .fc-sticky{position:sticky; top:var(--hdr-h,72px); z-index:50; transition:padding .2s, box-shadow .2s}
 .fc-sticky.stuck{padding-top:14px; padding-bottom:14px; box-shadow:0 8px 24px rgba(0,0,0,.10)}
 .fc-sticky.stuck .ctit{font-size:13px; margin-bottom:10px; color:var(--text-sub)}
@@ -227,6 +227,27 @@ input[readonly]{opacity:.6; cursor:not-allowed}
 /* Campo "Otro" editable */
 .pct-box{display:inline-flex; align-items:center; gap:6px; justify-content:flex-end}
 .pct-in{width:84px; text-align:right; padding:8px 10px}
+.tag-liq{display:inline-block; font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; background:#E6F7EC; color:#1E8E3E}
+.tag-noliq{background:#FFF1E0; color:#C25E00}
+.tag-over{background:#FFE5E3; color:var(--apple-red)}
+.vh-tag{margin-top:6px}
+.vh-tag:empty{display:none}
+.deep{margin-bottom:24px}
+.deep>summary{list-style:none; cursor:pointer; background:var(--bg-card); border-radius:20px; padding:22px 32px;
+  display:flex; justify-content:space-between; align-items:center; gap:16px}
+.deep>summary::-webkit-details-marker{display:none}
+.deep>summary:hover{background:#FAFAFC}
+.deep-sub{display:block; font-size:13px; color:var(--text-sub); margin-top:4px; font-weight:400}
+.deep-chev{color:var(--text-sub); font-size:12px; transition:transform .2s}
+.deep>summary{box-shadow:0 4px 24px rgba(0,0,0,.03)}
+.deep[open] .deep-chev{transform:rotate(180deg)}
+.deep-body{padding-top:24px}
+.meta-box{border:1px solid var(--border-light); border-radius:14px; padding:12px 12px 10px; margin-bottom:12px}
+.meta-box .rowt{border-bottom:none; padding:0; margin:0}
+.meta-sub{display:flex; flex-wrap:wrap; align-items:center; gap:8px 20px; margin-top:10px; padding-top:10px;
+  border-top:1px dashed var(--border-light); font-size:13px; color:var(--text-sub)}
+.meta-sub select{width:auto; min-width:220px; padding:8px 10px; font-size:13px}
+.meta-sub b{color:var(--text-main)}
 .otro-wrap{position:relative}
 .otro-wrap input{padding-right:40px}
 .otro-x{position:absolute; right:6px; top:50%; transform:translateY(-50%); border:none; background:transparent;
@@ -308,10 +329,9 @@ input[readonly]{opacity:.6; cursor:not-allowed}
     <span class="tab" id="tab1" onclick="goTab(1)"><span class="sn">1</span>Cliente</span>
     <span class="tab" id="tab2" onclick="goTab(2)"><span class="sn">2</span>Presupuesto</span>
     <span class="tab" id="tab3" onclick="goTab(3)"><span class="sn">3</span>Patrimonio</span>
-    <span class="tab" id="tab4" onclick="goTab(4)"><span class="sn">4</span>Estrategia 3S</span>
-    <span class="tab" id="tab5" onclick="goTab(5)"><span class="sn">5</span>Metas</span>
-    <span class="tab" id="tab6" onclick="goTab(6)"><span class="sn">6</span>Diagnóstico</span>
-    <span class="tab" id="tab7" onclick="goTab(7)"><span class="sn">7</span>Propuesta</span>
+    <span class="tab" id="tab4" onclick="goTab(4)"><span class="sn">4</span>Estrategia y metas</span>
+    <span class="tab" id="tab5" onclick="goTab(5)"><span class="sn">5</span>Diagnóstico</span>
+    <span class="tab" id="tab6" onclick="goTab(6)"><span class="sn">6</span>Propuesta</span>
   </div>
 </div>
 <div class="pbar" id="pbar" style="display:none"><div class="pfill" id="pfill" style="width:14%"></div></div>
@@ -446,7 +466,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
 
   <div class="card">
     <div class="ctit">Ahorro e inversión actual</div>
-    <div class="ibox">Lo que el cliente ya separa cada mes: cuenta de ahorros, CDT, fondos, pensión voluntaria, acciones. Sale del flujo libre y alimenta el indicador de ahorro. El saldo acumulado de esas cuentas va en el paso 3 (patrimonio).</div>
+    <div class="ibox">Lo que el cliente ya separa cada mes: cuenta de ahorros, CDT, fondos, pensión voluntaria, acciones. Sale del flujo libre y alimenta el indicador de ahorro. El saldo acumulado de esas cuentas va en el paso 3 (patrimonio). Si el ahorro es para una meta concreta, lo conectas con ella en el paso 4.</div>
     <div class="rowhead"><span style="flex:2">Concepto</span><span style="flex:1.8">Dónde lo guarda</span><span style="flex:1.4">Valor</span><span style="flex:1.3">Cada cuánto</span><span style="width:46px"></span></div>
     <div id="list-ahorros"></div>
     <button class="btn-add" onclick="addAhorro()">+ Añadir ahorro</button>
@@ -478,7 +498,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
 <div class="pnl" id="pnl-3">
   <div class="card">
     <div class="ctit">Patrimonio: qué tiene y qué es líquido</div>
-    <div class="ibox">Una sola lista para todo lo que el cliente posee. La <b>clase</b> define si el dinero es líquido o está inmovilizado, y la casilla <b>disponible</b> marca lo que se puede usar en la propuesta o en una emergencia. El capital disponible suma todo lo marcado, <b>aunque no sea líquido</b> (por ejemplo, cesantías). Ese total llega al paso 7 como <b>Dinero disponible</b>, y ahí decides a qué pilar y producto asignarlo.</div>
+    <div class="ibox">Una sola lista para todo lo que el cliente posee. La <b>clase</b> define si el dinero es líquido o está inmovilizado, y la casilla <b>disponible</b> marca lo que se puede usar en la propuesta o en una emergencia. El capital disponible suma todo lo marcado, <b>aunque no sea líquido</b> (por ejemplo, cesantías). Ese total llega al paso 6 como <b>Patrimonio disponible</b>: ahí eliges de qué activo sale cada línea y la tabla muestra si es líquido o no.</div>
     <div class="rowhead"><span style="flex:1.3">Clase</span><span style="flex:1.9">Nombre</span><span style="flex:1.6">Vehículo</span><span style="flex:1.4">Valor</span><span style="flex:1">Disponible</span><span style="width:46px"></span></div>
     <div id="list-patrimonio"></div>
     <div class="btn-group" style="margin-top:8px">
@@ -507,19 +527,52 @@ input[readonly]{opacity:.6; cursor:not-allowed}
   <div class="navrow"><button class="btn btn-o" onclick="goTab(2)">Volver</button><button class="btn btn-p" onclick="goTab(4)">Continuar a la estrategia</button></div>
 </div>
 
-<!-- ═════════ 4. ESTRATEGIA 3S ═════════ -->
+<!-- ═════════ 4. ESTRATEGIA Y METAS ═════════ -->
 <div class="pnl" id="pnl-4">
   <div class="card">
-    <div class="ctit">Parámetros de acumulación</div>
-    <div class="ibox">El destino es acumular 120 veces el ingreso mensual (70× en Solidez y 50× en Sinergia), pero el camino se calcula desde lo que el cliente puede aportar hoy. Con su flujo de caja, el sistema proyecta en cuánto tiempo llega y qué pasa si lo mejora. Todo se expresa en pesos de hoy, ya descontada la inflación.</div>
-    <div class="g4">
-      <div><label for="inflacion">Inflación esperada (% E.A.)</label><input type="number" step="0.1" id="inflacion" value="4.5"></div>
-      <div><label for="tasadesc">Rentabilidad esperada (% E.A.)</label><input type="number" step="0.1" id="tasadesc" value="8"></div>
-      <div><label for="anios_acum">Años para acumular</label><input type="text" id="anios_acum" readonly value="0"></div>
-      <div><label for="mult_inf">Multiplicador de inflación</label><input type="text" id="mult_inf" readonly value="1,00x"></div>
+    <div class="ctit">Hacia dónde se distribuye el dinero: los 3 pilares</div>
+    <div class="ibox">Los tres pilares reciben dinero <b>al mismo tiempo</b>. Define el porcentaje de cada uno; cuando S1 completa el fondo de imprevistos, su parte pasa a S2 y S3. En el paso 6 eliges el producto de cada pilar.</div>
+    <div id="cam-distrib">
+      <table class="rtable">
+        <tr><th>Pilar</th><th>Meta (pesos de hoy)</th><th style="text-align:right">% del aporte</th><th style="text-align:right">Por mes</th></tr>
+        <tr><td style="white-space:nowrap"><b class="text-green">S1 — Seguridad</b> <span class="tip" tabindex="0">i<span class="tipbox"><b>Características</b>
+            <ul><li>Dinero disponible en máximo 72 horas</li><li>Rentabilidad por encima de la inflación</li><li>Perfil conservador o moderado</li><li>No busca crecer el patrimonio: evita endeudarse en una emergencia</li></ul></span></span><div class="ksub">Fondo de imprevistos</div></td>
+          <td><b class="text-green" id="s1-meta">$0</b> <span class="ksub">(3× a 6×)</span><div class="ksub"><span id="rep-s1-txt">—</span></div></td>
+          <td style="text-align:right"><div class="pct-box"><input type="number" class="pct-in" id="rep-s1" min="0" max="100" step="1" oninput="updReparto('s1',this.value)"><span>%</span></div></td><td style="text-align:right" id="rep-s1-m"><b>$0</b></td></tr>
+        <tr><td style="white-space:nowrap"><b class="text-blue">S2 — Solidez</b> <span class="tip" tabindex="0">i<span class="tipbox"><b>Características</b>
+            <ul><li>Capital cerrado, no disponible en el corto plazo</li><li>Blindaje tributario, patrimonial y civil</li><li>Horizonte mínimo de 10 años</li><li>Pensado para el retiro y la protección de los dependientes</li></ul></span></span><div class="ksub">Retiro y protección de la familia</div></td>
+          <td><b class="text-blue" id="s2-vp">$0</b> <span class="ksub">(50×)</span><div class="ksub">Al retiro: <span id="s2-vf">$0</span></div></td>
+          <td style="text-align:right"><div class="pct-box"><input type="number" class="pct-in" id="rep-s2" min="0" max="100" step="1" oninput="updReparto('s2',this.value)"><span>%</span></div></td><td style="text-align:right" id="rep-s2-m"><b>$0</b></td></tr>
+        <tr><td style="white-space:nowrap"><b class="text-orange">S3 — Sinergia</b> <span class="tip" tabindex="0">i<span class="tipbox"><b>Características</b>
+            <ul><li>Captura de rentabilidad en mercados financieros</li><li>Interés compuesto en el tiempo</li><li>Diversificación por clases de activo y geografías</li><li>Estructura por horizontes, con gestión pasiva</li></ul></span></span><div class="ksub">Crecimiento con diversificación y tiempo</div></td>
+          <td><b class="text-orange" id="s3-vp">$0</b> <span class="ksub">(70×)</span><div class="ksub">Al retiro: <span id="s3-vf">$0</span></div></td>
+          <td style="text-align:right"><div class="pct-box"><input type="number" class="pct-in" id="rep-s3" min="0" max="100" step="1" oninput="updReparto('s3',this.value)"><span>%</span></div></td><td style="text-align:right" id="rep-s3-m"><b>$0</b></td></tr>
+        <tr class="tot"><td colspan="2">Total del aporte mensual</td><td style="text-align:right" id="rep-tot">100%</td><td style="text-align:right" id="rep-tot-m">$0</td></tr>
+      </table>
     </div>
-    <div class="g3" style="margin-bottom:0">
-      <div><label for="rentaRet">Rentabilidad en la etapa de renta (% E.A.)</label><input type="number" step="0.1" id="rentaRet" value="8"></div>
+    <div id="rep-aviso"></div>
+    <div class="btn-group" style="margin-top:12px; align-items:center"><button class="btn-add" onclick="repartoSugerido()">Usar reparto sugerido</button><span class="ksub" id="rep-modo"></span></div>
+    <div class="krow">
+      <div class="kc"><div class="klbl">Total a acumular hoy · 120×</div><div class="kval" id="k-vp-tot">$0</div></div>
+      <div class="kc"><div class="klbl">Valor futuro al retiro</div><div class="kval text-blue" id="k-vf-tot">$0</div><div class="ksub" id="k-vf-sub">—</div></div>
+      <div class="kc"><div class="klbl">Avance actual</div><div class="kval text-green" id="k-avance">0%</div><div class="ksub" id="k-avance-sub">líquidos + inversiones sobre la meta</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Metas personales del cliente</div>
+    <div class="ibox">Vivienda, carro, viaje, educación: cada meta se financia desde un pilar. Si el cliente <b>ya tiene algo ahorrado</b> o <b>ya ahorra cada mes</b> para ella (sección Ahorro del paso 2), regístralo aquí y el aporte se calcula solo sobre lo que falta. El ahorro para una meta nunca va como gasto.</div>
+    <div class="rowhead">
+      <span style="flex:1">Pilar</span><span style="flex:2">Meta</span><span style="flex:1.5">Monto hoy</span><span style="flex:1.5">Ya ahorrado</span>
+      <span style="flex:1.3">Fecha objetivo</span><span style="flex:.8">Rent. %</span><span style="width:46px"></span>
+    </div>
+    <div id="list-metas"></div>
+    <button class="btn-add" onclick="addMeta()">+ Añadir meta</button>
+    <div id="metas-aviso"></div>
+    <div class="krow">
+      <div class="kc"><div class="klbl">Aporte que piden las metas</div><div class="kval" id="k-metas-cuota">$0</div><div class="ksub" id="k-metas-sub">—</div></div>
+      <div class="kc"><div class="klbl">Ya cubierto con su ahorro</div><div class="kval text-green" id="k-metas-hoy">$0</div><div class="ksub">ahorros del paso 2 conectados</div></div>
+      <div class="kc"><div class="klbl">Falta por cubrir al mes</div><div class="kval" id="k-metas-falta">$0</div><div class="ksub" id="k-metas-falta-sub">—</div></div>
     </div>
   </div>
 
@@ -532,6 +585,24 @@ input[readonly]{opacity:.6; cursor:not-allowed}
       <div class="kc"><div class="klbl">Renta pasiva estimada</div><div class="kval text-orange" id="cam-renta">$0</div><div class="ksub" id="cam-renta-sub">—</div></div>
     </div>
     <div id="cam-req" style="margin-top:20px"></div>
+  </div>
+
+  <details class="deep" id="deep-3s">
+    <summary><span><b>Profundizar</b><span class="deep-sub">Parámetros, proyección por plazos y cómo acortar el camino</span></span><span class="deep-chev">▼</span></summary>
+    <div class="deep-body">
+
+  <div class="card">
+    <div class="ctit">Parámetros de acumulación</div>
+    <div class="ibox">El destino es acumular 120 veces el ingreso mensual (50× en Solidez y 70× en Sinergia), pero el camino se calcula desde lo que el cliente puede aportar hoy. Con su flujo de caja, el sistema proyecta en cuánto tiempo llega y qué pasa si lo mejora. Todo se expresa en pesos de hoy, ya descontada la inflación.</div>
+    <div class="g4">
+      <div><label for="inflacion">Inflación esperada (% E.A.)</label><input type="number" step="0.1" id="inflacion" value="4.5"></div>
+      <div><label for="tasadesc">Rentabilidad esperada (% E.A.)</label><input type="number" step="0.1" id="tasadesc" value="8"></div>
+      <div><label for="anios_acum">Años para acumular</label><input type="text" id="anios_acum" readonly value="0"></div>
+      <div><label for="mult_inf">Multiplicador de inflación</label><input type="text" id="mult_inf" readonly value="1,00x"></div>
+    </div>
+    <div class="g3" style="margin-bottom:0">
+      <div><label for="rentaRet">Rentabilidad en la etapa de renta (% E.A.)</label><input type="number" step="0.1" id="rentaRet" value="8"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -551,87 +622,14 @@ input[readonly]{opacity:.6; cursor:not-allowed}
     <div class="ctit-sub">Cuánto adelantas con cada mejora</div>
     <div id="cam-palancas"></div>
   </div>
+    </div>
+  </details>
 
-  <div class="card">
-    <div class="ctit">Hacia dónde se distribuye el dinero: los tres pilares</div>
-    <div class="ibox">Define qué porcentaje del aporte mensual va a cada pilar. <b>Los tres pilares reciben dinero al mismo tiempo.</b> Cuando S1 completa el fondo de imprevistos, su porcentaje pasa a S2 y S3. Este reparto es la guía: en el paso 7 eliges el producto concreto de cada pilar y ajustas los montos.</div>
-    <div id="cam-distrib" style="margin-bottom:24px">
-      <table class="rtable">
-        <tr><th>Pilar</th><th>Para qué</th><th style="text-align:right">% del aporte</th><th style="text-align:right">Por mes</th></tr>
-        <tr><td style="white-space:nowrap"><b class="text-green">S1 — Seguridad</b></td><td id="rep-s1-txt">Fondo de imprevistos</td>
-          <td style="text-align:right"><div class="pct-box"><input type="number" class="pct-in" id="rep-s1" min="0" max="100" step="1" oninput="updReparto('s1',this.value)"><span>%</span></div></td><td style="text-align:right" id="rep-s1-m"><b>$0</b></td></tr>
-        <tr><td style="white-space:nowrap"><b class="text-blue">S2 — Solidez</b></td><td>Retiro y protección de la familia</td>
-          <td style="text-align:right"><div class="pct-box"><input type="number" class="pct-in" id="rep-s2" min="0" max="100" step="1" oninput="updReparto('s2',this.value)"><span>%</span></div></td><td style="text-align:right" id="rep-s2-m"><b>$0</b></td></tr>
-        <tr><td style="white-space:nowrap"><b class="text-orange">S3 — Sinergia</b></td><td>Crecimiento con diversificación y tiempo</td>
-          <td style="text-align:right"><div class="pct-box"><input type="number" class="pct-in" id="rep-s3" min="0" max="100" step="1" oninput="updReparto('s3',this.value)"><span>%</span></div></td><td style="text-align:right" id="rep-s3-m"><b>$0</b></td></tr>
-        <tr class="tot"><td colspan="2">Total del aporte mensual</td><td style="text-align:right" id="rep-tot">100%</td><td style="text-align:right" id="rep-tot-m">$0</td></tr>
-      </table>
-      <div id="rep-aviso"></div>
-      <div class="btn-group" style="margin-top:12px; align-items:center"><button class="btn-add" onclick="repartoSugerido()">Usar reparto sugerido</button><span class="ksub" id="rep-modo"></span></div>
-    </div>
-    <div class="pilar" id="pil-s1">
-      <div class="p-left">
-        <div class="p-name">🛡️ S1 — Seguridad
-          <span class="tip" tabindex="0">i<span class="tipbox"><b>Características</b>
-            <ul><li>Dinero disponible en máximo 72 horas</li><li>Rentabilidad por encima de la inflación</li><li>Perfil conservador o moderado</li><li>No busca crecer el patrimonio: evita endeudarse en una emergencia</li></ul></span></span>
-        </div>
-        <div class="p-obj">Tener entre 3 y 6 veces el ingreso mensual disponible para imprevistos.</div>
-      </div>
-      <div class="p-right"><div class="p-mlbl">Meta</div><div class="p-mval text-green" id="s1-meta">$0 – $0</div><div class="p-vf" id="s1-hoy">Hoy tiene $0</div></div>
-    </div>
-    <div class="pilar p2" id="pil-s2">
-      <div class="p-left">
-        <div class="p-name">🏛️ S2 — Solidez
-          <span class="tip" tabindex="0">i<span class="tipbox"><b>Características</b>
-            <ul><li>Capital cerrado, no disponible en el corto plazo</li><li>Blindaje tributario, patrimonial y civil</li><li>Horizonte mínimo de 10 años</li><li>Pensado para el retiro y la protección de los dependientes</li></ul></span></span>
-        </div>
-        <div class="p-obj">Acumular 70 veces el ingreso mensual para el retiro y la protección de la familia.</div>
-      </div>
-      <div class="p-right"><div class="p-mlbl">Valor hoy · 70×</div><div class="p-mval text-blue" id="s2-vp">$0</div><div class="p-vf">Al retiro: <b id="s2-vf">$0</b></div></div>
-    </div>
-    <div class="pilar p3" id="pil-s3">
-      <div class="p-left">
-        <div class="p-name">📈 S3 — Sinergia
-          <span class="tip" tabindex="0">i<span class="tipbox"><b>Características</b>
-            <ul><li>Captura de rentabilidad en mercados financieros</li><li>Interés compuesto en el tiempo</li><li>Diversificación por clases de activo y geografías</li><li>Estructura por horizontes, con gestión pasiva</li></ul></span></span>
-        </div>
-        <div class="p-obj">Acumular 50 veces el ingreso mensual haciendo crecer el capital con diversificación y tiempo.</div>
-      </div>
-      <div class="p-right"><div class="p-mlbl">Valor hoy · 50×</div><div class="p-mval text-orange" id="s3-vp">$0</div><div class="p-vf">Al retiro: <b id="s3-vf">$0</b></div></div>
-    </div>
-    <div class="krow">
-      <div class="kc"><div class="klbl">Total a acumular hoy · 120×</div><div class="kval" id="k-vp-tot">$0</div></div>
-      <div class="kc"><div class="klbl">Valor futuro al retiro</div><div class="kval text-blue" id="k-vf-tot">$0</div><div class="ksub" id="k-vf-sub">—</div></div>
-      <div class="kc"><div class="klbl">Avance actual</div><div class="kval text-green" id="k-avance">0%</div><div class="ksub" id="k-avance-sub">líquidos + inversiones sobre la meta</div></div>
-    </div>
-  </div>
-
-  <div class="navrow"><button class="btn btn-o" onclick="goTab(3)">Volver</button><button class="btn btn-p" onclick="goTab(5)">Continuar a las metas</button></div>
+  <div class="navrow"><button class="btn btn-o" onclick="goTab(3)">Volver</button><button class="btn btn-p" onclick="goTab(5)">Ver el diagnóstico</button></div>
 </div>
 
-<!-- ═════════ 5. METAS ═════════ -->
+<!-- ═════════ 5. DIAGNÓSTICO ═════════ -->
 <div class="pnl" id="pnl-5">
-  <div class="card">
-    <div class="ctit">Metas del cliente</div>
-    <div class="ibox">Las tres primeras metas son las de la estrategia 3S y se calculan solas con el ingreso. Debajo agrega las metas concretas del cliente: vivienda, carro, viaje, educación. Cada una se asocia al pilar que la financia según su horizonte, y el sistema calcula el aporte mensual que exige.</div>
-    <div class="rowhead">
-      <span style="flex:1.1">Pilar</span><span style="flex:2">Meta</span><span style="flex:1.5">Monto hoy</span>
-      <span style="flex:1.2">Fecha objetivo</span><span style="flex:.9">Rent. %</span>
-      <span style="flex:1.4;text-align:right">Valor futuro</span><span style="flex:1.4;text-align:right">Aporte/mes</span><span style="width:46px"></span>
-    </div>
-    <div id="list-metas"></div>
-    <button class="btn-add" onclick="addMeta()">+ Añadir meta</button>
-    <div class="krow">
-      <div class="kc"><div class="klbl">Metas registradas</div><div class="kval text-blue" id="k-nmetas">0</div></div>
-      <div class="kc"><div class="klbl">Monto total de metas</div><div class="kval" id="k-metas-monto">$0</div><div class="ksub">sin contar las metas 3S</div></div>
-      <div class="kc"><div class="klbl">Aporte mensual requerido</div><div class="kval text-green" id="k-metas-cuota">$0</div><div class="ksub" id="k-metas-sub">—</div></div>
-    </div>
-  </div>
-  <div class="navrow"><button class="btn btn-o" onclick="goTab(4)">Volver</button><button class="btn btn-p" onclick="goTab(6)">Ver el diagnóstico</button></div>
-</div>
-
-<!-- ═════════ 6. DIAGNÓSTICO ═════════ -->
-<div class="pnl" id="pnl-6">
   <div id="diag"></div>
   <div class="card">
     <div class="ctit">Entregables</div>
@@ -653,11 +651,11 @@ input[readonly]{opacity:.6; cursor:not-allowed}
       </div>
     </div>
   </div>
-  <div class="navrow"><button class="btn btn-o" onclick="goTab(5)">Volver</button><button class="btn btn-p" onclick="goTab(7)">Construir la propuesta</button></div>
+  <div class="navrow"><button class="btn btn-o" onclick="goTab(4)">Volver</button><button class="btn btn-p" onclick="goTab(6)">Construir la propuesta</button></div>
 </div>
 
 <!-- ═════════ 7. PROPUESTA ═════════ -->
-<div class="pnl" id="pnl-7">
+<div class="pnl" id="pnl-6">
   <div class="card">
     <div class="ctit">Tu camino con esta propuesta</div>
     <div id="cam-prop"></div>
@@ -679,9 +677,10 @@ input[readonly]{opacity:.6; cursor:not-allowed}
         <div class="fc-bar"><div class="fc-fill" id="fc-e-bar" style="background:var(--apple-orange); width:0%"></div></div>
       </div>
       <div class="fc" id="fc-cap">
-        <div class="fc-lbl">Dinero disponible</div>
+        <div class="fc-lbl">Patrimonio disponible</div>
         <div class="fc-dis text-blue" id="fc-c-dis">$0</div>
         <div class="fc-det" id="fc-c-det">—</div>
+        <div class="fc-det" id="fc-c-split"></div>
         <div class="fc-bar"><div class="fc-fill" id="fc-c-bar" style="background:var(--apple-indigo); width:0%"></div></div>
       </div>
     </div>
@@ -691,14 +690,14 @@ input[readonly]{opacity:.6; cursor:not-allowed}
     <div class="ctit">Vehículos de la propuesta</div>
     <div class="ibox">Cada línea es un producto concreto con su pilar, su origen de recursos y la meta que financia. Los totales por pilar y la matriz de meses se arman solos con lo que registres aquí.</div>
     <div class="rowhead">
-      <span style="flex:.9">Pilar</span><span style="flex:1.6">Meta</span><span style="flex:1.3">Origen de recursos</span>
-      <span style="flex:2">Producto financiero</span><span style="flex:1.4">Monto</span><span style="flex:1">Mes</span><span style="width:46px"></span>
+      <span style="flex:.9">Pilar</span><span style="flex:1.4">Meta</span><span style="flex:1.8">Origen de recursos</span>
+      <span style="flex:1.8">Producto financiero</span><span style="flex:1.4">Monto</span><span style="flex:1">Mes</span><span style="width:46px"></span>
     </div>
     <div id="list-vh"></div>
     <div class="btn-group" style="margin-top:8px">
       <button class="btn-add" onclick="addVh('mensual')">+ Aporte mensual</button>
       <button class="btn-add" onclick="addVh('extra')">+ Aporte extraordinario</button>
-      <button class="btn-add" onclick="addVh('capital')">+ Dinero disponible</button>
+      <button class="btn-add" onclick="addVh('capital')">+ Patrimonio disponible</button>
       <button class="btn-add" style="background:var(--apple-blue); color:#fff" onclick="cargarReparto()">Cargar reparto del paso 4</button>
     </div>
     <div class="krow" id="pilares-resumen"></div>
@@ -718,7 +717,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
     <div class="matrix-ctrls">
       <button class="btn-mat bm-mensual act" id="bm-mensual" onclick="renderMatriz('mensual')">Mensual</button>
       <button class="btn-mat bm-nomens" id="bm-extra" onclick="renderMatriz('extra')">Extraordinarios</button>
-      <button class="btn-mat bm-capital" id="bm-capital" onclick="renderMatriz('capital')">Dinero disponible</button>
+      <button class="btn-mat bm-capital" id="bm-capital" onclick="renderMatriz('capital')">Patrimonio</button>
       <button class="btn-mat bm-todos" id="bm-todos" onclick="renderMatriz('todos')">Todos</button>
     </div>
     <div class="matrix-wrap" id="matriz"></div>
@@ -727,13 +726,12 @@ input[readonly]{opacity:.6; cursor:not-allowed}
   <div class="card">
     <div class="ctit">Entregables</div>
     <div class="opts">
-      <label class="opt"><input type="checkbox" id="opt-matriz" checked> Incluir calendario de aportes</label>
-      <label class="opt"><input type="checkbox" id="opt-diag-prop" checked> Incluir indicadores del diagnóstico</label>
+      <label class="opt"><input type="checkbox" id="opt-matriz" checked> Incluir el plan de acción con los productos (página 2)</label>
     </div>
     <div class="deliv">
       <div class="deliv-c">
         <span class="deliv-ico">📘</span>
-        <div style="flex:1"><div class="deliv-t">PDF de la propuesta</div><div class="deliv-s">Recursos, metas 3S, asignación por pilar y calendario de aportes.</div></div>
+        <div style="flex:1"><div class="deliv-t">PDF de la propuesta</div><div class="deliv-s">Una página visual: de tu ingreso a tus tres pilares, y el plan de acción con los productos.</div></div>
         <button class="btn btn-g" onclick="pdfPropuesta()">Descargar</button>
       </div>
       <div class="deliv-c">
@@ -747,7 +745,7 @@ input[readonly]{opacity:.6; cursor:not-allowed}
     </div>
   </div>
 
-  <div class="navrow"><button class="btn btn-o" onclick="goTab(6)">Volver al diagnóstico</button><span></span></div>
+  <div class="navrow"><button class="btn btn-o" onclick="goTab(5)">Volver al diagnóstico</button><span></span></div>
 </div>
 
 </div>
@@ -766,7 +764,7 @@ const PER_F = { mensual:1, trimestral:3, semestral:6, anual:12 };
 const PER_LBL = { mensual:'Mensual', trimestral:'Trimestral', semestral:'Semestral', anual:'Anual' };
 const PILAR_LBL = { s1:'S1 Seguridad', s2:'S2 Solidez', s3:'S3 Sinergia' };
 const CLASE_LBL = { liquido:'Líquido', inversion:'Inversión', noliquido:'No líquido' };
-const ORIGEN_LBL = { mensual:'Flujo mensual', extra:'Extraordinario', capital:'Dinero disponible' };
+const ORIGEN_LBL = { mensual:'Flujo mensual', extra:'Extraordinario', capital:'Patrimonio disponible' };
 const VEHICULOS = ['Cuenta de ahorros','CDT','Fondo de inversión colectiva','Fondo de pensión voluntaria',
   'Seguro de vida con ahorro','Acciones y bolsa','Propiedad raíz','Cesión de derechos fiduciarios',
   'Producto internacional','Fondo de capital privado','Criptomonedas','Otro'];
@@ -909,17 +907,18 @@ function calcEdad(){
 
 /* ─────────── NAVEGACIÓN ─────────── */
 function goTab(n){
-  for(let i=0;i<=7;i++){ const p = $('pnl-'+i); if(p) p.classList.toggle('on', i === n); }
-  for(let i=1;i<=7;i++){
+  for(let i=0;i<=6;i++){ const p = $('pnl-'+i); if(p) p.classList.toggle('on', i === n); }
+  for(let i=1;i<=6;i++){
     const t = $('tab'+i); if(!t) continue;
     t.className = 'tab' + (i === n ? ' on' : (i < n ? ' done' : ''));
   }
   const hay = n > 0;
   $('tabs-wrap').style.display = hay ? 'block' : 'none';
   $('pbar').style.display = hay ? 'block' : 'none';
-  if(hay) $('pfill').style.width = (n/7*100) + '%';
-  if(n === 6) renderDiagnostico();
-  if(n === 7){ renderVh(); renderMatriz(filtroMatriz); }
+  if(hay) $('pfill').style.width = (n/6*100) + '%';
+  if(n === 4) renderMetas();
+  if(n === 5) renderDiagnostico();
+  if(n === 6){ renderVh(); renderMatriz(filtroMatriz); }
   window.scrollTo({ top:0, behavior:'smooth' });
 }
 function nuevaAsesoria(){
@@ -1213,8 +1212,8 @@ function actualizarMetasBase(){
   const ing = ingresoTotal();
   const s1 = S.metas.find(m=>m.id==='m_s1'), s2 = S.metas.find(m=>m.id==='m_s2'), s3 = S.metas.find(m=>m.id==='m_s3');
   if(s1) s1.monto = ing * 6;
-  if(s2) s2.monto = ing * 70;
-  if(s3) s3.monto = ing * 50;
+  if(s2) s2.monto = ing * 50;
+  if(s3) s3.monto = ing * 70;
 }
 function metaMeses(m){
   if(m.id === 'm_s2' || m.id === 'm_s3') return aniosRetiro() * 12;
@@ -1228,55 +1227,75 @@ function metaVF(m){
   const i = (numTxt(S.params.inflacion)) / 100;
   return (m.monto||0) * Math.pow(1 + i, metaMeses(m)/12);
 }
+/* Aporte mensual que pide la meta, descontando lo que ya tiene ahorrado (que también rinde) */
 function metaAporte(m){
   const n = metaMeses(m); if(n <= 0) return 0;
   const r = tem(m.rent != null ? m.rent : S.params.tasadesc);
-  const vf = metaVF(m);
-  return r > 0 ? vf * r / (Math.pow(1+r, n) - 1) : vf / n;
+  const falta = Math.max(0, metaVF(m) - (m.ahorrado||0) * Math.pow(1+r, n));
+  return r > 0 ? falta * r / (Math.pow(1+r, n) - 1) : falta / n;
 }
+/* Ahorro mensual del paso 2 conectado a la meta. Un mismo ahorro solo cuenta para la primera meta que lo use. */
+function metaHoy(m){
+  if(!m.ahorroId) return 0;
+  const a = (S.ahorros||[]).find(x=> x.id === m.ahorroId); if(!a) return 0;
+  const primera = S.metas.find(x=> x.ahorroId === m.ahorroId);
+  return primera === m ? mensual(a) : 0;
+}
+function metaFalta(m){ return Math.max(0, metaAporte(m) - metaHoy(m)); }
 function addMeta(){
-  S.metas.push({ id:'m_'+Date.now(), pilar:'s3', base:false, nombre:'', monto:0, fecha:fechaMas(60), rent:S.params.tasadesc||8 });
+  S.metas.push({ id:'m_'+Date.now(), pilar:'s3', base:false, nombre:'', monto:0, ahorrado:0, ahorroId:'', fecha:fechaMas(60), rent:S.params.tasadesc||8 });
   renderMetas(); guardar();
 }
 function updMeta(i,f,v){
   S.metas[i][f] = v;
   refrescarFilaMeta(i); calcularTodo(); guardar();
   if(f === 'nombre') renderSelectsMeta();
+  if(f === 'ahorroId') renderMetas();
 }
 function delMeta(i){ S.metas.splice(i,1); renderMetas(); calcularTodo(); guardar(); }
 function refrescarFilaMeta(i){
   const m = S.metas[i]; if(!m) return;
   setTxt('vf-meta-'+i, fmt(metaVF(m)));
   setTxt('ap-meta-'+i, fmt(metaAporte(m)));
+  setTxt('hoy-meta-'+i, fmt(metaHoy(m)));
+  const fa = $('falta-meta-'+i);
+  if(fa){ const v = metaFalta(m); fa.textContent = v > 0 ? fmt(v) : 'Cubierta'; fa.className = v > 0 ? 'text-orange' : 'text-green'; }
   const a = $('anios-meta-'+i);
   if(a) a.textContent = (metaMeses(m)/12).toFixed(1).replace('.',',') + ' años';
   const mo = $('monto-meta-'+i);
   if(mo && m.base) mo.value = m.monto ? fmtC(m.monto) : '';
 }
 function renderMetas(){
+  const ahorrosOk = (S.ahorros||[]).filter(x=> x.monto > 0 || x.nombre);
   const h = S.metas.map((m,i)=>{
-    const ro = m.base ? ' readonly' : '';
-    const fechaAuto = (m.id==='m_s2'||m.id==='m_s3');
-    const colPilar = m.pilar==='s1' ? 'var(--apple-green)' : m.pilar==='s2' ? 'var(--apple-blue)' : 'var(--apple-orange)';
-    return `<div class="rowt">
-      <div style="flex:1.1; font-size:13px; font-weight:700; color:${colPilar}">${
-        m.base ? PILAR_LBL[m.pilar].split(' ')[0] + ' ' + PILAR_LBL[m.pilar].split(' ')[1]
-        : `<select onchange="updMeta(${i},'pilar',this.value)" style="padding:10px 8px; font-size:13px">
-            ${Object.keys(PILAR_LBL).map(p=>`<option value="${p}"${m.pilar===p?' selected':''}>${PILAR_LBL[p]}</option>`).join('')}
-           </select>`}</div>
-      <div style="flex:2"><input type="text" placeholder="Ej. Cuota inicial de vivienda" value="${esc(m.nombre)}"${ro} oninput="updMeta(${i},'nombre',this.value)"></div>
-      <div style="flex:1.5" class="pref"><span class="sym">$</span><input type="text" id="monto-meta-${i}" placeholder="0" value="${m.monto?fmtC(m.monto):''}"${ro} ${m.base?'':`oninput="fmtIn(this); updMeta(${i},'monto',numEl(this))"`}></div>
-      <div style="flex:1.2">${ fechaAuto
-        ? `<input type="text" readonly value="${aniosRetiro()} años" title="Se calcula con la edad de retiro">`
-        : `<input type="month" value="${esc(m.fecha)}" onchange="updMeta(${i},'fecha',this.value)">` }
-        <div style="font-size:11px; color:var(--text-sub); margin-top:4px" id="anios-meta-${i}">${(metaMeses(m)/12).toFixed(1).replace('.',',')} años</div></div>
-      <div style="flex:.9"><input type="number" step="0.1" value="${m.rent!=null?m.rent:''}" oninput="updMeta(${i},'rent',numTxt(this.value))"></div>
-      <div style="flex:1.4; text-align:right; font-weight:700" id="vf-meta-${i}">${fmt(metaVF(m))}</div>
-      <div style="flex:1.4; text-align:right; font-weight:700; color:var(--apple-green)" id="ap-meta-${i}">${fmt(metaAporte(m))}</div>
-      <div style="width:46px">${m.base?'':`<button class="btn-del" onclick="delMeta(${i})">✕</button>`}</div>
+    if(m.base) return '';
+    const ops = '<option value="">Ninguno</option>' + ahorrosOk.map(x=>{
+      const otra = S.metas.find(y=> y !== m && y.ahorroId === x.id && S.metas.indexOf(y) < i);
+      return `<option value="${x.id}"${m.ahorroId===x.id?' selected':''}>${esc(x.nombre || dondeTxt(x))} · ${fmt(mensual(x))}/mes${otra?' (ya en otra meta)':''}</option>`;
+    }).join('');
+    return `<div class="meta-box">
+      <div class="rowt">
+        <div style="flex:1"><select onchange="updMeta(${i},'pilar',this.value)" style="padding:10px 8px; font-size:13px">
+          ${Object.keys(PILAR_LBL).map(p=>`<option value="${p}"${m.pilar===p?' selected':''}>${p.toUpperCase()}</option>`).join('')}</select></div>
+        <div style="flex:2"><input type="text" placeholder="Ej. Cuota inicial de vivienda" value="${esc(m.nombre)}" oninput="updMeta(${i},'nombre',this.value)"></div>
+        <div style="flex:1.5" class="pref"><span class="sym">$</span><input type="text" placeholder="0" value="${m.monto?fmtC(m.monto):''}" oninput="fmtIn(this); updMeta(${i},'monto',numEl(this))"></div>
+        <div style="flex:1.5" class="pref"><span class="sym">$</span><input type="text" placeholder="0" value="${m.ahorrado?fmtC(m.ahorrado):''}" oninput="fmtIn(this); updMeta(${i},'ahorrado',numEl(this))"></div>
+        <div style="flex:1.3"><input type="month" value="${esc(m.fecha)}" onchange="updMeta(${i},'fecha',this.value)">
+          <div style="font-size:11px; color:var(--text-sub); margin-top:4px" id="anios-meta-${i}">${(metaMeses(m)/12).toFixed(1).replace('.',',')} años</div></div>
+        <div style="flex:.8"><input type="number" step="0.1" value="${m.rent!=null?m.rent:''}" oninput="updMeta(${i},'rent',numTxt(this.value))"></div>
+        <div style="width:46px"><button class="btn-del" onclick="delMeta(${i})">✕</button></div>
+      </div>
+      <div class="meta-sub">
+        <span>Ahorro actual que la alimenta <select onchange="updMeta(${i},'ahorroId',this.value)">${ops}</select></span>
+        <span>Valor futuro <b id="vf-meta-${i}">${fmt(metaVF(m))}</b></span>
+        <span>Pide <b id="ap-meta-${i}">${fmt(metaAporte(m))}</b>/mes</span>
+        <span>Hoy aporta <b class="text-green" id="hoy-meta-${i}">${fmt(metaHoy(m))}</b></span>
+        <span>Falta <b id="falta-meta-${i}">—</b></span>
+      </div>
     </div>`;
   }).join('');
-  $('list-metas').innerHTML = h;
+  $('list-metas').innerHTML = h || '<div class="empty">Sin metas personales. Agrega vivienda, carro, viaje, educación…</div>';
+  S.metas.forEach((m,i)=>{ if(!m.base) refrescarFilaMeta(i); });
   renderSelectsMeta();
 }
 
@@ -1312,7 +1331,7 @@ function computo(){
   const inversiones = suma(p=>p.clase==='inversion');
   const noLiquidos  = suma(p=>p.clase==='noliquido');
   /* Dinero disponible para la propuesta = todo lo marcado como disponible, sea líquido o no.
-     El asesor decide en el paso 7 a qué pilar lo asigna. */
+     El asesor decide en el paso 6 a qué pilar lo asigna. */
   const capDisp     = suma(p=>p.disponible);
   const noLiqDisp   = suma(p=>p.disponible && p.clase==='noliquido');
   const activos = liquidos + inversiones + noLiquidos;
@@ -1329,12 +1348,14 @@ function computo(){
   const n = aniosRetiro();
   const factor = Math.pow(1+infl, n);
   const M3S = { n, infl, factor, s1min:ing*3, s1ideal:ing*6,
-    vpS2:ing*70, vpS3:ing*50, vpTot:ing*120,
-    vfS2:ing*70*factor, vfS3:ing*50*factor, vfTot:ing*120*factor };
+    vpS2:ing*50, vpS3:ing*70, vpTot:ing*120,
+    vfS2:ing*50*factor, vfS3:ing*70*factor, vfTot:ing*120*factor };
 
   const metasCli = S.metas.filter(m=>!m.base);
   const metasMonto = metasCli.reduce((a,m)=> a + (m.monto||0), 0);
   const metasAporte = metasCli.reduce((a,m)=> a + metaAporte(m), 0);
+  const metasHoy    = metasCli.reduce((a,m)=> a + metaHoy(m), 0);
+  const metasFalta  = metasCli.reduce((a,m)=> a + metaFalta(m), 0);
 
   const ahorro = (S.ahorros||[]).reduce((a,x)=> a + mensual(x), 0);
   const libre  = fcl - ahorro;   /* lo que no tiene destino: se diluye */
@@ -1369,12 +1390,16 @@ function computo(){
   const asigMensual = V.filter(v=>v.tipo==='mensual').reduce((a,v)=> a + (v.monto||0), 0);
   const asigExtra   = V.filter(v=>v.tipo==='extra').reduce((a,v)=> a + (v.monto||0), 0);
   const asigCapital = V.filter(v=>v.tipo==='capital').reduce((a,v)=> a + (v.monto||0), 0);
-  const porPilar = { s1:{mensual:0,extra:0,capital:0}, s2:{mensual:0,extra:0,capital:0}, s3:{mensual:0,extra:0,capital:0} };
-  V.forEach(v=>{ if(porPilar[v.pilar]) porPilar[v.pilar][v.tipo] += (v.monto||0); });
+  const porPilar = { s1:{mensual:0,extra:0,capital:0,capNoLiq:0}, s2:{mensual:0,extra:0,capital:0,capNoLiq:0}, s3:{mensual:0,extra:0,capital:0,capNoLiq:0} };
+  V.forEach(v=>{
+    if(!porPilar[v.pilar]) return;
+    porPilar[v.pilar][v.tipo] += (v.monto||0);
+    if(v.tipo === 'capital'){ const a = activoDe(v); if(a && a.clase === 'noliquido') porPilar[v.pilar].capNoLiq += (v.monto||0); }
+  });
 
   return { ing, ingPasivo, porCat, gastos, gEsencial, gNoEsencial, gVida, fcl, libre, extras,
     liquidos, inversiones, noLiquidos, capDisp, noLiqDisp, activos, patNeto, patInvertido,
-    deudas:D, cobertura, primas, necesidad, aniosSost, M3S, metasCli, metasMonto, metasAporte,
+    deudas:D, cobertura, primas, necesidad, aniosSost, M3S, metasCli, metasMonto, metasAporte, metasHoy, metasFalta,
     ahorro, I, puntajes:{ pLiq, pEnd, pAho, pPro, pAva }, score,
     asigMensual, asigExtra, asigCapital, porPilar };
 }
@@ -1440,15 +1465,18 @@ function calcularTodo(){
   if($('anios_acum')) $('anios_acum').value = C.M3S.n;
   if($('mult_inf')) $('mult_inf').value = C.M3S.factor.toFixed(2).replace('.',',') + 'x';
 
-  /* Paso 5 */
-  setTxt('k-nmetas', C.metasCli.length);
-  setTxt('k-metas-monto', fmt(C.metasMonto));
+  /* Paso 4 · metas personales */
   setTxt('k-metas-cuota', fmt(C.metasAporte));
+  setTxt('k-metas-hoy', fmt(C.metasHoy));
+  const fEl = $('k-metas-falta');
+  if(fEl){ fEl.textContent = fmt(C.metasFalta); fEl.className = 'kval ' + (C.metasFalta > 0 ? 'text-orange' : 'text-green'); }
+  setTxt('k-metas-falta-sub', C.metasCli.length ? (C.metasFalta > 0 ? 'sale del reparto de cada pilar' : 'todas las metas cubiertas') : '—');
+  pintarAvisoMetas(C);
   const mSub = $('k-metas-sub'), mVal = $('k-metas-cuota');
   if(mSub && mVal){
     if(C.metasAporte > 0 && C.fcl > 0){
       const p = pct(C.metasAporte, C.fcl);
-      mSub.textContent = pctTxt(p) + ' del flujo de caja libre';
+      mSub.textContent = pctTxt(p) + ' de la capacidad de ahorro';
       mVal.className = 'kval ' + (p > 100 ? 'text-red' : p > 70 ? 'text-orange' : 'text-green');
     } else { mSub.textContent = 'Suma de todas las metas del cliente'; mVal.className = 'kval text-green'; }
   }
@@ -1458,6 +1486,7 @@ function calcularTodo(){
   fuente('m', C.fcl, C.asigMensual, 'var(--apple-blue)');
   fuente('e', C.extras, C.asigExtra, 'var(--apple-orange)');
   fuente('c', C.capDisp, C.asigCapital, 'var(--apple-indigo)');
+  setTxt('fc-c-split', C.capDisp > 0 ? 'Líquido ' + fmt(C.capDisp - C.noLiqDisp) + ' · No líquido ' + fmt(C.noLiqDisp) : '');
   pintarPilaresResumen(C);
   renderCamino(C);
   return C;
@@ -1515,6 +1544,21 @@ function pintarAlertasDeuda(C){
   }
   box.innerHTML = h;
 }
+/* Compara lo que piden las metas de cada pilar con lo que ese pilar recibe en el reparto */
+function pintarAvisoMetas(C){
+  const box = $('metas-aviso'); if(!box) return;
+  const B = baseCamino(C), msgs = [];
+  ['s1','s2','s3'].forEach(p=>{
+    const pide = C.metasCli.filter(m=> m.pilar === p).reduce((a,m)=> a + metaAporte(m), 0);
+    const recibe = B.A0 * B.rep[p] / 100;
+    if(pide > 0 && pide > recibe + 1000)
+      msgs.push('<b>' + PILAR_LBL[p] + ':</b> las metas piden ' + fmt(pide) + ' al mes y el pilar recibe ' + fmt(recibe) + ' (' + pctTxt(B.rep[p]) + '). Sube su porcentaje arriba, amplía plazos o ajusta montos.');
+  });
+  const usados = {};
+  S.metas.forEach(m=>{ if(m.ahorroId) usados[m.ahorroId] = (usados[m.ahorroId]||0) + 1; });
+  if(Object.values(usados).some(n=> n > 1)) msgs.push('Un mismo ahorro está conectado a varias metas: solo cuenta para la primera, para no sumarlo dos veces.');
+  box.innerHTML = msgs.map(t=> '<div class="ibox warn" style="margin:16px 0 0">' + t + '</div>').join('');
+}
 /* Aporte mensual sugerido por pilar: flujo libre × % del paso 4 */
 function sugeridoMensual(C, p){
   const B = baseCamino(C);
@@ -1549,7 +1593,7 @@ function pintarPilaresResumen(C){
       : ' · <span class="' + (dif > 0 ? 'text-orange' : 'text-red') + '">' + (dif > 0 ? '+' : '−') + fmt(Math.abs(dif)) + '</span>';
     return `<div class="kc"><div class="klbl">${PILAR_LBL[p]}</div>
       <div class="kval ${col[p]}">${fmt(tot)}</div>
-      <div class="ksub">${fmt(a.mensual)}/mes · ${fmt(a.extra)} extra · ${fmt(a.capital)} disponible<br>
+      <div class="ksub">${fmt(a.mensual)}/mes · ${fmt(a.extra)} extra · ${fmt(a.capital)} patrimonio${a.capNoLiq > 0 ? ' <span class="text-orange">(' + fmt(a.capNoLiq) + ' no líquido)</span>' : ''}<br>
       Sugerido (paso 4): ${fmt(sug)}/mes${difTxt}<br>Meta: ${fmt(metas[p])}</div></div>`;
   }).join('');
 }
@@ -1561,7 +1605,46 @@ function addVh(tipo){
     mes: tipo === 'mensual' ? 1 : mes, metaId:'' });
   renderVh(); calcularTodo(); guardar();
 }
-function updVh(i,f,v){ S.propuesta.vehiculos[i][f] = v; calcularTodo(); renderMatriz(filtroMatriz); guardar(); }
+function updVh(i,f,v){
+  const x = S.propuesta.vehiculos[i]; x[f] = v;
+  if(f === 'activoId'){
+    /* Si la línea no tiene monto, se propone lo que queda sin asignar de ese activo */
+    const a = activoDe(x);
+    if(a && !x.monto) x.monto = Math.max(0, (a.valor||0) - asignadoActivo(a.id, x.id));
+  }
+  calcularTodo(); renderMatriz(filtroMatriz); guardar();
+  if(f === 'tipo' || f === 'activoId') renderVh(); else refrescarTagsVh();
+}
+/* Activos del paso 3 marcados como disponibles */
+function activosDisp(){ return S.patrimonio.items.filter(p=> p.disponible); }
+function activoDe(v){ return v && v.activoId ? S.patrimonio.items.find(p=> p.id === v.activoId) : null; }
+function asignadoActivo(aid, excluir){
+  return S.propuesta.vehiculos.filter(v=> v.tipo === 'capital' && v.activoId === aid && v.id !== excluir).reduce((s,v)=> s + (v.monto||0), 0);
+}
+function liqLbl(a){ return a.clase === 'noliquido' ? 'No líquido' : a.clase === 'inversion' ? 'Inversión' : 'Líquido'; }
+function origenTxt(v){
+  if(v.tipo !== 'capital') return ORIGEN_LBL[v.tipo];
+  const a = activoDe(v);
+  return a ? (a.nombre || 'Activo') + ' (' + liqLbl(a).toLowerCase() + ')' : 'Patrimonio disponible';
+}
+function celdaActivo(v, i){
+  const lista = activosDisp();
+  const a = activoDe(v);
+  const ops = '<option value="">' + (lista.length ? '¿De cuál activo?' : 'Marca activos disponibles en el paso 3') + '</option>' +
+    lista.map(p=>`<option value="${p.id}"${v.activoId===p.id?' selected':''}>${esc(p.nombre||'Sin nombre')} · ${fmt(p.valor)}</option>`).join('');
+  return `<select onchange="updVh(${i},'activoId',this.value)" style="margin-top:6px; padding:8px; font-size:12px">${ops}</select><div class="vh-tag" id="vh-tag-${i}"></div>`;
+}
+/* Etiqueta de liquidez y alerta si se asigna más que el valor del activo (se refresca sin redibujar la fila) */
+function refrescarTagsVh(){
+  S.propuesta.vehiculos.forEach((v,i)=>{
+    const box = $('vh-tag-'+i); if(!box) return;
+    const a = activoDe(v);
+    if(!a){ box.innerHTML = ''; return; }
+    const usado = asignadoActivo(a.id, '');
+    box.innerHTML = `<span class="tag-liq${a.clase === 'noliquido' ? ' tag-noliq' : ''}">${liqLbl(a)}</span>` +
+      (usado > (a.valor||0) ? ` <span class="tag-liq tag-over">Excede su valor en ${fmt(usado - (a.valor||0))}</span>` : '');
+  });
+}
 function delVh(i){ S.propuesta.vehiculos.splice(i,1); renderVh(); calcularTodo(); renderMatriz(filtroMatriz); guardar(); }
 function renderVh(){
   const h = S.propuesta.vehiculos.map((v,i)=>{
@@ -1569,10 +1652,10 @@ function renderVh(){
     return `<div class="rowt">
       <div style="flex:.9"><select onchange="updVh(${i},'pilar',this.value)" style="padding:10px 8px; font-size:13px">
         ${['s1','s2','s3'].map(p=>`<option value="${p}"${v.pilar===p?' selected':''}>${p.toUpperCase()}</option>`).join('')}</select></div>
-      <div style="flex:1.6"><select class="sel-meta" data-i="${i}" onchange="updVh(${i},'metaId',this.value)" style="padding:10px 8px; font-size:13px"></select></div>
-      <div style="flex:1.3"><select onchange="updVh(${i},'tipo',this.value)" style="color:${colT}; font-weight:600; padding:10px 8px; font-size:13px">
-        ${Object.keys(ORIGEN_LBL).map(t=>`<option value="${t}"${v.tipo===t?' selected':''}>${ORIGEN_LBL[t]}</option>`).join('')}</select></div>
-      <div style="flex:2"><input type="text" placeholder="Ej. Seguro de vida con ahorro" value="${esc(v.nombre)}" oninput="updVh(${i},'nombre',this.value)"></div>
+      <div style="flex:1.4"><select class="sel-meta" data-i="${i}" onchange="updVh(${i},'metaId',this.value)" style="padding:10px 8px; font-size:13px"></select></div>
+      <div style="flex:1.8"><select onchange="updVh(${i},'tipo',this.value)" style="color:${colT}; font-weight:600; padding:10px 8px; font-size:13px">
+        ${Object.keys(ORIGEN_LBL).map(t=>`<option value="${t}"${v.tipo===t?' selected':''}>${ORIGEN_LBL[t]}</option>`).join('')}</select>${v.tipo === 'capital' ? celdaActivo(v, i) : ''}</div>
+      <div style="flex:1.8"><input type="text" placeholder="Ej. Seguro de vida con ahorro" value="${esc(v.nombre)}" oninput="updVh(${i},'nombre',this.value)"></div>
       <div style="flex:1.4" class="pref"><span class="sym">$</span><input type="text" placeholder="0" value="${v.monto?fmtC(v.monto):''}" oninput="fmtIn(this); updVh(${i},'monto',numEl(this))"></div>
       <div style="flex:1">${ v.tipo === 'mensual'
         ? '<span style="color:var(--text-sub); font-size:13px">Todos</span>'
@@ -1581,7 +1664,7 @@ function renderVh(){
     </div>`;
   }).join('');
   $('list-vh').innerHTML = h || '<div class="empty">Sin vehículos. Agrega el primero con los botones de abajo.</div>';
-  renderSelectsMeta();
+  renderSelectsMeta(); refrescarTagsVh();
 }
 function renderSelectsMeta(){
   const ops = '<option value="">Sin meta</option>' +
@@ -1634,8 +1717,8 @@ function renderMatriz(filtro){
    El aporte se reparte entre S1, S2 y S3 al mismo tiempo según los porcentajes del paso 4.
    S1 recibe su parte hasta completar el fondo de imprevistos; después ese porcentaje pasa a S2 y S3,
    que acumulan hacia la meta 120×. */
-/* Reparto sugerido: con S1 incompleto 30/40/30; con S1 completo todo a S2 y S3 en proporción 70:50 */
-function repartoSug(gap){ return gap > 0 ? { s1:30, s2:40, s3:30 } : { s1:0, s2:58, s3:42 }; }
+/* Reparto sugerido: con S1 incompleto 30/30/40; con S1 completo todo a S2 y S3 en proporción 50:70 */
+function repartoSug(gap){ return gap > 0 ? { s1:30, s2:30, s3:40 } : { s1:0, s2:42, s3:58 }; }
 function repartoActivo(gap){
   const r = S.params.reparto || {};
   return r.auto ? repartoSug(gap) : { s1:numTxt(r.s1), s2:numTxt(r.s2), s3:numTxt(r.s3) };
@@ -1792,7 +1875,7 @@ function tablaPalancas(Z){
 function renderCamino(C){
   if(!$('cam-historia')) return;
   const Z = camino(C), B = Z.B;
-  $('cam-historia').innerHTML = textoCamino(Z, C, true).map((t,i)=> '<div class="ibox' + (i === 0 && B.A0 <= 0 && C.ing > 0 ? ' warn' : '') + '" style="margin-bottom:' + (i ? 16 : 20) + 'px">' + t + '</div>').join('');
+  $('cam-historia').innerHTML = textoCamino(Z, C, true).slice(0,1).map((t,i)=> '<div class="ibox' + (i === 0 && B.A0 <= 0 && C.ing > 0 ? ' warn' : '') + '" style="margin-bottom:' + (i ? 16 : 20) + 'px">' + t + '</div>').join('');
 
   setTxt('cam-aporte', fmt(B.A0));
   setTxt('cam-aporte-sub', 'flujo libre ' + fmt(Math.max(0, C.fcl)) + (C.extras > 0 ? ' + ' + fmt(C.extras/12) + ' de extraordinarios' : ''));
@@ -1853,9 +1936,9 @@ function pintarReparto(B){
   setTxt('rep-tot-m', fmt(A * tot/100));
   const aS1 = A * r.s1/100;
   let t1;
-  if(B.gap <= 0) t1 = 'Fondo de imprevistos completo' + (r.s1 > 0 ? '. Su porcentaje pasa a S2 y S3.' : '.');
-  else if(aS1 <= 0) t1 = 'Fondo de imprevistos: faltan ' + fmt(B.gap) + ' y no está recibiendo aporte.';
-  else t1 = 'Fondo de imprevistos: faltan ' + fmt(B.gap) + '. Se completa en ' + fmtTiempo(Math.ceil(B.gap / aS1)) + ' y luego su porcentaje pasa a S2 y S3.';
+  if(B.gap <= 0) t1 = 'Completo' + (r.s1 > 0 ? ': su % pasa a S2 y S3' : '');
+  else if(aS1 <= 0) t1 = 'Faltan ' + fmt(B.gap) + ', sin aporte';
+  else t1 = 'Faltan ' + fmt(B.gap) + ' · se completa en ' + fmtTiempo(Math.ceil(B.gap / aS1));
   setTxt('rep-s1-txt', t1);
   const av = $('rep-aviso');
   if(av){
@@ -1958,7 +2041,7 @@ function renderDiagnostico(){
 
   const filasMetas = C.metasCli.map(m=>
     `<tr><td><b>${esc(m.nombre)||'—'}</b></td><td>${PILAR_LBL[m.pilar]}</td>
-     <td style="text-align:right">${fmt(m.monto)}</td><td style="text-align:right">${(metaMeses(m)/12).toFixed(1).replace('.',',')} años</td>
+     <td style="text-align:right">${fmt(m.monto)}</td><td style="text-align:right">${fmt(m.ahorrado||0)}</td><td style="text-align:right">${(metaMeses(m)/12).toFixed(1).replace('.',',')} años</td>
      <td style="text-align:right">${fmt(metaVF(m))}</td>
      <td style="text-align:right; color:var(--apple-green); font-weight:700">${fmt(metaAporte(m))}</td></tr>`).join('');
 
@@ -2054,16 +2137,16 @@ function renderDiagnostico(){
   <div class="card">
     <div class="ctit">Metas del cliente</div>
     ${C.metasCli.length ? `<table class="rtable">
-      <tr><th>Meta</th><th>Pilar</th><th style="text-align:right">Monto hoy</th><th style="text-align:right">Plazo</th><th style="text-align:right">Valor futuro</th><th style="text-align:right">Aporte/mes</th></tr>
+      <tr><th>Meta</th><th>Pilar</th><th style="text-align:right">Monto hoy</th><th style="text-align:right">Ya ahorrado</th><th style="text-align:right">Plazo</th><th style="text-align:right">Valor futuro</th><th style="text-align:right">Aporte/mes</th></tr>
       ${filasMetas}
-      <tr class="tot"><td colspan="2">Total</td><td style="text-align:right">${fmt(C.metasMonto)}</td><td></td><td></td><td style="text-align:right">${fmt(C.metasAporte)}</td></tr>
+      <tr class="tot"><td colspan="2">Total</td><td style="text-align:right">${fmt(C.metasMonto)}</td><td></td><td></td><td></td><td style="text-align:right">${fmt(C.metasAporte)}</td></tr>
     </table>` : '<div class="empty">Sin metas registradas.</div>'}
     <div class="ctit-sub">Estrategia 3S</div>
     <table class="rtable">
       <tr><th>Pilar</th><th style="text-align:right">Valor hoy</th><th style="text-align:right">Valor al retiro</th></tr>
       <tr><td>S1 — Seguridad (3× a 6×)</td><td style="text-align:right">${fmt(C.M3S.s1min)} – ${fmt(C.M3S.s1ideal)}</td><td style="text-align:right">—</td></tr>
-      <tr><td>S2 — Solidez (70×)</td><td style="text-align:right">${fmt(C.M3S.vpS2)}</td><td style="text-align:right">${fmt(C.M3S.vfS2)}</td></tr>
-      <tr><td>S3 — Sinergia (50×)</td><td style="text-align:right">${fmt(C.M3S.vpS3)}</td><td style="text-align:right">${fmt(C.M3S.vfS3)}</td></tr>
+      <tr><td>S2 — Solidez (50×)</td><td style="text-align:right">${fmt(C.M3S.vpS2)}</td><td style="text-align:right">${fmt(C.M3S.vfS2)}</td></tr>
+      <tr><td>S3 — Sinergia (70×)</td><td style="text-align:right">${fmt(C.M3S.vpS3)}</td><td style="text-align:right">${fmt(C.M3S.vfS3)}</td></tr>
       <tr class="tot"><td>Total a acumular (120×)</td><td style="text-align:right">${fmt(C.M3S.vpTot)}</td><td style="text-align:right">${fmt(C.M3S.vfTot)}</td></tr>
     </table>
     <div class="ksub" style="margin-top:12px">${C.M3S.n > 0 ? C.M3S.n + ' años para acumular, con inflación de ' + pctTxt(numTxt(S.params.inflacion)) + ' E.A.' : 'Define la edad y la edad de retiro para proyectar el valor futuro.'}</div>
@@ -2152,7 +2235,7 @@ function migrarIndex(d){
       const o = d.propuesta[p]; if(!o) return;
       (o.vehiculos||[]).forEach((v,i)=> s.propuesta.vehiculos.push({ id:'v_'+p+i, pilar:p, tipo:'mensual', nombre:v.n||'', monto:v.v||0, mes:1, metaId:'' }));
       if(o.noMensual > 0) s.propuesta.vehiculos.push({ id:'v_'+p+'n', pilar:p, tipo:'extra', nombre:'Aporte extraordinario', monto:o.noMensual, mes:6, metaId:'' });
-      if(o.capital > 0) s.propuesta.vehiculos.push({ id:'v_'+p+'c', pilar:p, tipo:'capital', nombre:'Dinero disponible', monto:o.capital, mes:1, metaId:'' });
+      if(o.capital > 0) s.propuesta.vehiculos.push({ id:'v_'+p+'c', pilar:p, tipo:'capital', nombre:'Patrimonio disponible', monto:o.capital, mes:1, metaId:'' });
       s.propuesta.notas[p] = o.nota || '';
     });
   }
@@ -2415,16 +2498,16 @@ function pdfDiagnostico(){
 
   if(C.metasCli.length){
     st.sec('METAS DEL CLIENTE', P_BLUE);
-    const fm = C.metasCli.map(m=>({ c:[m.nombre||'—', PILAR_LBL[m.pilar], fmt(m.monto),
+    const fm = C.metasCli.map(m=>({ c:[m.nombre||'—', PILAR_LBL[m.pilar], fmt(m.monto), fmt(m.ahorrado||0),
       (metaMeses(m)/12).toFixed(1).replace('.',',') + ' años', fmt(metaVF(m)), fmt(metaAporte(m))] }));
-    fm.push({ c:['TOTAL','',fmt(C.metasMonto),'','',fmt(C.metasAporte)], bold:true });
-    st.tabla(['Meta','Pilar','Monto hoy','Plazo','Valor futuro','Aporte/mes'], fm, [46,26,28,20,28,30], [2,3,4,5]);
+    fm.push({ c:['TOTAL','',fmt(C.metasMonto),'','','',fmt(C.metasAporte)], bold:true });
+    st.tabla(['Meta','Pilar','Monto hoy','Ya ahorrado','Plazo','Valor futuro','Aporte/mes'], fm, [38,24,25,25,18,24,24], [2,3,4,5,6]);
   }
 
   st.sec('ESTRATEGIA 3S — METAS DE ACUMULACIÓN');
   st.par2('S1 Seguridad mínima (3×)', fmt(C.M3S.s1min), 'S1 ideal (6×)', fmt(C.M3S.s1ideal));
-  st.par2('S2 Solidez (70×) hoy', fmt(C.M3S.vpS2), 'Al retiro', fmt(C.M3S.vfS2));
-  st.par2('S3 Sinergia (50×) hoy', fmt(C.M3S.vpS3), 'Al retiro', fmt(C.M3S.vfS3));
+  st.par2('S2 Solidez (50×) hoy', fmt(C.M3S.vpS2), 'Al retiro', fmt(C.M3S.vfS2));
+  st.par2('S3 Sinergia (70×) hoy', fmt(C.M3S.vpS3), 'Al retiro', fmt(C.M3S.vfS3));
   st.par2('Total a acumular (120×)', fmt(C.M3S.vpTot), 'Valor futuro total', fmt(C.M3S.vfTot));
   st.par2('Años para acumular', C.M3S.n || '—', 'Inflación de descuento', pctTxt(numTxt(S.params.inflacion)) + ' E.A.');
   st.y += 2;
@@ -2438,96 +2521,223 @@ function hex2rgb(h){
   const s = h.replace('#','');
   return [parseInt(s.substr(0,2),16), parseInt(s.substr(2,2),16), parseInt(s.substr(4,2),16)];
 }
+/* $28,5 millones · $1.140 millones */
+function fmtMill(n){
+  const m = (n||0) / 1e6;
+  return '$' + (m >= 100 ? Math.round(m).toLocaleString('es-CO') : (Math.round(m*10)/10).toLocaleString('es-CO')) + ' millones';
+}
 function pdfPropuesta(){
   if(!window.jspdf || !window.jspdf.jsPDF){ showToast('No se pudo cargar el motor de PDF.'); return; }
   const C = calcularTodo();
-  const doc = new window.jspdf.jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-  const st = pdfBase(doc, 'Propuesta estrategia 3S', encabezadoSub(), [124,150,240]);
-
-  st.sec('OBJETIVO DEL CLIENTE', P_BLUE);
-  st.par2('Objetivo', S.cliente.objetivo || 'No definido', 'Horizonte', S.cliente.horizonte || 'No definido');
-  if(S.cliente.expectativas) st.par('"' + S.cliente.expectativas + '"');
-
-  if($('opt-diag-prop') && $('opt-diag-prop').checked){
-    st.sec('PUNTO DE PARTIDA');
-    bloqueIndicadores(doc, st, C);
-  }
-
-  st.sec('RECURSOS DISPONIBLES', P_GREEN);
-  st.par2('Flujo de caja libre', fmt(C.fcl), 'Asignado al mes', fmt(C.asigMensual));
-  st.par2('Flujos extraordinarios del año', fmt(C.extras), 'Asignado extraordinario', fmt(C.asigExtra));
-  st.par2('Dinero disponible', fmt(C.capDisp), 'Asignado del disponible', fmt(C.asigCapital));
-  st.dest('Flujo mensual sin asignar', fmt(C.fcl - C.asigMensual), (C.fcl - C.asigMensual) >= 0 ? P_GREEN : P_RED);
-
-  /* Camino hacia la renta pasiva */
   const Z = camino(C);
-  if(C.ing > 0){
-    st.sec('TU CAMINO HACIA LA RENTA PASIVA', P_GREEN);
-    textoCamino(Z, C, false).forEach(t=> st.par(t, P_DARK));
-    if(Z.req !== null && Z.nAnios > 0){
-      st.par('Para retirarte a los ' + (Z.edad + Z.nAnios) + ' años necesitas aportar ' + fmt(Z.req) + ' al mes; hoy puedes destinar ' + fmt(Z.B.A0) + '.');
-    }
-    const hay = Z.mej > 0;
-    const fh = Z.filas.map(f=>({ c: hay
-      ? [f.y + ' años' + (f.esRetiro ? ' *' : ''), f.edad || '—', fmt(f.k0), fmt(f.r0), fmt(f.k1), fmt(f.r1)]
-      : [f.y + ' años' + (f.esRetiro ? ' *' : ''), f.edad || '—', fmt(f.k0), fmt(f.r0), pctTxt(Math.min(100, pct(f.k0, Z.B.target))), ''] }));
-    st.tabla(hay ? ['Plazo','Edad','Capital actual','Renta/mes','Capital con mejora','Renta/mes'] : ['Plazo','Edad','Capital actual','Renta/mes','% de la meta',''],
-      fh, [26,16,34,32,38,32], [2,3,4,5]);
-    st.par('Valores en pesos de hoy. * Plazo hasta la edad de retiro deseada. Renta estimada con ' + pctTxt(numTxt(S.params.rentaRet)) + ' E.A. sobre el capital; no es un rendimiento garantizado.');
-    const fp = filasPalancas(Z);
-    if(fp.length > 1){
-      st.tabla(['Escenario','Aporte/mes','Llegas en','Adelantas'],
-        fp.map(p=>({ c:[p.etiqueta, fmt(p.A), p.tiempo, p.ade] })), [66,32,44,36], [1]);
-    }
-  }
+  const doc = new window.jspdf.jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
+  const W = 297, H = 210, M = 12;
+  /* Paleta (verdes de la referencia) */
+  const BOSQUE=[0,36,28], PINO=[0,96,67], ESME=[32,179,108], MENTA=[207,239,224], TXT=[10,10,10],
+        GRIS=[120,120,126], LINEA=[214,214,218], CLARO=[244,245,247], BLANCO=[255,255,255];
+  const COLP = { s1:[30,150,80], s2:[0,110,220], s3:[225,125,0] };
+  const TINT = { s1:[234,247,239], s2:[232,242,253], s3:[254,243,229] };
+  const fill = c => doc.setFillColor(c[0],c[1],c[2]);
+  const ink  = c => doc.setTextColor(c[0],c[1],c[2]);
+  const draw = c => doc.setDrawColor(c[0],c[1],c[2]);
+  const font = (w, sz) => { doc.setFont('helvetica', w); doc.setFontSize(sz); };
+  const txt  = (t, x, y, o) => doc.text(String(t), x, y, o);
+  const lineas = (t, w) => doc.splitTextToSize(String(t), w);
+  const flecha = (x1, y1, x2, y2, c) => {
+    draw(c); doc.setLineWidth(1.2); doc.line(x1, y1, x2 - 2.2, y2);
+    fill(c); const a = Math.atan2(y2-y1, x2-x1), s = 3.2;
+    doc.triangle(x2, y2, x2 - s*Math.cos(a-0.5), y2 - s*Math.sin(a-0.5), x2 - s*Math.cos(a+0.5), y2 - s*Math.sin(a+0.5), 'F');
+    doc.setLineWidth(0.2);
+  };
+  const nom = S.cliente.nombre || 'Cliente';
+  const primerNom = nom.trim().split(/\s+/)[0];
+  const fecha = new Date().toLocaleDateString('es-CO', { day:'numeric', month:'long', year:'numeric' });
 
-  st.sec('METAS DE ACUMULACIÓN 3S', P_BLUE);
-  st.par2('Años para acumular', C.M3S.n || '—', 'Inflación', pctTxt(numTxt(S.params.inflacion)) + ' E.A.');
-  st.par2('S2 Solidez (70×) hoy', fmt(C.M3S.vpS2), 'Al retiro', fmt(C.M3S.vfS2));
-  st.par2('S3 Sinergia (50×) hoy', fmt(C.M3S.vpS3), 'Al retiro', fmt(C.M3S.vfS3));
-  st.par2('Total (120×)', fmt(C.M3S.vpTot), 'Valor futuro total', fmt(C.M3S.vfTot));
+  /* ─── Página 1 · infografía ─── */
+  fill(BOSQUE); doc.rect(0, 0, W, 30, 'F');
+  font('bold', 21);
+  let x = M; const y0 = 15;
+  [['DE TU ', BLANCO], ['INGRESO', ESME], [' A TU ', BLANCO], ['LIBERTAD FINANCIERA', ESME]].forEach(([t,c])=>{ ink(c); txt(t, x, y0); x += doc.getTextWidth(t); });
+  font('normal', 9.5); ink([200,214,208]);
+  txt('Propuesta para ' + nom + '  ·  ' + fecha + (S.meta.asesor ? '  ·  Asesor: ' + S.meta.asesor : ''), M, 23.5);
+  font('bold', 9); ink(ESME); txt('MENTORÍA FINANCIERA 3S', W - M, 13, { align:'right' });
+  font('normal', 7.5); ink([200,214,208]); txt('Seguridad · Solidez · Sinergia', W - M, 18, { align:'right' });
 
-  const metasNom = {}; S.metas.forEach(m=> metasNom[m.id] = m.nombre);
-  const colP = { s1:P_GREEN, s2:P_BLUE, s3:P_ORANGE };
-  ['s1','s2','s3'].forEach(p=>{
-    const vs = S.propuesta.vehiculos.filter(v=> v.pilar === p);
-    const a = C.porPilar[p], tot = a.mensual + a.extra + a.capital;
-    if(!vs.length && tot === 0 && !S.propuesta.notas[p]) return;
-    st.sec(PILAR_LBL[p].toUpperCase(), colP[p]);
-    st.par2('Aporte mensual', fmt(a.mensual), 'Extraordinario', fmt(a.extra));
-    st.par2('Dinero disponible', fmt(a.capital), 'Total del pilar', fmt(tot));
-    if(vs.length){
-      st.tabla(['Meta','Origen de recursos','Producto financiero','Monto','Mes'],
-        vs.map(v=>({ c:[metasNom[v.metaId] || 'Sin meta', ORIGEN_LBL[v.tipo], v.nombre||'—', fmt(v.monto),
-          v.tipo==='mensual'?'Todos':MESES[(v.mes||1)-1]] })),
-        [44,32,56,30,16], [3]);
-    }
-    if(S.propuesta.notas[p]) st.par('Nota: ' + S.propuesta.notas[p]);
+  const top = 38, alto = 92;
+  /* 1. Ingreso */
+  const b1x = M, b1w = 42;
+  fill(BOSQUE); doc.roundedRect(b1x, top, b1w, alto, 3, 3, 'F');
+  font('bold', 10); ink(BLANCO); txt('1. INGRESO', b1x + 5, top + 9); txt('TOTAL', b1x + 5, top + 14);
+  font('normal', 7.5); ink([190,210,200]); txt('Todo lo que ganas cada mes', b1x + 5, top + 20);
+  font('bold', 15); ink(ESME); txt(fmt(C.ing), b1x + 5, top + 32);
+  font('normal', 7.5);
+  const fuentes = [['Principal', S.ingresos.principal||0]].concat(S.ingresos.fuentes.filter(f=>f.valor>0).map(f=>[f.nombre||'Otra fuente', f.valor]));
+  let yy = top + 42;
+  fuentes.slice(0,5).forEach(([n,v])=>{
+    draw([30,70,58]); doc.line(b1x + 5, yy - 4, b1x + b1w - 5, yy - 4);
+    ink(BLANCO); txt(lineas(n, 15)[0], b1x + 5, yy); ink([190,210,200]); txt(fmt(v), b1x + b1w - 5, yy, { align:'right' });
+    yy += 7;
+  });
+  if(C.ingPasivo > 0){ font('bold', 7); ink(ESME); txt(pctTxt(pct(C.ingPasivo, C.ing)) + ' es ingreso pasivo', b1x + 5, top + alto - 6); }
+
+  /* 2. Gastos y compromisos */
+  const b2x = b1x + b1w + 9, b2w = 46;
+  flecha(b1x + b1w + 1.5, top + alto/2, b2x - 1.5, top + alto/2, ESME);
+  fill(CLARO); doc.roundedRect(b2x, top, b2w, alto, 3, 3, 'F');
+  font('bold', 10); ink(BOSQUE); txt('2. GASTOS Y', b2x + 5, top + 9); txt('COMPROMISOS', b2x + 5, top + 14);
+  font('normal', 7.5); ink(GRIS); txt('Tu base para vivir y operar', b2x + 5, top + 20);
+  font('bold', 15); ink(TXT); txt(fmt(C.gastos), b2x + 5, top + 32);
+  const filasG = [['Gastos de vida', C.gVida], ['Cuotas de deudas', C.deudas.cuota], ['Seguros', C.primas]];
+  yy = top + 42; font('normal', 7.5);
+  filasG.forEach(([n,v])=>{
+    draw(LINEA); doc.line(b2x + 5, yy - 4, b2x + b2w - 5, yy - 4);
+    ink(TXT); txt(n, b2x + 5, yy); ink(GRIS); txt(fmt(v), b2x + b2w - 5, yy, { align:'right' }); yy += 7;
+  });
+  fill(BLANCO); doc.roundedRect(b2x + 5, top + alto - 17, b2w - 10, 11, 2, 2, 'F');
+  font('bold', 9); ink(BOSQUE); txt(pctTxt(pct(C.gastos, C.ing)) + ' del ingreso', b2x + b2w/2, top + alto - 10, { align:'center' });
+
+  /* 3. Excedente */
+  const b3x = b2x + b2w + 9, b3w = 50;
+  flecha(b2x + b2w + 1.5, top + alto/2, b3x - 1.5, top + alto/2, ESME);
+  fill(PINO); doc.roundedRect(b3x, top, b3w, alto, 3, 3, 'F');
+  font('bold', 10); ink(BLANCO); txt('3. EXCEDENTE', b3x + 5, top + 9); txt('MENSUAL', b3x + 5, top + 14);
+  font('normal', 7.5); ink([200,230,215]);
+  lineas('Lo que queda después de cubrir tu vida', b3w - 10).forEach((l,i)=> txt(l, b3x + 5, top + 20 + i*3.6));
+  font('bold', 19); ink(BLANCO); txt(fmt(Math.max(0, C.fcl)), b3x + 5, top + 37);
+  font('normal', 7.5); ink([200,230,215]); txt(pctTxt(pct(Math.max(0,C.fcl), C.ing)) + ' de tu ingreso', b3x + 5, top + 43);
+  draw(ESME); doc.setLineWidth(0.6); doc.roundedRect(b3x + 5, top + 49, b3w - 10, 15, 2, 2, 'S'); doc.setLineWidth(0.2);
+  font('bold', 15); ink(ESME); txt('100%', b3x + b3w/2, top + 57, { align:'center' });
+  font('bold', 6.5); ink(BLANCO); txt('SE DISTRIBUYE EN TUS 3 PILARES', b3x + b3w/2, top + 61.5, { align:'center' });
+  yy = top + 71;
+  if(C.extras > 0){ font('normal', 7); ink([200,230,215]); txt('+ Extraordinarios del año', b3x + 5, yy); font('bold', 8.5); ink(BLANCO); txt(fmt(C.extras), b3x + 5, yy + 4.2); yy += 10.5; }
+  if(C.capDisp > 0){ font('normal', 7); ink([200,230,215]); txt('+ Patrimonio disponible', b3x + 5, yy); font('bold', 8.5); ink(BLANCO); txt(fmt(C.capDisp), b3x + 5, yy + 4.2); }
+
+  /* 4. Los tres pilares */
+  const px = b3x + b3w + 12, pw = W - M - px, ph = 29.3, gap = 2;
+  font('bold', 9); ink(BOSQUE); txt('4. METODOLOGÍA 3S', px, top - 2.5);
+  const hayMensual = S.propuesta.vehiculos.some(v=> v.tipo === 'mensual' && v.monto > 0);
+  const P = {
+    s1:{ t:'SEGURIDAD', meta:'Meta: 3 a 6 veces tu ingreso', m:fmtMill(C.M3S.s1min).replace(' millones','') + ' a ' + fmtMill(C.M3S.s1ideal), d:'Imprevistos y tranquilidad.', ej:['Fondo de emergencia','Liquidez inmediata'] },
+    s2:{ t:'SOLIDEZ', meta:'Meta: 50 veces tu ingreso', m:fmtMill(C.M3S.vpS2), d:'Retiro y protección de la familia.', ej:['Pensión voluntaria','Seguro de vida con ahorro'] },
+    s3:{ t:'SINERGIA', meta:'Meta: 70 veces tu ingreso', m:fmtMill(C.M3S.vpS3), d:'Rentabilidad y crecimiento.', ej:['Fondos y ETFs','Propiedad raíz'] }
+  };
+  ['s1','s2','s3'].forEach((p,i)=>{
+    const y = top + i*(ph + gap), c = COLP[p], a = C.porPilar[p];
+    flecha(b3x + b3w + 1.5, top + alto/2, px - 1.2, y + ph/2, c);
+    fill(TINT[p]); doc.roundedRect(px, y, pw, ph, 3, 3, 'F');
+    fill(c); doc.roundedRect(px, y, 2.4, ph, 1.2, 1.2, 'F');
+    /* Insignia */
+    fill(c); doc.circle(px + 10, y + 9, 4.6, 'F');
+    font('bold', 8.5); ink(BLANCO); txt(p.toUpperCase(), px + 10, y + 10.4, { align:'center' });
+    font('bold', 13); ink(c); txt(P[p].t, px + 17, y + 10.5);
+    font('bold', 7.5); ink(TXT); txt(P[p].meta + ' (' + P[p].m + ')', px + 17, y + 17.6);
+    font('normal', 7.5); ink(GRIS); txt(P[p].d, px + 17, y + 22.2);
+    /* Aporte del pilar */
+    const mens = hayMensual ? a.mensual : sugeridoMensual(C, p);
+    const pctP = hayMensual ? pct(a.mensual, Math.max(0, C.fcl)) : baseCamino(C).rep[p];
+    const cx = px + pw - 5;
+    font('bold', 13); ink(c); txt(fmt(mens), cx, y + 10.5, { align:'right' });
+    font('normal', 7); ink(GRIS); txt('al mes (' + pctTxt(pctP) + ')', cx, y + 13.8, { align:'right' });
+    const extraP = a.extra + a.capital;
+    if(extraP > 0){ font('bold', 7); ink(c); txt('+ ' + fmtMill(extraP) + ' puntuales', cx, y + 22.2, { align:'right' }); }
+    /* Productos */
+    const prods = S.propuesta.vehiculos.filter(v=> v.pilar === p && v.nombre).map(v=> v.nombre);
+    const lista = (prods.length ? prods : P[p].ej).filter((v,k,arr)=> arr.indexOf(v) === k);
+    font('bold', 7); ink(TXT);
+    const etq = prods.length ? 'Tus productos: ' : 'Ejemplos: ';
+    txt(etq, px + 17, y + 26.6);
+    const wE = doc.getTextWidth(etq);
+    font('normal', 7); ink(TXT);
+    txt(lineas(lista.slice(0,3).join(' · '), pw - 22 - wE)[0], px + 17 + wE, y + 26.6);
   });
 
-  if($('opt-matriz') && $('opt-matriz').checked && S.propuesta.vehiculos.length){
-    st.sec('CALENDARIO DE APORTES');
-    const filas = S.metas.filter(m=>m.nombre).concat([{ id:'', nombre:'Sin meta asignada' }]).map(meta=>{
-      const c = [meta.nombre.substring(0,26)];
-      let tot = 0;
-      for(let m=1;m<=12;m++){
-        const v = celda('mensual',meta.id,m) + celda('extra',meta.id,m) + celda('capital',meta.id,m);
-        tot += v;
-        c.push(v > 0 ? Math.round(v/1000) : '-');
-      }
-      c.push(tot > 0 ? Math.round(tot/1000) : '-');
-      return { c:c, gris: tot === 0 };
+  /* Banda inferior: así transformas tu dinero en libertad */
+  const by = 138, bh = 52;
+  fill(BOSQUE); doc.roundedRect(M, by, W - 2*M, bh, 4, 4, 'F');
+  font('bold', 13); ink(BLANCO); txt('ASÍ TRANSFORMAS', M + 7, by + 16); txt('TU DINERO EN', M + 7, by + 22.5);
+  font('bold', 19); ink(ESME); txt('LIBERTAD', M + 7, by + 31);
+  font('normal', 7.5); ink([190,210,200]);
+  lineas(primerNom + ', cuánto avanzas depende de tu constancia y de que te acompañen en el proceso.', 56).forEach((l,i)=> txt(l, M + 7, by + 39 + i*3.6));
+  /* Pasos */
+  const pasos = [['CUBRES', 'TU VIDA HOY'], ['TE PROTEGES', 'DE IMPREVISTOS'], ['CONSTRUYES', 'PATRIMONIO SÓLIDO'], ['MULTIPLICAS', 'TU CAPITAL']];
+  const sx = M + 70, sw = 27;
+  pasos.forEach((p2,i)=>{
+    const cx = sx + i*(sw + 6) + sw/2;
+    fill(PINO); doc.circle(cx, by + 17, 6.5, 'F');
+    font('bold', 10); ink(ESME); txt(String(i+1), cx, by + 18.3, { align:'center' });
+    font('bold', 7.2); ink(BLANCO); txt(p2[0], cx, by + 31, { align:'center' }); txt(p2[1], cx, by + 35, { align:'center' });
+    if(i < pasos.length - 1) flecha(cx + 8.5, by + 17, cx + sw + 6 - 8.5, by + 17, ESME);
+  });
+  /* Resultado */
+  const rx = sx + 4*(sw + 6) + 2, rw = W - M - 6 - rx;
+  flecha(sx + 3*(sw + 6) + sw/2 + 8.5, by + 17, rx - 1.5, by + 17, ESME);
+  fill(ESME); doc.roundedRect(rx, by + 6, rw, bh - 12, 3, 3, 'F');
+  font('bold', 7.5); ink(BOSQUE); txt('LOGRAS TU LIBERTAD FINANCIERA EN', rx + 5, by + 13.5);
+  const e0 = edadAlcanza(Z, Z.m0);
+  if(C.ing > 0 && Z.m0 !== null && Z.B.A0 > 0){
+    font('bold', 16); ink(BLANCO); txt(fmtTiempo(Z.m0), rx + 5, by + 23);
+    font('normal', 7.5); ink(BOSQUE);
+    txt((e0 ? 'a los ' + e0 + ' años · ' : '') + 'meta de ' + fmtMill(Z.B.target), rx + 5, by + 28.5);
+    font('bold', 9); ink(BOSQUE); txt('Renta pasiva: ' + fmt(Z.renta) + '/mes', rx + 5, by + 36);
+  } else {
+    font('bold', 11); ink(BLANCO);
+    lineas(Z.req ? 'Necesitas ' + fmt(Z.req) + ' al mes' : 'Libera flujo para empezar', rw - 10).forEach((l,i)=> txt(l, rx + 5, by + 22 + i*5));
+    font('normal', 7.5); ink(BOSQUE); txt('para una renta de ' + fmt(Z.renta) + '/mes', rx + 5, by + 36);
+  }
+  font('normal', 6.5); ink(GRIS);
+  txt('Valores en pesos de hoy. Las rentabilidades son supuestos de planeación (' + pctTxt(numTxt(S.params.tasadesc)) + ' E.A.), no rendimientos garantizados. Documento confidencial.', M, H - 7);
+  txt('Pág. 1', W - M, H - 7, { align:'right' });
+
+  /* ─── Página 2 · tu plan de acción (opcional) ─── */
+  const V = S.propuesta.vehiculos.filter(v=> v.monto > 0);
+  if($('opt-matriz') && $('opt-matriz').checked && V.length){
+    doc.addPage('a4', 'landscape');
+    fill(BOSQUE); doc.rect(0, 0, W, 22, 'F');
+    font('bold', 16); ink(BLANCO); txt('TU PLAN DE ', M, 14); ink(ESME); txt('ACCIÓN', M + doc.getTextWidth('TU PLAN DE '), 14);
+    font('normal', 8.5); ink([200,214,208]); txt(nom + '  ·  ' + fecha, W - M, 14, { align:'right' });
+    const metasNom = {}; S.metas.forEach(m=> metasNom[m.id] = m.nombre);
+    const cols = [['Pilar', 30], ['Producto', 72], ['Para qué meta', 62], ['De dónde sale', 58], ['Monto', 30], ['Cuándo', 21]];
+    let y = 34;
+    font('bold', 7.5); ink(GRIS); x = M;
+    cols.forEach(([t,w],i)=>{ txt(t.toUpperCase(), i === 4 ? x + w - 3 : x, y, i === 4 ? { align:'right' } : undefined); x += w; });
+    y += 3; draw(LINEA); doc.line(M, y, W - M, y); y += 7;
+    ['s1','s2','s3'].forEach(p=>{
+      V.filter(v=> v.pilar === p).forEach(v=>{
+        if(y > 150) return;
+        x = M; font('bold', 8.5); ink(COLP[p]); txt(PILAR_LBL[p], x, y); x += cols[0][1];
+        font('bold', 8.5); ink(TXT); txt(lineas(v.nombre || '—', cols[1][1] - 4)[0], x, y); x += cols[1][1];
+        font('normal', 8.5); txt(lineas(metasNom[v.metaId] || '—', cols[2][1] - 4)[0], x, y); x += cols[2][1];
+        ink(GRIS); txt(lineas(origenTxt(v), cols[3][1] - 4)[0], x, y); x += cols[3][1];
+        font('bold', 8.5); ink(TXT); txt(fmt(v.monto) + (v.tipo === 'mensual' ? '/mes' : ''), x + cols[4][1] - 3, y, { align:'right' }); x += cols[4][1];
+        font('normal', 8.5); ink(GRIS); txt(v.tipo === 'mensual' ? 'Cada mes' : MESES[(v.mes||1)-1], x, y);
+        y += 4; draw([236,236,240]); doc.line(M, y, W - M, y); y += 6;
+      });
     });
-    st.tabla(['Meta (miles $)'].concat(MESES).concat(['Año']), filas,
-      [40].concat(new Array(12).fill(10.5)).concat([13]), [1,2,3,4,5,6,7,8,9,10,11,12,13]);
-    st.par('Cifras en miles de pesos.');
+    /* Totales */
+    y += 2;
+    const tots = [['Cada mes', fmt(C.asigMensual)], ['Aportes puntuales del año', fmt(C.asigExtra)], ['Desde tu patrimonio', fmt(C.asigCapital)]];
+    const tw = (W - 2*M - 12) / 3;
+    tots.forEach(([l,v],i)=>{
+      const tx = M + i*(tw + 6);
+      fill(MENTA); doc.roundedRect(tx, y, tw, 18, 3, 3, 'F');
+      font('normal', 7.5); ink(PINO); txt(l.toUpperCase(), tx + 5, y + 7);
+      font('bold', 13); ink(BOSQUE); txt(v, tx + 5, y + 14.5);
+    });
+    /* Próximos pasos */
+    y += 34;
+    font('bold', 10); ink(BOSQUE); txt('PRÓXIMOS PASOS', M, y);
+    const pp = ['Aperturar los vehículos financieros de cada pilar en compañía de tu asesor.', 'Programar los aportes el mismo día en que recibes tu ingreso.', 'Revisar el plan cada seis meses o si cambia tu ingreso, tu familia o tus deudas.'];
+    const pw3 = (W - 2*M - 12) / 3;
+    pp.forEach((t,i)=>{
+      const tx = M + i*(pw3 + 6);
+      fill(BOSQUE); doc.circle(tx + 5, y + 10, 4.5, 'F');
+      font('bold', 9); ink(ESME); txt(String(i+1), tx + 5, y + 11.1, { align:'center' });
+      font('normal', 8.5); ink(TXT); lineas(t, pw3 - 16).forEach((l,k)=> txt(l, tx + 13, y + 9 + k*4));
+    });
+    font('normal', 6.5); ink(GRIS); txt('Documento confidencial.' + (S.meta.asesor ? ' Asesor: ' + S.meta.asesor + '.' : ''), M, H - 7);
+    txt('Pág. 2', W - M, H - 7, { align:'right' });
   }
 
-  st.sec('PRÓXIMOS PASOS');
-  st.par('1. Firmar y radicar los productos definidos en cada pilar.  2. Automatizar los aportes mensuales el mismo día del pago.  3. Revisar la estrategia cada seis meses o ante cualquier cambio de ingreso, familia o deuda.');
-  st.par('Esta propuesta se construye con la información entregada por el cliente. Las rentabilidades utilizadas son supuestos de planeación, no rendimientos garantizados.');
-
-  st.pie('Propuesta 3S');
   doc.save('Propuesta_3S_' + nombreArchivo() + '.pdf');
   showToast('PDF de la propuesta descargado.');
 }
